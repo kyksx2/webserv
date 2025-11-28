@@ -6,7 +6,7 @@
 /*   By: yzeghari <yzeghari@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/24 13:37:27 by yzeghari          #+#    #+#             */
-/*   Updated: 2025/11/25 16:23:52 by yzeghari         ###   ########.fr       */
+/*   Updated: 2025/11/28 12:24:14 by yzeghari         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,7 +29,10 @@ class HTTPRequest
 		std::map<std::string, std::string>	m_headers;
 
 	public :
-		HTTPRequest();
+		HTTPRequest(std::string target,
+				std::string query,
+				std::string version,
+				std::map<std::string, std::string> headers);
 		virtual ~HTTPRequest();
 		std::string	GetTarget() const;
 		std::string	GetQuery() const;

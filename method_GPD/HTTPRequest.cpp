@@ -6,13 +6,14 @@
 /*   By: yzeghari <yzeghari@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/24 13:45:23 by yzeghari          #+#    #+#             */
-/*   Updated: 2025/11/25 16:38:16 by yzeghari         ###   ########.fr       */
+/*   Updated: 2025/11/28 12:25:05 by yzeghari         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "HTTPRequest.hpp"
 
-HTTPRequest::HTTPRequest()
+HTTPRequest::HTTPRequest(std::string target, std::string query, std::string version, std::map<std::string, std::string> headers)
+: m_target(target), m_query(query), m_version(version), m_headers(headers)
 {
 }
 

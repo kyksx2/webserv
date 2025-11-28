@@ -6,7 +6,7 @@
 /*   By: yzeghari <yzeghari@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/25 13:50:59 by yzeghari          #+#    #+#             */
-/*   Updated: 2025/11/26 17:02:56 by yzeghari         ###   ########.fr       */
+/*   Updated: 2025/11/28 12:34:32 by yzeghari         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,6 +60,7 @@ void	get_atr(std::vector<std::string> v,
 		}
 	}
 }
+
 HTTPRequest	*get_creation(std::vector<std::string> v)
 {
 	std::string	target;
@@ -67,17 +68,27 @@ HTTPRequest	*get_creation(std::vector<std::string> v)
 	std::string version;
 	std::map<std::string, std::string> headers;
 	get_atr(v,target, query, version, headers);
-
+	return (new GetRequest(target, query, version, headers));
 }
 
 HTTPRequest	*delete_creation(std::vector<std::string> v)
 {
-
+	std::string	target;
+	std::string	query;
+	std::string version;
+	std::map<std::string, std::string> headers;
+	get_atr(v,target, query, version, headers);
+	return (new DeleteRequest(target, query, version, headers));
 }
 
 HTTPRequest	*post_creation(std::vector<std::string> v)
 {
-
+	std::string	target;
+	std::string	query;
+	std::string version;
+	std::map<std::string, std::string> headers;
+	get_atr(v,target, query, version, headers);
+	return (new PostRequest(target, query, version, headers));
 }
 
 //Cree la bonne class en fonction du premier mot de la requete | renvoi exception si inconnue

@@ -1,28 +1,27 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   PostRequest.hpp                                    :+:      :+:    :+:   */
+/*   DeleteRequest.cpp                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: yzeghari <yzeghari@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/11/24 13:39:08 by yzeghari          #+#    #+#             */
-/*   Updated: 2025/11/28 12:33:22 by yzeghari         ###   ########.fr       */
+/*   Created: 2025/11/28 12:27:58 by yzeghari          #+#    #+#             */
+/*   Updated: 2025/11/28 12:33:39 by yzeghari         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef POSTRequest_HPP
-# define  POSTRequest_HPP
+#include "DeleteRequest.hpp"
 
-#include "HTTPRequest.hpp"
-
-class PostRequest : public HTTPRequest
+DeleteRequest::DeleteRequest(std::string target, std::string query, std::string version, std::map<std::string, std::string> headers)
+: HTTPRequest(target, query, version, headers)
 {
-	public:
-		PostRequest(std::string target,
-				std::string query,
-				std::string version,
-				std::map<std::string, std::string> headers);
-		~PostRequest();
-		std::string	generateResponse();
-};
-#endif
+}
+
+DeleteRequest::~DeleteRequest()
+{
+}
+
+std::string DeleteRequest::generateResponse()
+{
+	return std::string();
+}
