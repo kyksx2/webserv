@@ -6,7 +6,7 @@
 /*   By: yzeghari <yzeghari@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/25 13:45:13 by yzeghari          #+#    #+#             */
-/*   Updated: 2025/11/28 12:32:08 by yzeghari         ###   ########.fr       */
+/*   Updated: 2025/12/01 15:45:51 by yzeghari         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,5 +23,6 @@ GetRequest::~GetRequest()
 
 std::string GetRequest::generateResponse()
 {
-	return std::string();
+	
+
 }
