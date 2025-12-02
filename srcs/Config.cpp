@@ -1,4 +1,5 @@
 #include "Config.hpp"
+#include "parsing.hpp"
 
 Config::Config() {
     //
@@ -8,29 +9,16 @@ Config::Config(const std::string& filepath) {
     parse(filepath);
 }
 
-// std::string readFile(const std::string& filename)
-// {
-//     std::ifstream file(filename);
-//     if (!file.is_open()) {
-//         throw std::runtime_error("Impossible d'ouvrir le fichier");
-//     }
-    
-//     std::stringstream buffer;
-//     buffer << file.rdbuf();
-//     return buffer.str();
-// }
+
 
 void    Config::parse(const std::string& filepath)
 {
+    std::vector<Token> token;
 
-    std::ifstream infile(filepath);
-    std::string line;
-    std::string copy_file;
-
-    while (std::getline(infile, line))
-        copy_file += line + '\n';
-    
-    // std::cout << copy_file << std::endl;
-    infile.close();
+    std::string fileContent = readFile(filepath);
+    fileContent = cleanContent(fileContent);
+    token = tokeniseContent(fileContent);
+	for (std::vector<Token>::iterator it = token.begin(); it != token.end(); ++it)
+		// std::cout << it->type << " ";
 }
 
