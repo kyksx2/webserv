@@ -9,6 +9,46 @@ enum TokenType		determineType(const std::string& word)
 		return (VALUE);
 }
 
+ConfigNode parseBlock(const std::vector<Token>& tokens, size_t& i)
+{
+    ConfigNode node;
+
+	if (tokens[i].type == KEYWORD)
+		node.directive = tokens[i++].value;
+
+	while (i < tokens.size() && tokens[i].type != OPEN_BRACE && tokens[i].type != SEMICOLON)
+	{
+		if (tokens[i].type == VALUE)
+			node.arguments.push_back(tokens[i].value);
+	}
+
+	if (tokens[i].type == OPEN_BRACE)
+	{
+		i++;
+		while (i < tokens.size() && tokens[i].type != CLOSE_BRACE)
+			node.children.push_back(parseBlock(tokens, i));
+		i++;
+	}
+
+	else if (tokens[i].type == SEMICOLON)
+		i++;
+	return (node);
+}
+
+// Fait un arbre de syntaxe abstraite avec les tokens du vector Token pour structurer les blocks servers et locations
+ConfigNode parse(const std::vector<Token>& tokens)
+{
+    ConfigNode root;
+    root.directive = "root";
+    
+    size_t i = 0;
+    while (i < tokens.size()) {
+        root.children.push_back(parseBlock(tokens, i));
+    }
+    
+    return root;
+}
+
 std::vector<Token> tokeniseContent(const std::string& fileContent)
 {
     std::vector<Token> tokens;

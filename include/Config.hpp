@@ -23,8 +23,8 @@ struct ConfigNode {
     std::vector<std::string> arguments;       // ["80"], ["/api"]
     std::vector<ConfigNode> children;         // blocs imbriqués
 };
-// CLASSE CONFIG QUI PREND TOUT LES SERVEURS DANS UN VECTOR
 
+// CLASSE CONFIG QUI PREND TOUT LES SERVEURS DANS UN VECTOR
 class Config {
 private:
     // std::vector<Server_Config> _servers;
@@ -35,7 +35,7 @@ public:
     explicit Config(const std::string& filepath);
     
     // Parsing
-    void parse(const std::string& filepath);
+    void parsing(const std::string& filepath);
     
     // // Getters
     // const std::vector<Server_Config>& getServers() const;
