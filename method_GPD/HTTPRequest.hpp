@@ -6,19 +6,14 @@
 /*   By: yzeghari <yzeghari@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/24 13:37:27 by yzeghari          #+#    #+#             */
-/*   Updated: 2025/11/28 12:24:14 by yzeghari         ###   ########.fr       */
+/*   Updated: 2025/12/04 13:13:13 by yzeghari         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef HTTPREQUEST_HPP
 # define  HTTPREQUEST_HPP
 
-#include <iostream>
-#include <string>
-#include <map>
-
-#include <exception>
-#include <vector>
+#include "HTTPResponse.hpp"
 
 class HTTPRequest
 {
@@ -38,7 +33,7 @@ class HTTPRequest
 		std::string	GetQuery() const;
 		std::string	GetVersion() const;
 		std::map<std::string, std::string>	GetHeaders() const;
-		virtual	std::string	generateResponse() = 0;
+		virtual	HTTPResponse	generateResponse() = 0;
 
 		class	HTTPRequestExcpetion : public std::exception
 		{

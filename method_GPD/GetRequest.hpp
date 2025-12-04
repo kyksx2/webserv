@@ -6,7 +6,7 @@
 /*   By: yzeghari <yzeghari@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/25 13:46:05 by yzeghari          #+#    #+#             */
-/*   Updated: 2025/11/28 12:32:02 by yzeghari         ###   ########.fr       */
+/*   Updated: 2025/12/04 15:40:47 by yzeghari         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,6 +23,8 @@ class GetRequest : public HTTPRequest
 				std::string version,
 				std::map<std::string, std::string> headers);
 		~GetRequest();
-		std::string	generateResponse();
+		HTTPResponse	generateResponse();
 };
+
+std::string getMIME_Type(const std::string& target);
 #endif
