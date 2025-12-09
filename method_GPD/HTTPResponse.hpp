@@ -6,7 +6,7 @@
 /*   By: yzeghari <yzeghari@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/04 12:52:24 by yzeghari          #+#    #+#             */
-/*   Updated: 2025/12/04 14:35:56 by yzeghari         ###   ########.fr       */
+/*   Updated: 2025/12/09 12:47:03 by yzeghari         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,11 +21,16 @@
 #include <vector>
 #include <sys/stat.h>
 #include <fstream>
+#include <dirent.h>
+#include <sys/types.h>
+#include <unistd.h>
+#include <fcntl.h>
 
 enum HTTPStatusCode {
 	OK = 200,
 	Created = 201,
 	Accepted = 202,
+	NoContent = 204,
 	MovedPermanently = 301,
 	PermanentRedirect = 308,
 	BadRequest = 400,
@@ -54,6 +59,7 @@ class HTTPResponse
 		void	setHeader(std::string key, std::string value);
 		void	setBody(std::string	body);
 		// generate;
+		//! pense a rajouter les headers obligatoire tel que lenght ou connection ds generate
 };
 
 #endif

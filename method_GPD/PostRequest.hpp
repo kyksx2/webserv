@@ -6,7 +6,7 @@
 /*   By: yzeghari <yzeghari@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/24 13:39:08 by yzeghari          #+#    #+#             */
-/*   Updated: 2025/11/28 12:33:22 by yzeghari         ###   ########.fr       */
+/*   Updated: 2025/12/08 14:42:26 by yzeghari         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,6 +23,6 @@ class PostRequest : public HTTPRequest
 				std::string version,
 				std::map<std::string, std::string> headers);
 		~PostRequest();
-		std::string	generateResponse();
+		HTTPResponse	generateResponse();
 };
 #endif

@@ -6,7 +6,7 @@
 /*   By: yzeghari <yzeghari@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/25 13:45:13 by yzeghari          #+#    #+#             */
-/*   Updated: 2025/12/04 15:40:58 by yzeghari         ###   ########.fr       */
+/*   Updated: 2025/12/08 14:41:51 by yzeghari         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,7 +51,7 @@ HTTPResponse GetRequest::generateResponse()
 	std::string	inthefile;
 	struct stat st;
 
-	if (!stat(this->m_target.c_str(), &st)) // recpere le type du fichier
+	if (!stat(this->m_target.c_str(), &st)) // recupere le type du fichier
 	{
 		if (S_ISDIR(st.st_mode))
 		{
@@ -102,10 +102,64 @@ HTTPResponse GetRequest::generateResponse()
 						return (getresponse);
 					}
 				}
-				//! cas auto-index
+				// //! cas auto-index
 				{
-					//      yes     |  no
-					// Generate list|   403
+				// 	//      yes     |  no
+				// 	// Generate list|   403
+
+				// 	// Listing Generation
+				// 	DIR	*fd_dir;
+				// 	fd_dir = opendir(this->m_target.c_str()); // ouvre le dossier et stock dans une struct
+				// 	if (!fd_dir)
+				// 	{
+				// 		getresponse.setStatus(200, "OK");
+				// 		getresponse.setHeader("Content-Type", "text/html");
+				// 		getresponse.setBody(
+				// 		"<!DOCTYPE html>"
+				// 		"<html>"
+				// 		"<head>"
+				// 			"<title>Directory listing</title>"
+				// 		"</head>"
+				// 		"<body>"
+				// 			"<h1>Index of this directory</h1>"
+				// 			"<p>Directory is empty.</p>"
+				// 		"</body>"
+				// 		"</html>");
+				// 		return (getresponse);
+				// 	}
+				// 	struct dirent* entry;
+				// 	while ((entry = readdir(fd_dir)) != NULL)
+				// 	{
+				// 		inthefile += entry->d_name;
+				// 		inthefile += "<br>";  // ou conserver \n et mettre tout dans <pre>
+				// 	}
+				// 	closedir(fd_dir);
+				// 	getresponse.setStatus(200, "OK");
+				// 	getresponse.setHeader("Content-Type", "text/html");
+				// 	getresponse.setBody(
+				// 		"<!DOCTYPE html>"
+				// 		"<html>"
+				// 		"<head>"
+				// 			"<title>Directory listing</title>"
+				// 		"</head>"
+				// 		"<body>"
+				// 			"<h1>Index of this directory</h1>"
+				// 			"<p>" + inthefile + "</p>"
+				// 		"</body>"
+				// 		"</html>"
+				// 	);
+				// 	return (getresponse);
+
+					// // 403 forbidden
+					// getresponse.setStatus(403, "Forbidden");
+					// getresponse.setHeader("Content-Type", "text/html");
+					// getresponse.setBody(
+					// 	"<html><head><title>403 Forbidden</title></head>"
+					// 	"<body><h1>403 Forbidden</h1>"
+					// 	"<p>You don't have permission to access this resource.</p>"
+					// 	"</body></html>"
+					// );
+					// return (getresponse);
 				}
 			}
 		}
