@@ -6,13 +6,13 @@
 /*   By: yzeghari <yzeghari@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/25 13:50:59 by yzeghari          #+#    #+#             */
-/*   Updated: 2025/12/09 12:15:55 by yzeghari         ###   ########.fr       */
+/*   Updated: 2025/12/09 15:57:09 by yzeghari         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "RequestMethod.hpp"
 
-//! 400 Bad Request A RAJOUTER
+//! 400 Bad Request A RAJOUTER && la recuperation des config du serv, besoin pour les methodes
 
 //Met les attribut dans les variable pour faciliter la creation des obj
 void	get_atr(std::vector<std::string> v,
