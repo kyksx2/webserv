@@ -6,7 +6,7 @@
 /*   By: yzeghari <yzeghari@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/25 16:26:53 by yzeghari          #+#    #+#             */
-/*   Updated: 2025/11/25 16:27:23 by yzeghari         ###   ########.fr       */
+/*   Updated: 2025/12/10 15:36:57 by yzeghari         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,3 +24,4 @@ std::vector<std::string>	split(const std::string &chaine, char delimiteur)
 	}
 	return (v);
 }
+

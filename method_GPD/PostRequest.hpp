@@ -6,7 +6,7 @@
 /*   By: yzeghari <yzeghari@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/24 13:39:08 by yzeghari          #+#    #+#             */
-/*   Updated: 2025/12/08 14:42:26 by yzeghari         ###   ########.fr       */
+/*   Updated: 2025/12/10 15:37:28 by yzeghari         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,9 @@
 # define  POSTRequest_HPP
 
 #include "HTTPRequest.hpp"
+
+void	split_path(std::string path, std::string &dir, std::string &file);
+
 
 class PostRequest : public HTTPRequest
 {
