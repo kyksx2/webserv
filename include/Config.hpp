@@ -2,15 +2,15 @@
 #define CONFIG_HPP
 
 #include "Server_config.hpp"
+#include "parsing.hpp"
 
 // CLASSE CONFIG QUI PREND TOUT LES SERVEURS DANS UN VECTOR
 class Config {
 private:
-    // std::vector<Server_Config> _servers;
+    std::vector<Server_Config> _servers;
     std::string _configFilePath;
 
 public:
-    Config();
     explicit Config(const std::string& filepath);
     
     // Parsing
@@ -21,11 +21,9 @@ public:
     // const std::string& getConfigFilePath() const;
     
     // // Utilitaires
-    // const Server_Config* findServer(const std::string& host, int port) const;
-    // const Server_Config* findServerByPort(int port) const;
+    void buildFromTree(const std::vector<ConfigNode>& nodes);
+    Server_Config buildServer(const ConfigNode& node);
     
-    // // Debug
-    // void print() const;  // Pour afficher la config parsée
 };
 
 

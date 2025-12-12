@@ -19,6 +19,7 @@ struct Token {
     TokenType type;
     std::string value;  // Le contenu textuel du token
     int line;           // Numéro de ligne (utile pour les erreurs)
+    Token(TokenType t, const std::string& v, int l) : type(t), value(v), line(l) {}
 };
 
 
@@ -28,13 +29,33 @@ struct ConfigNode {
     std::vector<ConfigNode> children;         // blocs imbriqués
 };
 
-bool validateNode(const ConfigNode& node);
-void print_node(ConfigNode &node, int layer);
-std::string cleanContent(const std::string& fileContent);
-std::string readFile(const std::string& filename);
-enum TokenType		determineType(const std::string& word);
-std::vector<Token> tokeniseContent(const std::string& fileContent);
-ConfigNode parse(const std::vector<Token>& tokens);
-ConfigNode parseBlock(const std::vector<Token>& tokens, size_t& i);
+class Parsing {
+    private:
+            ConfigNode _tree;
+    public:
+        Parsing(const std::string& filepath);
+
+        bool                errorPageCase(const ConfigNode& node);
+        bool                ArgCase(const ConfigNode& node);
+        bool                listenCase(const ConfigNode& node);
+        bool                validateNode(const ConfigNode& node);
+        std::string         cleanContent(const std::string& fileContent);
+        std::string         readFile(const std::string& filename);
+        enum TokenType      determineType(const std::string& word);
+        std::vector<Token>  tokeniseContent(const std::string& fileContent);
+        ConfigNode          parseBlock(const std::vector<Token>& tokens, size_t& i);
+        bool                caseByCase_directive(const ConfigNode& node);
+
+        /*-----------------Setter--------------------------*/
+        ConfigNode          setTree(const std::vector<Token>& tokens);
+
+        /*----------------Getter---------------------------*/
+        const ConfigNode          getTree(void);
+};
+
+std::vector<std::string>    modifyArgListen(const ConfigNode& node);
+void print_node(ConfigNode &node, int layer);  // Pour afficher la config parsée
+
+
 
 #endif

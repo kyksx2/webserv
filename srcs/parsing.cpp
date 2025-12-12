@@ -1,28 +1,17 @@
 #include "Config.hpp"
 #include "parsing.hpp"
 
-void print_node(ConfigNode &node, int layer)
+Parsing::Parsing(const std::string& filepath)
 {
-	int n = layer;
-	std::string tabs(n, '\t');
-	size_t i = 0;
-	if (!node.directive.empty())
-		std::cout << tabs << layer << " " << "[ Directive: " << node.directive << "]";
-
-	if (!node.arguments.empty())
-		std::cout << " " << "[ Arguments: ";
-	for (std::vector<std::string>::iterator it = node.arguments.begin(); it != node.arguments.end(); ++it)
-		std::cout << *it << " ";
-	std::cout << "] : " << node.arguments.size() << std::endl;
-
-	while (i < node.children.size())
-	{
-		print_node(node.children[i], layer + 1);
-		i++;
-	}
+    std::string fileContent = readFile(filepath);
+    fileContent = cleanContent(fileContent);
+    std::vector<Token> token = tokeniseContent(fileContent);
+	_tree = setTree(token);
+    validateNode(_tree);
+	print_node(_tree, 0);
 }
 
-enum TokenType		determineType(const std::string& word)
+enum TokenType  Parsing::determineType(const std::string& word)
 {
 	if (word == "server" || word == "location" || word == "listen" ||
         word == "server_name" || word == "client_max_body_size" ||
@@ -34,101 +23,15 @@ enum TokenType		determineType(const std::string& word)
 		return (VALUE);
 }
 
-std::vector<std::string> modifyArgListen(const ConfigNode& node)
-{
-    if (node.arguments.empty()) {
-        return std::vector<std::string>();
-    }
-
-    std::string arg = node.arguments[0];
-    std::vector<std::string> parts;
-
-    size_t pos = arg.find(':');
-    if (pos != std::string::npos) {
-        parts.push_back(arg.substr(0, pos));        // avant les :
-        parts.push_back(arg.substr(pos + 1));       // après les :
-        return parts;
-    }
-    return node.arguments;
-}
-
-bool caseByCase_directive(const ConfigNode& node)
-{
-    if (node.directive == "listen")
-    {
-        if (node.arguments.size() != 1)
-            return false;
-
-        std::vector<std::string> parts = modifyArgListen(node);
-        
-        if (parts.empty()) {
-            return false;
-        }
-
-        // Vérifier que la chaîne n'est pas vide et contient uniquement des chiffres
-        std::string portStr = parts[0];
-        if (portStr.empty()) {
-            std::cerr << "Erreur: port vide\n";
-            return false;
-        }
-
-        // Gérer les exceptions de std::stoi
-        try {
-            int port = std::stoi(portStr);
-            if (port < 1 || port > 65535) {
-                std::cerr << "Erreur: port invalide " << port << "\n";
-                return false;
-            }
-        } catch (const std::invalid_argument&) {
-            std::cerr << "Erreur: port n'est pas un nombre valide\n";
-            return false;
-        } catch (const std::out_of_range&) {
-            std::cerr << "Erreur: port hors limites\n";
-            return false;
-        }
-    }
-
-    return true;
-}
-
-bool validateNode(const ConfigNode& node)
-{
-    bool has_listen;
-    bool has_root;
-
-    if (node.directive == "server")
-    {
-        for (const auto& child : node.children)
-        {
-            if (child.directive == "listen")
-                has_listen = true;
-            if (child.directive == "root")
-                has_root = true;
-        }
-        if (!has_listen)
-            throw std::runtime_error("Erreur : le serveur n'a pas de port attribué");
-        if (!has_root)
-            throw std::runtime_error("Erreur : le serveur n'a pas de repertoire attribué");
-    }
-
-    caseByCase_directive(node);
-    // Valider récursivement les enfants
-    for (const auto& child : node.children) {
-        if (!validateNode(child))
-            return false;
-    }
-    return true;
-}
-
-ConfigNode parseBlock(const std::vector<Token>& tokens, size_t& i)
+ConfigNode Parsing::parseBlock(const std::vector<Token>& tokens, size_t& i)
 {
     ConfigNode node;
 
 	if (tokens[i].type == KEYWORD)
 		node.directive = tokens[i++].value;
-    else
+    else {
         throw std::runtime_error("Erreur : mauvaise directive : [" + tokens[i].value + "]");
-
+    }
 	while (i < tokens.size() && tokens[i].type != OPEN_BRACE && tokens[i].type != SEMICOLON)
 	{
 		if (tokens[i].type == VALUE)
@@ -152,10 +55,10 @@ ConfigNode parseBlock(const std::vector<Token>& tokens, size_t& i)
 }
 
 // Fait un arbre de syntaxe abstraite avec les tokens du vector Token pour structurer les blocks servers et locations
-ConfigNode parse(const std::vector<Token>& tokens)
+ConfigNode Parsing::setTree(const std::vector<Token>& tokens)
 {
     ConfigNode root;
-    root.directive = "root";
+    root.directive = "root_server";
     
     size_t i = 0;
     while (i < tokens.size()) {
@@ -164,7 +67,7 @@ ConfigNode parse(const std::vector<Token>& tokens)
     return root;
 }
 
-std::vector<Token> tokeniseContent(const std::string& fileContent)
+std::vector<Token> Parsing::tokeniseContent(const std::string& fileContent)
 {
     std::vector<Token> tokens;
     std::string word;
@@ -178,42 +81,40 @@ std::vector<Token> tokeniseContent(const std::string& fileContent)
         }
         else if (c == '{') {
             if (!word.empty()) {
-                tokens.push_back({KEYWORD, word, line});
+                tokens.push_back(Token(KEYWORD, word, line));
                 word.clear();
             }
-            tokens.push_back({OPEN_BRACE, "{", line});
+            tokens.push_back(Token(OPEN_BRACE, "{", line));
         }
         else if (c == '}') {
             if (!word.empty()) {
-                tokens.push_back({VALUE, word, line});
+                tokens.push_back(Token(VALUE, word, line));
                 word.clear();
             }
-            tokens.push_back({CLOSE_BRACE, "}", line});
+            tokens.push_back(Token(CLOSE_BRACE, "}", line));
         }
         else if (c == ';') {
             if (!word.empty()) {
-                tokens.push_back({VALUE, word, line});
+                tokens.push_back(Token(VALUE, word, line));
                 word.clear();
             }
-            tokens.push_back({SEMICOLON, ";", line});
+            tokens.push_back(Token(SEMICOLON, ";", line));
         }
         else if (isspace(c)) {
             if (!word.empty()) {
-                tokens.push_back({determineType(word), word, line});
+                tokens.push_back(Token(determineType(word), word, line));
                 word.clear();
             }
         }
-        else {
+        else
             word += c;
-        }
     }
-    
     return tokens;
 }
 
-std::string readFile(const std::string& filename)
+std::string Parsing::readFile(const std::string& filename)
 {
-    std::ifstream file(filename);
+    std::ifstream file(filename.c_str());
     if (!file.is_open()) {
         throw std::runtime_error("Impossible d'ouvrir le fichier");
     }
@@ -222,7 +123,7 @@ std::string readFile(const std::string& filename)
     return buffer.str();
 }
 
-std::string cleanContent(const std::string& fileContent)
+std::string Parsing::cleanContent(const std::string& fileContent)
 {
     int i = 0;
     char inquote = 0;
@@ -243,4 +144,96 @@ std::string cleanContent(const std::string& fileContent)
             result += fileContent[i++];
     }
     return (result);
+}
+
+/*--------------------------GETTERS---------------------------------------*/
+const ConfigNode Parsing::getTree(void)
+{
+    return (_tree);
+}
+
+/*-------------------------HANDLE ERROR-----------------------------------*/
+
+bool Parsing::validateNode(const ConfigNode& node)
+{
+    bool has_listen;
+    bool has_root;
+
+    // Verifier si une directive est presente ou voir les doublons
+    if (node.directive == "server")
+    {
+        for (std::vector<ConfigNode>::const_iterator it = node.children.begin(); 
+            it != node.children.end(); ++it)
+        {
+            const ConfigNode& child = *it; 
+            if (child.directive == "listen")
+                has_listen = true;
+            if (child.directive == "root")
+                has_root = true;
+            if (child.directive == "server")
+                throw std::runtime_error("Erreur : block serveur a l'interieur d'un block serveur");
+        }
+        if (!has_listen)
+            throw std::runtime_error("Erreur : le serveur n'a pas de port attribué");
+        if (!has_root)
+            throw std::runtime_error("Erreur : le serveur n'a pas de repertoire attribué");
+    }
+    if (caseByCase_directive(node))
+        return (false);
+    // Valider récursivement les enfants
+    for (std::vector<ConfigNode>::const_iterator it = node.children.begin(); 
+        it != node.children.end(); ++it)
+    {
+        const ConfigNode& child = *it; 
+        if (!validateNode(child))
+            return false;
+    }
+    return true;
+}
+
+bool Parsing::caseByCase_directive(const ConfigNode& node)
+{
+    if (!ArgCase(node))
+        return (false);
+    if (!listenCase(node))
+        return (false);
+    if (!errorPageCase(node))
+        return (false);
+    return true;
+}
+
+bool    Parsing::ArgCase(const ConfigNode& node)
+{
+    std::stringstream error_msg;
+
+    if (node.directive == "root" || node.directive == "autoindex" ||
+        node.directive == "client_max_body_size" ||
+        node.directive == "listen" || node.directive == "upload_store")
+    {
+        if (node.arguments.size() != 1){
+            error_msg << "Error : directive '" << node.directive << "' should have only one argument";
+            throw std::runtime_error(error_msg.str());
+        }
+    }
+    if (node.directive == "error_page" && node.arguments.size() != 2)
+        throw std::runtime_error("Error : directive 'error_page' should have two arguments");
+    if (node.directive == "cgi_handler" && node.arguments.size() < 2)
+        throw std::runtime_error("Error : directive 'cgi_handler' should have at least two arguments");
+    return (true);
+}
+
+bool    Parsing::errorPageCase(const ConfigNode& node)
+{
+    if (node.directive == "error_page")
+    {
+        if (node.arguments.size() != 2)
+            throw std::runtime_error("Error : directive error_page should have two arguments");
+        int code;
+        std::stringstream ss(node.arguments[0]);
+        if (ss >> code)
+            throw std::runtime_error("Error : Invalid integer format for error_page.");
+        if (code < 300 || code >= 600)
+            throw std::runtime_error("Error : directive error_page should have valid error number (Between 300 and 599)");
+    }
+	return (true);
 }
