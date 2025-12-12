@@ -6,7 +6,7 @@
 /*   By: yzeghari <yzeghari@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/24 13:38:21 by yzeghari          #+#    #+#             */
-/*   Updated: 2025/12/08 14:42:07 by yzeghari         ###   ########.fr       */
+/*   Updated: 2025/12/12 15:39:09 by yzeghari         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,10 +18,7 @@
 class DeleteRequest : public HTTPRequest
 {
 	public:
-		DeleteRequest(std::string target,
-					std::string query,
-					std::string version,
-					std::map<std::string, std::string> headers);
+		DeleteRequest(std::vector<std::string> &v);
 		~DeleteRequest();
 		HTTPResponse	generateResponse();
 };

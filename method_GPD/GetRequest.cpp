@@ -6,14 +6,16 @@
 /*   By: yzeghari <yzeghari@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/25 13:45:13 by yzeghari          #+#    #+#             */
-/*   Updated: 2025/12/08 14:41:51 by yzeghari         ###   ########.fr       */
+/*   Updated: 2025/12/12 15:39:12 by yzeghari         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "GetRequest.hpp"
 
-GetRequest::GetRequest(std::string target, std::string query, std::string version, std::map<std::string, std::string> headers)
-: HTTPRequest(target, query, version, headers)
+//! Rajouter l utilisation de query ABSOLUMENT
+
+GetRequest::GetRequest(std::vector<std::string> &v)
+: HTTPRequest(v)
 {
 }
 

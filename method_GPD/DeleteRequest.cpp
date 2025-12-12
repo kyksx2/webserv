@@ -6,14 +6,14 @@
 /*   By: yzeghari <yzeghari@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/28 12:27:58 by yzeghari          #+#    #+#             */
-/*   Updated: 2025/12/09 14:39:45 by yzeghari         ###   ########.fr       */
+/*   Updated: 2025/12/12 15:39:05 by yzeghari         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "DeleteRequest.hpp"
 
-DeleteRequest::DeleteRequest(std::string target, std::string query, std::string version, std::map<std::string, std::string> headers)
-: HTTPRequest(target, query, version, headers)
+DeleteRequest::DeleteRequest(std::vector<std::string> &v)
+: HTTPRequest(v)
 {
 }
 

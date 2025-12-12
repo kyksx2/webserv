@@ -6,14 +6,14 @@
 /*   By: yzeghari <yzeghari@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/25 14:31:54 by yzeghari          #+#    #+#             */
-/*   Updated: 2025/12/10 16:47:46 by yzeghari         ###   ########.fr       */
+/*   Updated: 2025/12/12 15:39:20 by yzeghari         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "PostRequest.hpp"
 
-PostRequest::PostRequest(std::string target, std::string query, std::string version, std::map<std::string, std::string> headers)
-: HTTPRequest(target, query, version, headers)
+PostRequest::PostRequest(std::vector<std::string> &v)
+: HTTPRequest(v)
 {
 }
 
@@ -53,23 +53,57 @@ HTTPResponse PostRequest::generateResponse()
 		{
 			if (access(this->m_target.c_str(), W_OK) == 0)
 			{
-				// 200 OK ou 204 (overwrite)
+				std::ofstream	monFlux(this->m_target.c_str(), std::ios::out | std::ios::trunc);
+				if (monFlux)
+				{
+					//200
+					postresponse.setStatus(200, "OK");
+					postresponse.setHeader("Content-Type", this->m_headers["Content-Type"]);
+					monFlux << this->m_body;
+					monFlux.close();
+					return (postresponse);
+				}
+				else
+				{
+					// 500
+					postresponse.setStatus(500, "Internal Server Error");
+					return (postresponse);
+				}
 			}
 			else
 			{
-				//perm no=403
+				//403
+				postresponse.setStatus(403, "Forbidden");
+				return (postresponse);
 			}
 		}
 		else if (S_ISDIR(st.st_mode))
 		{
-			//verif perm no=403
 			if (access(this->m_target.c_str(), W_OK) == 0)
 			{
-
+				//! A voir si il faut rajouter la bonne extension
+				std::ofstream	monFlux((this->m_target + "default").c_str(), std::ios::out | std::ios::trunc);
+				if (monFlux)
+				{
+					//200
+					postresponse.setStatus(200, "OK");
+					postresponse.setHeader("Content-Type", this->m_headers["Content-Type"]);
+					monFlux << this->m_body;
+					monFlux.close();
+					return (postresponse);
+				}
+				else
+				{
+					// 500
+					postresponse.setStatus(500, "Internal Server Error");
+					return (postresponse);
+				}
 			}
 			else
 			{
-			//perm no=403
+				//403
+				postresponse.setStatus(403, "Forbidden");
+				return (postresponse);
 			}
 		}
 	}
@@ -81,22 +115,43 @@ HTTPResponse PostRequest::generateResponse()
 			{
 				if (access(dir.c_str(), W_OK) == 0)
 				{
-					//201 CREATED
+
+					std::ofstream	monFlux(this->m_target.c_str(), std::ios::out | std::ios::trunc);
+					if (monFlux)
+					{
+						//200
+						postresponse.setStatus(200, "OK");
+						postresponse.setHeader("Content-Type", this->m_headers["Content-Type"]);
+						monFlux << this->m_body;
+						monFlux.close();
+						return (postresponse);
+					}
+					else
+					{
+							//500
+							postresponse.setStatus(500, "Internal Server Error");
+							return (postresponse);
+					}
 				}
 				else
 				{
-					//perm no=403
+					//403
+					postresponse.setStatus(403, "Forbidden");
+					return (postresponse);
 				}
 			}
-			else if (S_ISREG(st.st_mode))
+			else
 			{
-				// 403 Forbidden
+				//403
+				postresponse.setStatus(403, "Forbidden");
+				return (postresponse);
 			}
 		}
 		else
 		{
 			// → 404 Not Found
+			postresponse.setStatus(404, "Not Found");
+			return (postresponse);
 		}
 	}
-	return ;
 }
