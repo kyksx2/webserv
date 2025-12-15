@@ -6,25 +6,25 @@
 /*   By: yzeghari <yzeghari@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/25 13:50:59 by yzeghari          #+#    #+#             */
-/*   Updated: 2025/12/12 16:03:10 by yzeghari         ###   ########.fr       */
+/*   Updated: 2025/12/15 16:01:53 by yzeghari         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "RequestMethod.hpp"
 
-HTTPRequest	*get_creation(std::vector<std::string> &v)
+HTTPRequest	*get_creation(std::string &buffer)
 {
-	return (new GetRequest(v));
+	return (new GetRequest(buffer));
 }
 
-HTTPRequest	*delete_creation(std::vector<std::string> &v)
+HTTPRequest	*delete_creation(std::string &buffer)
 {
-	return (new DeleteRequest(v));
+	return (new DeleteRequest(buffer));
 }
 
-HTTPRequest	*post_creation(std::vector<std::string> &v)
+HTTPRequest	*post_creation(std::string &buffer)
 {
-	return (new PostRequest(v));
+	return (new PostRequest(buffer));
 }
 
 //Cree la bonne class en fonction du premier mot de la requete | renvoi exception si inconnue
@@ -32,22 +32,23 @@ HTTPResponse	RequestCreation(std::string buffer)
 {
 	HTTPRequest		*request;
 	HTTPResponse	response;
-	std::vector<std::string>	v_request;
 	int	i;
 	std::string method[] = {"GET", "POST", "DELETE"};
-	HTTPRequest *(*ft_method[])(std::vector<std::string>&) = {
+	HTTPRequest *(*ft_method[])(std::vector<std::string>&, std::string &) = {
 		get_creation,
 		delete_creation,
 		post_creation
 	};
 
-	v_request = split(buffer, ' '); // permet de transformer le string en vector en utilisant ' ' comme separateur
+	std::stringstream ss(buffer);
+	std::string method_request;
+	ss >> method_request; // Recupere le premier mot du buffer
 
 	for (i = 0; i < 3; i++)
 	{
-		if (method[i] == v_request[0])
+		if (method[i] == method_request)
 		{
-			request = ft_method[i](v_request);
+			request = ft_method[i](buffer);
 			response = request->generateResponse();
 			delete request;
 			return (response);

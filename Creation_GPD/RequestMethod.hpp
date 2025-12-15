@@ -6,7 +6,7 @@
 /*   By: yzeghari <yzeghari@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/25 13:52:38 by yzeghari          #+#    #+#             */
-/*   Updated: 2025/12/12 15:54:05 by yzeghari         ###   ########.fr       */
+/*   Updated: 2025/12/15 16:02:06 by yzeghari         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,11 +16,11 @@
 #include "PostRequest.hpp"
 #include "DeleteRequest.hpp"
 
-std::vector<std::string>	split(const std::string &chaine, char delimiteur);
+#include <sstream>
 
 HTTPResponse	RequestCreation(std::string	buffer);
-HTTPRequest	*get_creation(std::vector<std::string> &v);
-HTTPRequest	*delete_creation(std::vector<std::string> &v);
-HTTPRequest	*post_creation(std::vector<std::string> &v);
+HTTPRequest	*get_creation(std::string &buffer);
+HTTPRequest	*delete_creation(std::string &buffer);
+HTTPRequest	*post_creation(std::string &buffer);
 
 #endif

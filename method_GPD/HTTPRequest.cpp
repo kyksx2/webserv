@@ -6,29 +6,43 @@
 /*   By: yzeghari <yzeghari@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/24 13:45:23 by yzeghari          #+#    #+#             */
-/*   Updated: 2025/12/12 16:03:35 by yzeghari         ###   ########.fr       */
+/*   Updated: 2025/12/15 15:45:30 by yzeghari         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "HTTPRequest.hpp"
 
-HTTPRequest::HTTPRequest(std::vector<std::string> &v)
+HTTPRequest::HTTPRequest(std::vector<std::string> &v, std::string &buffer)
 {
+	std::stringstream	ss(buffer);
 	std::vector<std::string>::iterator	it = v.begin();
 	it++;//skip le 1er mot
 
 	size_t pos = (*it).find('?');// target/query   | verifie la presence de l argument optionel
 	if (pos != std::string::npos)
 	{		//separe le maillon avant/apres "?"
-		target = (*it).substr(0, pos);
-		query = (*it).substr(pos + 1);
+		this->m_target = (*it).substr(0, pos);
+		this->m_query = (*it).substr(pos + 1);
 	}
 	else
 	{
-		target = (*it);
+		this->m_target = (*it);
 	}
+	if (this->m_target == "")
+		throw();//Bad request
+
 	if (++it != v.end())//Version
-		version = (*it);
+	{
+		if ((pos = (*it).find("\r\n")) != std::string::npos)
+		{
+			this->m_version = (*it).substr(0, pos);
+			if (this->m_version != "HTTP/1.0" && this->m_version !="HTTP/1.1")
+				throw();//Not implemented
+		}
+		else
+			throw();//Bad request
+	}
+
 	for (it; it != v.end(); ++it) // headers
 	{
 		std::string	key = (*it);
@@ -44,15 +58,23 @@ HTTPRequest::HTTPRequest(std::vector<std::string> &v)
 				value += (*it);
 				it++;
 			}
-			if (headers.find(key) != headers.end()) // verifie existe deja si oui ajoute ", valeur"
-				headers[key] += ", " + value;
+			if (this->m_headers.find(key) != this->m_headers.end()) // verifie existe deja si oui ajoute ", valeur"
+				this->m_headers[key] += ", " + value;
 			else
-				headers[key] = value;
+				this->m_headers[key] = value;
 		}
 	}
-	for (it; it != v.end(); ++it) // body
+
+
+	if ((pos = buffer.find("\r\n\r\n")) != std::string::npos)
 	{
-		body += *it;
+		size_t body_start = pos + 4;
+
+		if (m_headers.count("Content-Length")) // si pas de Content-Length pas de body
+		{
+			size_t len = std::atoi(m_headers["Content-Length"].c_str());
+			this->m_body = buffer.substr(body_start, len);
+		}
 	}
 }
 

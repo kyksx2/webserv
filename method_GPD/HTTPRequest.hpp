@@ -6,7 +6,7 @@
 /*   By: yzeghari <yzeghari@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/24 13:37:27 by yzeghari          #+#    #+#             */
-/*   Updated: 2025/12/12 15:46:47 by yzeghari         ###   ########.fr       */
+/*   Updated: 2025/12/15 13:04:54 by yzeghari         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,7 +29,7 @@ class HTTPRequest
 		std::string	m_body;
 
 	public :
-		HTTPRequest(std::vector<std::string> &v);
+		HTTPRequest(std::vector<std::string> &v, std::string &buffer);
 		virtual ~HTTPRequest();
 		std::string	GetTarget() const;
 		std::string	GetQuery() const;
