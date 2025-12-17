@@ -6,7 +6,7 @@
 /*   By: yzeghari <yzeghari@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/25 14:31:54 by yzeghari          #+#    #+#             */
-/*   Updated: 2025/12/12 15:39:20 by yzeghari         ###   ########.fr       */
+/*   Updated: 2025/12/17 12:23:27 by yzeghari         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,7 +58,7 @@ HTTPResponse PostRequest::generateResponse()
 				{
 					//200
 					postresponse.setStatus(200, "OK");
-					postresponse.setHeader("Content-Type", this->m_headers["Content-Type"]);
+					postresponse.setHeader("Content-Type", this->m_headers["content-type"]);
 					monFlux << this->m_body;
 					monFlux.close();
 					return (postresponse);
@@ -87,7 +87,7 @@ HTTPResponse PostRequest::generateResponse()
 				{
 					//200
 					postresponse.setStatus(200, "OK");
-					postresponse.setHeader("Content-Type", this->m_headers["Content-Type"]);
+					postresponse.setHeader("Content-Type", this->m_headers["content-type"]);
 					monFlux << this->m_body;
 					monFlux.close();
 					return (postresponse);
@@ -121,7 +121,7 @@ HTTPResponse PostRequest::generateResponse()
 					{
 						//200
 						postresponse.setStatus(200, "OK");
-						postresponse.setHeader("Content-Type", this->m_headers["Content-Type"]);
+						postresponse.setHeader("Content-Type", this->m_headers["content-type"]);
 						monFlux << this->m_body;
 						monFlux.close();
 						return (postresponse);

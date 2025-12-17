@@ -6,7 +6,7 @@
 /*   By: yzeghari <yzeghari@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/04 12:52:24 by yzeghari          #+#    #+#             */
-/*   Updated: 2025/12/09 12:47:03 by yzeghari         ###   ########.fr       */
+/*   Updated: 2025/12/17 12:21:48 by yzeghari         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,6 +25,8 @@
 #include <sys/types.h>
 #include <unistd.h>
 #include <fcntl.h>
+#include <climits>
+#include <algorithm>
 
 enum HTTPStatusCode {
 	OK = 200,

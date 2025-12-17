@@ -6,13 +6,13 @@
 /*   By: yzeghari <yzeghari@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/15 15:47:17 by yzeghari          #+#    #+#             */
-/*   Updated: 2025/12/15 16:53:53 by yzeghari         ###   ########.fr       */
+/*   Updated: 2025/12/17 13:39:25 by yzeghari         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "HTTPRequest.hpp"
 
-static	std::vector<std::string>	split(const std::string &chaine, char delimiteur)
+static std::vector<std::string>	split(const std::string &chaine, char delimiteur)
 {
 	std::vector<std::string>	v;
 	std::stringstream ss(chaine);
@@ -24,6 +24,53 @@ static	std::vector<std::string>	split(const std::string &chaine, char delimiteur
 	}
 	return (v);
 }
+
+static bool safe_atoi(const char *str, int &result)
+{
+	int sign = 1;
+	int value = 0;
+
+	if (!str)
+		return false;
+
+	while ((*str >= 9 && *str <= 13) || *str == ' ')
+		str++;
+
+	if (*str == '+' || *str == '-')
+	{
+		if (*str == '-')
+			sign = -1;
+		str++;
+	}
+
+	if (*str < '0' || *str > '9')
+		return false;
+
+	// Parse digits
+	while (*str >= '0' && *str <= '9')
+	{
+		int digit = *str - '0';
+
+		// Overflow check
+		if (sign == 1)
+		{
+			if (value > (INT_MAX - digit) / 10)
+				return false; // overflow
+		}
+		else
+		{
+			if (value > (-(INT_MIN + digit)) / 10)
+				return false; // underflow
+		}
+
+		value = value * 10 + digit;
+		str++;
+	}
+
+	result = value * sign;
+	return true;
+}
+
 
 HTTPRequest::HTTPRequest(std::string &buffer)
 {
@@ -72,6 +119,7 @@ HTTPRequest::HTTPRequest(std::string &buffer)
 			throw std::runtime_error("400 Bad Request");
 
 		std::string key = line.substr(0, pos);
+		std::transform(key.begin(), key.end(), key.begin(), ::tolower);
 		std::string value = line.substr(pos + 1);
 
 		// trim espace(s) au début de la valeur
@@ -84,5 +132,30 @@ HTTPRequest::HTTPRequest(std::string &buffer)
 		else
 			m_headers[key] = value;
 	}
-	// !body
+	//! Verification des headers a faire
+	// body
+	if (((pos = buffer.find("\r\n\r\n")) != std::string::npos) && m_headers.count("Content-Length"))
+	{
+		int	len;
+
+		if (!safe_atoi(m_headers["content-length"].c_str(), len))
+		throw std::runtime_error("400 Bad Request");
+
+		if (len < 0)
+			throw std::runtime_error("400 Bad Request");
+
+		// if (len > MAX_BODY_SIZE)	//! A recup ds config serv
+		// 	throw std::runtime_error("413 Payload Too Large");
+
+		size_t body_start = buffer.find("\r\n\r\n");
+		if (body_start == std::string::npos)
+			throw std::runtime_error("400 Bad Request");
+
+		body_start += 4;
+
+		if (buffer.size() < body_start + static_cast<size_t>(len))
+			throw std::runtime_error("400 Bad Request");
+
+		m_body = buffer.substr(body_start, len);
+	}
 }
