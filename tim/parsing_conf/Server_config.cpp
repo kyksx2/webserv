@@ -76,3 +76,35 @@ const std::vector<Location_config>& Server_Config::getLocations() const
 {
     return (_locations);
 }
+
+/*-----------------------UTILS-----------------------------*/
+
+void Server_Config::print() const {
+    std::cout << "  Server:" << std::endl;
+    std::cout << "    listen: " << _host << ":" << _port << std::endl;
+    
+    if (!_serverNames.empty()) {
+        std::cout << "    server_name: ";
+        for (size_t i = 0; i < _serverNames.size(); i++) {
+            std::cout << _serverNames[i];
+            if (i < _serverNames.size() - 1) std::cout << ", ";
+        }
+        std::cout << std::endl;
+    }
+    
+    if (_clientMaxBodySize != 0)
+        std::cout << "    client_max_body_size: " << _clientMaxBodySize << std::endl;
+    
+    if (!_errorPages.empty()) {
+        std::cout << "    error_pages:" << std::endl;
+        for (std::map<int, std::string>::const_iterator it = _errorPages.begin();
+             it != _errorPages.end(); ++it) {
+            std::cout << "      " << it->first << " -> " << it->second << std::endl;
+        }
+    }
+    
+    std::cout << "    Locations (" << _locations.size() << "):" << std::endl;
+    for (size_t i = 0; i < _locations.size(); i++) {
+        _locations[i].print();
+    }
+}

@@ -55,7 +55,7 @@ class Parsing {
 
 std::vector<std::string>    modifyArgListen(const ConfigNode& node);
 void print_node(ConfigNode &node, int layer);  // Pour afficher la config parsée
-
-
+bool isStringDigit(std::string str);
+size_t parseBodySize(const std::string &value);
 
 #endif

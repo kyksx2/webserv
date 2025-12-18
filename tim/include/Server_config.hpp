@@ -11,9 +11,9 @@ private:
     int _port;                                   // Ex: 8080
     std::vector<std::string> _serverNames;       // Ex: ["localhost", "site.com"]
     std::map<int, std::string> _errorPages;      // Ex: {404 -> "/errors/404.html"}
-    size_t _clientMaxBodySize;                   // Taille max globale
+    size_t _clientMaxBodySize;                     // Taille max globale
     std::vector<Location_config> _locations;            // Liste des locations
-    // Location_config* _defaultLocation;                  // Location par défaut "/"
+    // Location_config* _defaultLocation;         // Location par défaut "/"
 
 public:
     Server_Config();
@@ -36,6 +36,7 @@ public:
     void addLocation(const Location_config& location);
 
     // Utilitaires
+    void print() const;
     // std::string getErrorPage(int code) const;
     // const Location_config* matchLocation(const std::string& uri) const;
     // bool matchesServerName(const std::string& host) const;

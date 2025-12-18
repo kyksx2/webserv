@@ -6,7 +6,7 @@ CXX = c++
 CXXFLAGS = -Wall -Wextra -Werror -std=c++98 -I include
 
 # Dossiers
-SRC_DIR = srcs
+SRC_DIR = parsing_conf
 OBJ_DIR = objs
 
 # Recherche de tous les .cpp automatiquement

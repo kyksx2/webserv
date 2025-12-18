@@ -15,19 +15,19 @@
 
 class Location_config {
 private:
-    std::string _path;                           // Ex: "/", "/api", "/uploads"
-    std::string _root;                           // Ex: "/var/www/html"
-    std::vector<std::string> _index;             // Ex: ["index.html", "index.htm"]
-    std::vector<std::string> _allowedMethods;    // Ex: ["GET", "POST"]
-    bool _autoindex;                             // Listing de répertoire
-    std::string _uploadStore;                    // Où stocker les uploads
-    std::string _cgiExtension;                   // Ex: ".php", ".py"
-    std::string _cgiPath;                        // Ex: "/usr/bin/php-cgi"
-    std::pair<int, std::string> _redirect;       // Ex: {301, "/new-path"}
-    size_t _clientMaxBodySize;                   // Taille max du body
+    std::string _path;                               // Ex: "/", "/api", "/uploads"
+    std::string _root;                               // Ex: "/var/www/html"
+    std::vector<std::string> _index;                 // Ex: ["index.html", "index.htm"]
+    std::vector<std::string> _allowedMethods;        // Ex: ["GET", "POST"]
+    bool _autoindex;                                 // Listing de répertoire
+    std::string _uploadStore;                        // Où stocker les uploads
+    std::map<std::string, std::string> _cgiHandlers; // Ex: ".php", ".py" -> "/usr/bin/php-cgi"
+    std::pair<int, std::string> _redirect;           // Ex: {301, "/new-path"}
+    size_t _clientMaxBodySize;                       // Taille max du body
 
-public: 
-    Location_config(const std::string& path);
+public:
+    Location_config();
+    // Location_config(const std::string& path);
     
     // Getters
     const std::string& getPath() const;
@@ -40,7 +40,7 @@ public:
     const std::string& getCgiPath() const;
     const std::pair<int, std::string>& getRedirect() const;
     size_t getClientMaxBodySize() const;
-    
+
     // Setters
     void setRoot(const std::string& root);
     void addIndex(const std::string& index);
@@ -52,6 +52,7 @@ public:
     void setClientMaxBodySize(size_t size);
     
     // Utilitaires
+    void print() const;
     // bool isMethodAllowed(const std::string& method) const;
     // bool isCgiRequest(const std::string& filename) const;
 };

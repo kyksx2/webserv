@@ -37,19 +37,18 @@ ConfigNode Parsing::parseBlock(const std::vector<Token>& tokens, size_t& i)
 		if (tokens[i].type == VALUE)
 			node.arguments.push_back(tokens[i].value);
         else if (tokens[i].type == KEYWORD)
-            throw std::runtime_error("Probleme de syntaxe");
+            throw std::runtime_error("Erreur : Probleme de syntaxe");
         i++;
 	}
     // Récursivité pour chercher tout les enfants
-	if (tokens[i].type == OPEN_BRACE)
+	if (i < tokens.size() && tokens[i].type == OPEN_BRACE)
 	{
 		i++;
 		while (i < tokens.size() && tokens[i].type != CLOSE_BRACE)
 			node.children.push_back(parseBlock(tokens, i));
 		i++;
 	}
-
-	else if (tokens[i].type == SEMICOLON)
+	else if (i < tokens.size() && tokens[i].type == SEMICOLON)
 		i++;
 	return (node);
 }

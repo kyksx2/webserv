@@ -5,9 +5,10 @@
 #include "parsing.hpp"
 
 // CLASSE CONFIG QUI PREND TOUT LES SERVEURS DANS UN VECTOR
-class Config {
+class Config{
 private:
     std::vector<Server_Config> _servers;
+    std::vector<Location_config> _location;
     std::string _configFilePath;
 
 public:
@@ -21,9 +22,10 @@ public:
     // const std::string& getConfigFilePath() const;
     
     // // Utilitaires
-    void buildFromTree(const std::vector<ConfigNode>& nodes);
+    // void buildFromTree(const std::vector<ConfigNode>& nodes);
+    Location_config buildLocation(const ConfigNode& node);
     Server_Config buildServer(const ConfigNode& node);
-    
+    void print() const;
 };
 
 
