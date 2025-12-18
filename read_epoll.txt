@@ -53,3 +53,16 @@ int epoll_wait(int epfd, struct epoll_event *events, int maxevents,
 
 retourne le nombre d'evenements prets
 events[i].data.fd = fd a traiter
+
+--- FLAG EPOLL ---
+EPOLLIN (descripteur pret a etre lu):
+1. pour la socket d'ecoute: indique une nouvelle connection en attente (->accept()).
+2. pour un socket client: indique des donnees arrivees du client (-> recv()).
+
+EPOLLOUT (descripteur pret pour ecriture):
+pour un socket client: buffer d'envoi vide, on peut envoyer des donnees (->send())
+
+EPOLLERR (condition d'erreur survenue):
+
+EPOLLHUP (deconnexion arrive):
+indique que le cote oppose a ferme la connection
