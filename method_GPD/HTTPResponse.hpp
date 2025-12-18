@@ -6,7 +6,7 @@
 /*   By: yzeghari <yzeghari@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/04 12:52:24 by yzeghari          #+#    #+#             */
-/*   Updated: 2025/12/17 12:21:48 by yzeghari         ###   ########.fr       */
+/*   Updated: 2025/12/18 13:18:14 by yzeghari         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,6 +49,7 @@ enum HTTPStatusCode {
 class HTTPResponse
 {
 	private:
+		std::string	_version;
 		int	_status_code;
 		std::string	_reason_phrase;
 		std::map<std::string, std::string>	_headers;
@@ -56,11 +57,13 @@ class HTTPResponse
 
 	public:
 		HTTPResponse();
+		HTTPResponse(std::string version, int status_code, std::string reason_phrase);
 		~HTTPResponse();
+		void	setVersion(std::string version);
 		void	setStatus(int status_code, std::string reason_phrase);
 		void	setHeader(std::string key, std::string value);
 		void	setBody(std::string	body);
-		// generate;
+		std::string		generate();
 		//! pense a rajouter les headers obligatoire tel que lenght ou connection ds generate
 };
 

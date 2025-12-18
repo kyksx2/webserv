@@ -6,7 +6,7 @@
 /*   By: yzeghari <yzeghari@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/25 13:45:13 by yzeghari          #+#    #+#             */
-/*   Updated: 2025/12/12 15:39:12 by yzeghari         ###   ########.fr       */
+/*   Updated: 2025/12/18 14:52:33 by yzeghari         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,8 +14,8 @@
 
 //! Rajouter l utilisation de query ABSOLUMENT
 
-GetRequest::GetRequest(std::vector<std::string> &v)
-: HTTPRequest(v)
+GetRequest::GetRequest(std::string &buffer, const Server& serv)
+: HTTPRequest(buffer, serv)
 {
 }
 

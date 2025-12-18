@@ -6,75 +6,157 @@
 /*   By: yzeghari <yzeghari@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/24 13:45:23 by yzeghari          #+#    #+#             */
-/*   Updated: 2025/12/15 15:45:30 by yzeghari         ###   ########.fr       */
+/*   Updated: 2025/12/18 14:53:03 by yzeghari         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "HTTPRequest.hpp"
 
-HTTPRequest::HTTPRequest(std::vector<std::string> &v, std::string &buffer)
+std::vector<std::string>	split(const std::string &chaine, char delimiteur)
 {
-	std::stringstream	ss(buffer);
-	std::vector<std::string>::iterator	it = v.begin();
-	it++;//skip le 1er mot
+	std::vector<std::string>	v;
+	std::stringstream ss(chaine);
+	std::string	sous_chaine;
 
-	size_t pos = (*it).find('?');// target/query   | verifie la presence de l argument optionel
-	if (pos != std::string::npos)
-	{		//separe le maillon avant/apres "?"
-		this->m_target = (*it).substr(0, pos);
-		this->m_query = (*it).substr(pos + 1);
-	}
-	else
+	while(std::getline(ss, sous_chaine, delimiteur))
 	{
-		this->m_target = (*it);
+		v.push_back(sous_chaine);
 	}
-	if (this->m_target == "")
-		throw();//Bad request
+	return (v);
+}
 
-	if (++it != v.end())//Version
+bool safe_atoi(const char *str, int &result)
+{
+	int sign = 1;
+	int value = 0;
+
+	if (!str)
+		return false;
+
+	while ((*str >= 9 && *str <= 13) || *str == ' ')
+		str++;
+
+	if (*str == '+' || *str == '-')
 	{
-		if ((pos = (*it).find("\r\n")) != std::string::npos)
+		if (*str == '-')
+			sign = -1;
+		str++;
+	}
+
+	if (*str < '0' || *str > '9')
+		return false;
+
+	// Parse digits
+	while (*str >= '0' && *str <= '9')
+	{
+		int digit = *str - '0';
+
+		// Overflow check
+		if (sign == 1)
 		{
-			this->m_version = (*it).substr(0, pos);
-			if (this->m_version != "HTTP/1.0" && this->m_version !="HTTP/1.1")
-				throw();//Not implemented
+			if (value > (INT_MAX - digit) / 10)
+				return false; // overflow
 		}
 		else
-			throw();//Bad request
+		{
+			if (value > (-(INT_MIN + digit)) / 10)
+				return false; // underflow
+		}
+
+		value = value * 10 + digit;
+		str++;
 	}
 
-	for (it; it != v.end(); ++it) // headers
+	result = value * sign;
+	return true;
+}
+
+
+HTTPRequest::HTTPRequest(std::string &buffer, const Server& serv)
+{
+	std::stringstream ss(buffer);
+	std::string line;
+	std::getline(ss, line);
+
+	std::vector<std::string> firstline = split(line, ' ');
+	if (firstline.size() < 3)
+		throw std::runtime_error("400 Bad Request");
+
+	std::string target = firstline[1];
+	std::string version = firstline[2];
+
+	// séparateur query
+	size_t pos = target.find('?');
+	if (pos != std::string::npos)
+	{		//separe le maillon avant/apres "?"
+		m_target = target.substr(0, pos);
+		m_query = target.substr(pos + 1);
+	}
+	else
+		m_target = target;
+
+	if (m_target.empty())
+		throw std::runtime_error("400 Bad Request");
+
+	// nettoyage du \r final
+	if (!version.empty() && version.back() == '\r')
+		version.pop_back();
+
+	m_version = version;
+	if (m_version != "HTTP/1.0" && m_version != "HTTP/1.1")
+		throw std::runtime_error("501 Not Implemented");
+
+	while (std::getline(ss, line))
 	{
-		std::string	key = (*it);
-		if (key == "\r\n")
+		if (!line.empty() && line.back() == '\r')
+			line.pop_back();
+		if (line.empty())
 			break;
-		it++;
-		if (it != v.end())
-		{
-			std::string	value = (*it);
-			while ((value.find("\r\n") == std::string::npos) && it != v.end())
-			{
-				value += " ";
-				value += (*it);
-				it++;
-			}
-			if (this->m_headers.find(key) != this->m_headers.end()) // verifie existe deja si oui ajoute ", valeur"
-				this->m_headers[key] += ", " + value;
-			else
-				this->m_headers[key] = value;
-		}
+
+	// chercher le séparateur clé/valeur
+		size_t pos = line.find(':');
+		if (pos == std::string::npos)
+			throw std::runtime_error("400 Bad Request");
+
+		std::string key = line.substr(0, pos);
+		std::transform(key.begin(), key.end(), key.begin(), ::tolower);
+		std::string value = line.substr(pos + 1);
+
+		// trim espace(s) au début de la valeur
+		while (!value.empty() && value[0] == ' ')
+			value.erase(0, 1);
+
+		// gérer headers multiples (concat avec ", ")
+		if (m_headers.count(key))
+			m_headers[key] += ", " + value;
+		else
+			m_headers[key] = value;
 	}
-
-
-	if ((pos = buffer.find("\r\n\r\n")) != std::string::npos)
+	//! Verification des headers a faire
+	// body
+	if (((pos = buffer.find("\r\n\r\n")) != std::string::npos) && m_headers.count("Content-Length"))
 	{
-		size_t body_start = pos + 4;
+		int	len;
 
-		if (m_headers.count("Content-Length")) // si pas de Content-Length pas de body
-		{
-			size_t len = std::atoi(m_headers["Content-Length"].c_str());
-			this->m_body = buffer.substr(body_start, len);
-		}
+		if (!safe_atoi(m_headers["content-length"].c_str(), len))
+		throw std::runtime_error("400 Bad Request");
+
+		if (len < 0)
+			throw std::runtime_error("400 Bad Request");
+
+		// if (len > MAX_BODY_SIZE)	//! A recup ds config serv
+		// 	throw std::runtime_error("413 Payload Too Large");
+
+		size_t body_start = buffer.find("\r\n\r\n");
+		if (body_start == std::string::npos)
+			throw std::runtime_error("400 Bad Request");
+
+		body_start += 4;
+
+		if (buffer.size() < body_start + static_cast<size_t>(len))
+			throw std::runtime_error("400 Bad Request");
+
+		m_body = buffer.substr(body_start, len);
 	}
 }
 

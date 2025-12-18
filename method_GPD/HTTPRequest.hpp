@@ -6,7 +6,7 @@
 /*   By: yzeghari <yzeghari@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/24 13:37:27 by yzeghari          #+#    #+#             */
-/*   Updated: 2025/12/15 13:04:54 by yzeghari         ###   ########.fr       */
+/*   Updated: 2025/12/18 14:52:50 by yzeghari         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,8 @@
 
 //! IL FAUT PEUT ETRE VERIFIE LES HEADERS OBLIGATOIRE SOIT ICI SOIT DANC CHAQUE METHODE
 
+struct Server;
+
 class HTTPRequest
 {
 	protected :
@@ -29,7 +31,7 @@ class HTTPRequest
 		std::string	m_body;
 
 	public :
-		HTTPRequest(std::vector<std::string> &v, std::string &buffer);
+		HTTPRequest(std::string &buffer, const Server& serv);
 		virtual ~HTTPRequest();
 		std::string	GetTarget() const;
 		std::string	GetQuery() const;
@@ -46,4 +48,7 @@ class HTTPRequest
 				virtual ~HTTPRequestExcpetion() throw();
 		};
 };
+
+std::vector<std::string>	split(const std::string &chaine, char delimiteur);
+bool						safe_atoi(const char *str, int &result);
 #endif

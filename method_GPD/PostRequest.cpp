@@ -6,14 +6,14 @@
 /*   By: yzeghari <yzeghari@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/25 14:31:54 by yzeghari          #+#    #+#             */
-/*   Updated: 2025/12/17 12:23:27 by yzeghari         ###   ########.fr       */
+/*   Updated: 2025/12/18 14:52:40 by yzeghari         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "PostRequest.hpp"
 
-PostRequest::PostRequest(std::vector<std::string> &v)
-: HTTPRequest(v)
+PostRequest::PostRequest(std::string &buffer, const Server& serv)
+: HTTPRequest(buffer, serv)
 {
 }
 
@@ -149,7 +149,7 @@ HTTPResponse PostRequest::generateResponse()
 		}
 		else
 		{
-			// → 404 Not Found
+			//404 Not Found
 			postresponse.setStatus(404, "Not Found");
 			return (postresponse);
 		}
