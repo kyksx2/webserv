@@ -6,12 +6,13 @@
 /*   By: yzeghari <yzeghari@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/25 14:31:54 by yzeghari          #+#    #+#             */
-/*   Updated: 2025/12/18 14:52:40 by yzeghari         ###   ########.fr       */
+/*   Updated: 2025/12/18 17:06:53 by yzeghari         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "PostRequest.hpp"
 
+//! Pour POST avec 201 Created, Location si body contient URI → 500 si absent (optionnel selon ton serveur)
 PostRequest::PostRequest(std::string &buffer, const Server& serv)
 : HTTPRequest(buffer, serv)
 {

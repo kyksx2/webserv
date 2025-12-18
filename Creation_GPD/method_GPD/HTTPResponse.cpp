@@ -6,7 +6,7 @@
 /*   By: yzeghari <yzeghari@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/04 12:59:01 by yzeghari          #+#    #+#             */
-/*   Updated: 2025/12/18 13:18:29 by yzeghari         ###   ########.fr       */
+/*   Updated: 2025/12/18 16:51:38 by yzeghari         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,6 +61,9 @@ std::string	HTTPResponse::generate()
 	if (this->_body.empty())
 		_body = _reason_phrase;
 
+	if (this->_status_code == 204 || this->_status_code == 304)
+		_body = "";
+		
 	//ptet a mttre en minuscule pour debug
 	_headers["Content-Length"] = _body.size();
 	for (std::map<std::string, std::string>::const_iterator it = _headers.begin();

@@ -6,7 +6,7 @@
 /*   By: yzeghari <yzeghari@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/24 13:45:23 by yzeghari          #+#    #+#             */
-/*   Updated: 2025/12/18 14:53:03 by yzeghari         ###   ########.fr       */
+/*   Updated: 2025/12/18 16:58:43 by yzeghari         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -132,7 +132,40 @@ HTTPRequest::HTTPRequest(std::string &buffer, const Server& serv)
 		else
 			m_headers[key] = value;
 	}
-	//! Verification des headers a faire
+	// Verification des headers
+
+	if (m_headers.count("transfer-encoding"))
+	{
+		if (this->m_headers["transfer-encoding"] == "chunked" && this->m_version == "HTTP/1.0")
+		{
+			throw std::runtime_error("501 NotImplemented");
+		}
+	}
+
+	if (m_headers.count("transfer-encoding") && m_headers.count("content-length"))
+	{
+		throw std::runtime_error("400 Bad Request");
+	}
+
+	if (!m_headers.count("connection"))
+	{
+		if (this->m_headers["connection"] != "keep-alive" && this->m_headers["connection"] != "close")
+		{
+			throw std::runtime_error("400 Bad Request");
+		}
+		if (this->m_version == "HTTP/1.0")
+		{
+			this->m_headers["connection"] == "keep-alive";
+		}
+		else
+			this->m_headers["connection"] == "close";
+	}
+
+	if (!m_headers.count("host") && m_version == "HTTP/1.1")
+	{
+		throw std::runtime_error("400 Bad Request");
+	}
+
 	// body
 	if (((pos = buffer.find("\r\n\r\n")) != std::string::npos) && m_headers.count("Content-Length"))
 	{

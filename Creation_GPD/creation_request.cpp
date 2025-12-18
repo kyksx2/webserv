@@ -6,11 +6,23 @@
 /*   By: yzeghari <yzeghari@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/25 13:50:59 by yzeghari          #+#    #+#             */
-/*   Updated: 2025/12/18 14:53:16 by yzeghari         ###   ########.fr       */
+/*   Updated: 2025/12/18 17:05:59 by yzeghari         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "RequestMethod.hpp"
+
+//! Exemple d utilisation
+// try
+// {
+// HTTPResponse	request = RequestCreation(std::string buffer, const Server& serv)
+// response = request.generate();
+// }
+// catch(const std::exception& e)
+// {
+// delete request;
+// httpresponse response("version", "code", "reason");
+// }
 
 HTTPRequest	*get_creation(std::string &buffer, const Server& serv)
 {
@@ -60,7 +72,7 @@ HTTPResponse	RequestCreation(std::string buffer, const Server& serv)
 	std::getline(ss, line);
 	std::vector<std::string> firstline = split(line, ' ');
 	if (firstline.size() < 3)
-		throw std::runtime_error("400 Bad Request");
+		HTTPResponse response("HTTP/1.1", 400, "Bad Request");
 
 	std::string target = firstline[1];
 	std::string version = firstline[2];
