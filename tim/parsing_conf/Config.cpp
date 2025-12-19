@@ -134,6 +134,7 @@ void    Config::parsing(const std::string& filepath)
             const ConfigNode& child = *it; 
             _servers.push_back(buildServer(child));
         }
+        print();
     }
     catch(const std::exception& e) {
         std::cerr << e.what() << '\n';

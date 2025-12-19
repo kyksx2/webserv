@@ -24,10 +24,8 @@ size_t parseBodySize(const std::string &value)
     std::string unit;
     ss >> unit;
 
-    for (size_t i = 0; i < unit.size(); ++i){
+    for (size_t i = 0; i < unit.size(); ++i)
         unit[i] = std::tolower(unit[i]);
-        // std::cout << unit[i] << std::endl;
-    }
 
     size_t multiplier = 1;
     if (unit.empty() || unit == "b")

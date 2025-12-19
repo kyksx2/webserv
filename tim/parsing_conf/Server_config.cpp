@@ -1,6 +1,7 @@
 #include "Server_config.hpp"
 #include "parsing.hpp"
 #include "Config.hpp"
+#include <climits>
 
 
 Server_Config::Server_Config(){
@@ -36,7 +37,7 @@ void Server_Config::setErrorPage(int code, const std::string& path)
 
 void Server_Config::setClientMaxBodySize(size_t size)
 {
-    if (size < 2000000)
+    if (size < LLONG_MAX)
         _clientMaxBodySize = size;
 }
 

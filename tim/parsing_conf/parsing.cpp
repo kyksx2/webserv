@@ -8,7 +8,8 @@ Parsing::Parsing(const std::string& filepath)
     std::vector<Token> token = tokeniseContent(fileContent);
 	_tree = setTree(token);
     validateNode(_tree);
-	print_node(_tree, 0);
+	// print_node(_tree, 0);
+    // std::cout << "caca";
 }
 
 enum TokenType  Parsing::determineType(const std::string& word)
