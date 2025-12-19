@@ -6,7 +6,7 @@
 /*   By: yzeghari <yzeghari@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/24 13:37:27 by yzeghari          #+#    #+#             */
-/*   Updated: 2025/12/18 14:52:50 by yzeghari         ###   ########.fr       */
+/*   Updated: 2025/12/19 13:51:17 by yzeghari         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,12 +40,14 @@ class HTTPRequest
 		std::map<std::string, std::string>	GetHeaders() const;
 		virtual	HTTPResponse	generateResponse() = 0;
 
-		class	HTTPRequestExcpetion : public std::exception
+		class	HTTPRequestException : public std::exception
 		{
+			private :
+				std::string	_err;
 			public :
-				HTTPRequestExcpetion() throw();
+				HTTPRequestException(std::string err) throw();
 				virtual const char	*what() const throw();
-				virtual ~HTTPRequestExcpetion() throw();
+				virtual ~HTTPRequestException() throw();
 		};
 };
 

@@ -6,7 +6,7 @@
 /*   By: yzeghari <yzeghari@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/24 13:45:23 by yzeghari          #+#    #+#             */
-/*   Updated: 2025/12/18 16:58:43 by yzeghari         ###   ########.fr       */
+/*   Updated: 2025/12/19 13:58:00 by yzeghari         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,10 +80,19 @@ HTTPRequest::HTTPRequest(std::string &buffer, const Server& serv)
 
 	std::vector<std::string> firstline = split(line, ' ');
 	if (firstline.size() < 3)
-		throw std::runtime_error("400 Bad Request");
+		throw HTTPRequest::HTTPRequestException("HTTP/1.1,400,Bad Request");
 
 	std::string target = firstline[1];
 	std::string version = firstline[2];
+
+	// Commence par version pour pouvoir le throw si je dois
+	if (!version.empty() && version.back() == '\r')// nettoyage du \r final
+		version.pop_back();
+
+	m_version = version;
+	if (m_version != "HTTP/1.0" && m_version != "HTTP/1.1")
+		throw HTTPRequest::HTTPRequestException("HTTP/1.1,501,Not Implemented");
+
 
 	// séparateur query
 	size_t pos = target.find('?');
@@ -96,15 +105,7 @@ HTTPRequest::HTTPRequest(std::string &buffer, const Server& serv)
 		m_target = target;
 
 	if (m_target.empty())
-		throw std::runtime_error("400 Bad Request");
-
-	// nettoyage du \r final
-	if (!version.empty() && version.back() == '\r')
-		version.pop_back();
-
-	m_version = version;
-	if (m_version != "HTTP/1.0" && m_version != "HTTP/1.1")
-		throw std::runtime_error("501 Not Implemented");
+		throw HTTPRequest::HTTPRequestException(m_version + ",400,Bad Request");
 
 	while (std::getline(ss, line))
 	{
@@ -116,7 +117,7 @@ HTTPRequest::HTTPRequest(std::string &buffer, const Server& serv)
 	// chercher le séparateur clé/valeur
 		size_t pos = line.find(':');
 		if (pos == std::string::npos)
-			throw std::runtime_error("400 Bad Request");
+			throw HTTPRequest::HTTPRequestException(m_version + ",400,Bad Request");
 
 		std::string key = line.substr(0, pos);
 		std::transform(key.begin(), key.end(), key.begin(), ::tolower);
@@ -126,7 +127,7 @@ HTTPRequest::HTTPRequest(std::string &buffer, const Server& serv)
 		while (!value.empty() && value[0] == ' ')
 			value.erase(0, 1);
 
-		// gérer headers multiples (concat avec ", ")
+		// gerer headers multiples (concat avec ", ")
 		if (m_headers.count(key))
 			m_headers[key] += ", " + value;
 		else
@@ -138,20 +139,20 @@ HTTPRequest::HTTPRequest(std::string &buffer, const Server& serv)
 	{
 		if (this->m_headers["transfer-encoding"] == "chunked" && this->m_version == "HTTP/1.0")
 		{
-			throw std::runtime_error("501 NotImplemented");
+			throw HTTPRequest::HTTPRequestException(m_version + "501 NotImplemented");
 		}
 	}
 
 	if (m_headers.count("transfer-encoding") && m_headers.count("content-length"))
 	{
-		throw std::runtime_error("400 Bad Request");
+		throw HTTPRequest::HTTPRequestException(m_version+",400,Bad Request");
 	}
 
 	if (!m_headers.count("connection"))
 	{
 		if (this->m_headers["connection"] != "keep-alive" && this->m_headers["connection"] != "close")
 		{
-			throw std::runtime_error("400 Bad Request");
+			throw HTTPRequest::HTTPRequestException(m_version + ",400,Bad Request");
 		}
 		if (this->m_version == "HTTP/1.0")
 		{
@@ -163,7 +164,7 @@ HTTPRequest::HTTPRequest(std::string &buffer, const Server& serv)
 
 	if (!m_headers.count("host") && m_version == "HTTP/1.1")
 	{
-		throw std::runtime_error("400 Bad Request");
+		throw HTTPRequest::HTTPRequestException(m_version + ",400,Bad Request");
 	}
 
 	// body
@@ -172,22 +173,22 @@ HTTPRequest::HTTPRequest(std::string &buffer, const Server& serv)
 		int	len;
 
 		if (!safe_atoi(m_headers["content-length"].c_str(), len))
-		throw std::runtime_error("400 Bad Request");
+		throw HTTPRequest::HTTPRequestException(m_version + ",400,Bad Request");
 
 		if (len < 0)
-			throw std::runtime_error("400 Bad Request");
+			throw HTTPRequest::HTTPRequestException(m_version + ",400,Bad Request");
 
 		// if (len > MAX_BODY_SIZE)	//! A recup ds config serv
-		// 	throw std::runtime_error("413 Payload Too Large");
+		// 	throw HTTPRequest::HTTPRequestException(m_version + ",400,Bad Request");
 
 		size_t body_start = buffer.find("\r\n\r\n");
 		if (body_start == std::string::npos)
-			throw std::runtime_error("400 Bad Request");
+			throw HTTPRequest::HTTPRequestException(m_version + ",400,Bad Request");
 
 		body_start += 4;
 
 		if (buffer.size() < body_start + static_cast<size_t>(len))
-			throw std::runtime_error("400 Bad Request");
+			throw HTTPRequest::HTTPRequestException(m_version + ",400,Bad Request");
 
 		m_body = buffer.substr(body_start, len);
 	}
@@ -222,15 +223,15 @@ std::map<std::string, std::string> HTTPRequest::GetHeaders() const
 	return (this->m_headers);
 }
 
-HTTPRequest::HTTPRequestExcpetion::HTTPRequestExcpetion() throw()
+HTTPRequest::HTTPRequestException::HTTPRequestException(std::string err) throw()
 {
 }
 
-const char *HTTPRequest::HTTPRequestExcpetion::what() const throw()
+const char *HTTPRequest::HTTPRequestException::what() const throw()
 {
-	return ("Error: Invalid request");
+	return (this->_err.c_str());
 }
 
-HTTPRequest::HTTPRequestExcpetion::~HTTPRequestExcpetion() throw()
+HTTPRequest::HTTPRequestException::~HTTPRequestException() throw()
 {
 }

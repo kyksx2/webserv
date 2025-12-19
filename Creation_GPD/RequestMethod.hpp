@@ -6,7 +6,7 @@
 /*   By: yzeghari <yzeghari@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/25 13:52:38 by yzeghari          #+#    #+#             */
-/*   Updated: 2025/12/18 16:13:15 by yzeghari         ###   ########.fr       */
+/*   Updated: 2025/12/19 13:32:35 by yzeghari         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,8 +19,4 @@
 #include <sstream>
 
 HTTPResponse	RequestCreation(std::string	buffer, const Server& serv);
-HTTPRequest	*get_creation(std::string &buffer, const Server& serv);
-HTTPRequest	*delete_creation(std::string &buffer, const Server& serv);
-HTTPRequest	*post_creation(std::string &buffer, const Server& serv);
-
 #endif
