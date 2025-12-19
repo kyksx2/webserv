@@ -6,7 +6,7 @@
 /*   By: yzeghari <yzeghari@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/24 13:45:23 by yzeghari          #+#    #+#             */
-/*   Updated: 2025/12/19 13:58:00 by yzeghari         ###   ########.fr       */
+/*   Updated: 2025/12/19 17:00:32 by yzeghari         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,6 +72,7 @@ bool safe_atoi(const char *str, int &result)
 }
 
 
+
 HTTPRequest::HTTPRequest(std::string &buffer, const Server& serv)
 {
 	std::stringstream ss(buffer);
@@ -99,7 +100,7 @@ HTTPRequest::HTTPRequest(std::string &buffer, const Server& serv)
 	if (pos != std::string::npos)
 	{		//separe le maillon avant/apres "?"
 		m_target = target.substr(0, pos);
-		m_query = target.substr(pos + 1);
+		query_creation(line);
 	}
 	else
 		m_target = target;
@@ -194,16 +195,45 @@ HTTPRequest::HTTPRequest(std::string &buffer, const Server& serv)
 	}
 }
 
+void HTTPRequest::query_creation(std::string line)
+{
+	std::stringstream ss(line);
+	std::string querys;
+
+	while (std::getline(ss, querys, '&'))
+	{
+		size_t pos = querys.find('=');
+
+		std::string key;
+		std::string val;
+
+		if (pos != std::string::npos)
+		{
+			key = querys.substr(0, pos);
+			val = querys.substr(pos + 1);
+		}
+		else
+		{
+			// paramètre sans valeur (ex: ?debug)
+			key = querys;
+			val = "";
+		}
+
+		this->m_query[key] = val;
+	}
+}
+
 HTTPRequest::~HTTPRequest()
 {
 }
+
 
 std::string HTTPRequest::GetTarget() const
 {
 	return (this->m_target);
 }
 
-std::string HTTPRequest::GetQuery() const
+std::map<std::string, std::string> HTTPRequest::GetQuery() const
 {
 	return (this->m_query);
 }

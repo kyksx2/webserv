@@ -6,13 +6,12 @@
 /*   By: yzeghari <yzeghari@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/25 14:31:54 by yzeghari          #+#    #+#             */
-/*   Updated: 2025/12/18 17:06:53 by yzeghari         ###   ########.fr       */
+/*   Updated: 2025/12/19 15:22:06 by yzeghari         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "PostRequest.hpp"
 
-//! Pour POST avec 201 Created, Location si body contient URI → 500 si absent (optionnel selon ton serveur)
 PostRequest::PostRequest(std::string &buffer, const Server& serv)
 : HTTPRequest(buffer, serv)
 {
@@ -22,7 +21,6 @@ PostRequest::~PostRequest()
 {
 }
 
-//! A ranger
 void	split_path(std::string path, std::string &dir, std::string &file)
 {
 	std::string::size_type pos = path.find_last_of("/\\");
@@ -39,9 +37,11 @@ void	split_path(std::string path, std::string &dir, std::string &file)
 	}
 }
 
+//! Pour POST avec 201 Created, Location si body contient URI → 500 si absent (optionnel selon ton serveur)
 HTTPResponse PostRequest::generateResponse()
 {
 	HTTPResponse	postresponse;
+	postresponse.setVersion(this->m_version);
 	struct stat st;
 	std::string	dir;
 	std::string	file;
@@ -57,7 +57,7 @@ HTTPResponse PostRequest::generateResponse()
 				std::ofstream	monFlux(this->m_target.c_str(), std::ios::out | std::ios::trunc);
 				if (monFlux)
 				{
-					//200
+					// 200 OK
 					postresponse.setStatus(200, "OK");
 					postresponse.setHeader("Content-Type", this->m_headers["content-type"]);
 					monFlux << this->m_body;
@@ -66,14 +66,14 @@ HTTPResponse PostRequest::generateResponse()
 				}
 				else
 				{
-					// 500
+					// 500 Internal Server Error
 					postresponse.setStatus(500, "Internal Server Error");
 					return (postresponse);
 				}
 			}
 			else
 			{
-				//403
+				// 403 Forbidden
 				postresponse.setStatus(403, "Forbidden");
 				return (postresponse);
 			}
@@ -86,7 +86,7 @@ HTTPResponse PostRequest::generateResponse()
 				std::ofstream	monFlux((this->m_target + "default").c_str(), std::ios::out | std::ios::trunc);
 				if (monFlux)
 				{
-					//200
+					// 200 OK
 					postresponse.setStatus(200, "OK");
 					postresponse.setHeader("Content-Type", this->m_headers["content-type"]);
 					monFlux << this->m_body;
@@ -95,14 +95,14 @@ HTTPResponse PostRequest::generateResponse()
 				}
 				else
 				{
-					// 500
+					// 500 Internal Server Error
 					postresponse.setStatus(500, "Internal Server Error");
 					return (postresponse);
 				}
 			}
 			else
 			{
-				//403
+				// 403 Forbidden
 				postresponse.setStatus(403, "Forbidden");
 				return (postresponse);
 			}
@@ -120,7 +120,7 @@ HTTPResponse PostRequest::generateResponse()
 					std::ofstream	monFlux(this->m_target.c_str(), std::ios::out | std::ios::trunc);
 					if (monFlux)
 					{
-						//200
+						// 200 OK
 						postresponse.setStatus(200, "OK");
 						postresponse.setHeader("Content-Type", this->m_headers["content-type"]);
 						monFlux << this->m_body;
@@ -129,28 +129,28 @@ HTTPResponse PostRequest::generateResponse()
 					}
 					else
 					{
-							//500
+							// 500 Internal Server Error
 							postresponse.setStatus(500, "Internal Server Error");
 							return (postresponse);
 					}
 				}
 				else
 				{
-					//403
+					// 403 Forbidden
 					postresponse.setStatus(403, "Forbidden");
 					return (postresponse);
 				}
 			}
 			else
 			{
-				//403
+				// 403 Forbidden
 				postresponse.setStatus(403, "Forbidden");
 				return (postresponse);
 			}
 		}
 		else
 		{
-			//404 Not Found
+			// 404 Not Found
 			postresponse.setStatus(404, "Not Found");
 			return (postresponse);
 		}

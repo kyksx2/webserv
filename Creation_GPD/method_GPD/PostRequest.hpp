@@ -6,7 +6,7 @@
 /*   By: yzeghari <yzeghari@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/24 13:39:08 by yzeghari          #+#    #+#             */
-/*   Updated: 2025/12/18 14:52:10 by yzeghari         ###   ########.fr       */
+/*   Updated: 2025/12/19 15:19:35 by yzeghari         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,6 @@
 #include "HTTPRequest.hpp"
 
 void	split_path(std::string path, std::string &dir, std::string &file);
-
 
 class PostRequest : public HTTPRequest
 {

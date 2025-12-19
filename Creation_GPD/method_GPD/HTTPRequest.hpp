@@ -6,7 +6,7 @@
 /*   By: yzeghari <yzeghari@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/24 13:37:27 by yzeghari          #+#    #+#             */
-/*   Updated: 2025/12/19 13:51:17 by yzeghari         ###   ########.fr       */
+/*   Updated: 2025/12/19 17:00:09 by yzeghari         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,16 +25,17 @@ class HTTPRequest
 {
 	protected :
 		std::string	m_target;
-		std::string	m_query;
+		std::map<std::string, std::string>	m_query;
 		std::string	m_version;
 		std::map<std::string, std::string>	m_headers;
 		std::string	m_body;
 
 	public :
 		HTTPRequest(std::string &buffer, const Server& serv);
+		void query_creation(std::string line);
 		virtual ~HTTPRequest();
 		std::string	GetTarget() const;
-		std::string	GetQuery() const;
+		std::map<std::string, std::string>	GetQuery() const;
 		std::string	GetVersion() const;
 		std::string	GetBody() const;
 		std::map<std::string, std::string>	GetHeaders() const;

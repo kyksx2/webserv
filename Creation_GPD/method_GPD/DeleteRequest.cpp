@@ -6,7 +6,7 @@
 /*   By: yzeghari <yzeghari@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/28 12:27:58 by yzeghari          #+#    #+#             */
-/*   Updated: 2025/12/18 14:52:21 by yzeghari         ###   ########.fr       */
+/*   Updated: 2025/12/19 15:16:25 by yzeghari         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,9 +24,10 @@ DeleteRequest::~DeleteRequest()
 HTTPResponse DeleteRequest::generateResponse()
 {
 	HTTPResponse	delresponse;
+	delresponse.setVersion(this->m_version);
 	struct stat st;
 
-	// 5. Si DELETE n'est pas autorisé dans ta config (location) A rajouter
+	// Si DELETE n'est pas autorisé dans ta config (location) A rajouter
 	// → 405 Method Not Allowed
 
 	if (!stat(this->m_target.c_str(), &st))
@@ -35,7 +36,7 @@ HTTPResponse DeleteRequest::generateResponse()
 		{
 			if (!access(this->m_target.c_str(), W_OK))
 			{
-				if (unlink(this->m_target.c_str()) < 0) // cas erreur
+				if (unlink(this->m_target.c_str()) < 0)
 				{
 					if (errno == EACCES || errno == EPERM)
 					{

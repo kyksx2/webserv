@@ -6,13 +6,11 @@
 /*   By: yzeghari <yzeghari@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/25 13:45:13 by yzeghari          #+#    #+#             */
-/*   Updated: 2025/12/18 14:52:33 by yzeghari         ###   ########.fr       */
+/*   Updated: 2025/12/19 15:18:00 by yzeghari         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "GetRequest.hpp"
-
-//! Rajouter l utilisation de query ABSOLUMENT
 
 GetRequest::GetRequest(std::string &buffer, const Server& serv)
 : HTTPRequest(buffer, serv)
@@ -45,11 +43,12 @@ std::string getMIME_Type(const std::string& target)
 	return "text/html";
 }
 
-
+//! Rajouter l utilisation de query ABSOLUMENT
 //tester path../file/ != path../dir/
 HTTPResponse GetRequest::generateResponse()
 {
 	HTTPResponse	getresponse;
+	getresponse.setVersion(this->m_version);
 	std::string	inthefile;
 	struct stat st;
 
