@@ -14,7 +14,7 @@ Server_Config::~Server_Config(){
 
 void Server_Config::setHost(const std::string& host)
 {
-    if (host.find(':') == 4)
+    if (!host.empty())
         _host = host;
 }
 void Server_Config::setPort(int port)

@@ -6,7 +6,7 @@
 /*   By: kjolly <kjolly@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/16 13:05:43 by kjolly            #+#    #+#             */
-/*   Updated: 2025/12/21 16:02:40 by kjolly           ###   ########.fr       */
+/*   Updated: 2025/12/22 10:07:56 by kjolly           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,7 @@ int main(int ac, char **av) {
             WebServ serv(conf);
             std::cout << std::endl << "----------------------------------------" << std::endl;
             // serv.printEverythings();
-            // serv.run();
+            serv.run();
         }
         catch(const std::exception& e)
         {

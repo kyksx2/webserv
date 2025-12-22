@@ -11,9 +11,9 @@ class Server {
   struct sockaddr_in getAddr();
   // int getPort();
   void init(int epoll_fd);
+  Server_Config config;
 
   private:
-  Server_Config config;
   int listen_fd;
   bool isAlive;
   struct sockaddr_in addr;

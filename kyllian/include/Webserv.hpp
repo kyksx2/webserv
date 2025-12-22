@@ -28,14 +28,14 @@ class WebServ {
     WebServ(const std::string& conf);
     ~WebServ();
 
-   //  void run();
+    void run();
     void epollInit();
-   //  void handleNewClient(Server* find_server);
-   //  void readClientData(int event_fd);
-   //  void sendClientData(int event_fd);
-   //  void closeClient(int event_fd);
+    void handleNewClient(Server* find_server);
+    void readClientData(int event_fd);
+    void sendClientData(int event_fd);
+    void closeClient(int event_fd);
 
-   void printEverythings();
+   // void printEverythings();
 
     class initException : public std::exception {
       public:
