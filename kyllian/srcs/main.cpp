@@ -6,13 +6,21 @@
 /*   By: kjolly <kjolly@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/16 13:05:43 by kjolly            #+#    #+#             */
-/*   Updated: 2025/12/22 10:07:56 by kjolly           ###   ########.fr       */
+/*   Updated: 2025/12/22 13:43:20 by kjolly           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../include/Webserv.hpp"
 
 //! add a signal handler
+
+volatile int signal_running = 1;
+
+void handle_sig(int sig) {
+    (void)sig;
+    std::cout << "Receive signal: shut down the server." << std::endl;
+    signal_running = 0;
+}
 
 int main(int ac, char **av) {
     if (ac == 2 || ac == 1) {
@@ -21,6 +29,9 @@ int main(int ac, char **av) {
             conf = av[1];
         else
             conf = "../config/default.conf";
+        signal(SIGINT, handle_sig);
+        signal(SIGQUIT, handle_sig);
+        signal(SIGPIPE, SIG_IGN);
         try
         {
             WebServ serv(conf);

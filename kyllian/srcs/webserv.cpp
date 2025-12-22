@@ -117,7 +117,7 @@ void    WebServ::readClientData(int event_fd) {
         if (errno == EAGAIN || errno == EWOULDBLOCK)
             return;
     }
-    }
+}
     //? ------------------------------ fin test ----------------------------
 //     while((receive_bits = recv(event_fd, buffer, BUFFER_SIZE, 0)) > 0) {
 //         client->appendRequest(buffer, receive_bits);
@@ -243,7 +243,7 @@ void    WebServ::closeClient(int event_fd) {
 }
 
 void    WebServ::run() {
-    while(true) {
+    while(signal_running) {
         struct epoll_event ev[EVENTS_MAX];
         int n_event = epoll_wait(this->epoll_fd, ev, EVENTS_MAX, -1);
         if (n_event == -1) {

@@ -17,7 +17,7 @@ class Client {
    void clearState();
 
    std::string& getResponseBuffer();
-  //  int getClientFd();
+   int getClientFd();
    size_t getDataSent();
 
    void setDataSent(int n);

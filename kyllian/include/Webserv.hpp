@@ -23,6 +23,11 @@
 #define BUFFER_SIZE 1024
 #define RETURN_SIZE 1024
 
+extern volatile sig_atomic_t signal_running;
+//? EXTERN: pour dire au compilateur que cette var sera utiliser autre part, donc ne pas la redefinir
+//? VOLATILE: empeche le compilateur de faire de l'optimisation sur cette var
+//? sig_atomic_t: type de var speciale concu pour communiquer avec des signaux
+
 class WebServ {
  public:
     WebServ(const std::string& conf);

@@ -20,6 +20,8 @@ Client&  Client::operator=(const Client& src) {
 
 size_t  Client::getDataSent() { return this->data_sent; }
 
+int Client::getClientFd() { return this->client_fd; }
+
 void    Client::setDataSent(int n) { this->data_sent = n; }
 
 Client::~Client() {}

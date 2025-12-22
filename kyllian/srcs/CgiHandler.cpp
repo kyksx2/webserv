@@ -25,6 +25,8 @@
 //         //! double tableau pour execve + recuperation de l'env
 //         //! ecrire dans file_from_cgi[1]
 //         //? dup stdin dans l'ecriture de pipe_from_cgi[1];
+
+//         //! gerer les signaux en les remettant comme ils etaient definis de base
 //         dup2(pipe_to_cgi[0], STDIN_FILENO); //? en cas de POST on a des donnees a recup
 //         dup2(pipe_from_cgi[1], STDOUT_FILENO); //? ecrit ici pour que le parent puisse read
 //         close(pipe_to_cgi[0]);
