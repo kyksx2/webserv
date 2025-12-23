@@ -63,9 +63,28 @@ void    Client::setResponseBuffer(std::string& response) {
     this->responseBuffer = response;
 }
 
-// bool    Client::completeRequest() {
-
-// }
+bool    Client::completeRequest()
+{
+	try
+    {
+        requestCreation();
+		return true;
+    }
+    catch(const std::exception& e)
+    {
+		std::string	error = e.what()
+		if (error == "restart getbuffer")
+		{
+			// liberez tout mes copain nan en sah delete request si il faut
+			return false;
+		}
+        //! il faut verifier si response existe deja
+        std::vector<std::string> err_line = split(e.what(), ',');
+        // ajout de std::atoi
+        HTTPResponse response(err_line[0], std::atoi(err_line[1].c_str()), err_line[2]);
+		return true;
+    }
+}
 
 void    Client::generateResponse() {
     try
@@ -73,7 +92,7 @@ void    Client::generateResponse() {
         requestCreation();
     }
     catch(const std::exception& e)
-    {   
+    {
         //! il faut verifier si response existe deja
         std::vector<std::string> err_line = split(e.what(), ',');
         // ajout de std::atoi

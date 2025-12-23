@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   HTTPRequest.cpp                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kjolly <kjolly@student.42.fr>              +#+  +:+       +#+        */
+/*   By: yzeghari <yzeghari@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/24 13:45:23 by yzeghari          #+#    #+#             */
-/*   Updated: 2025/12/23 13:04:50 by kjolly           ###   ########.fr       */
+/*   Updated: 2025/12/23 15:06:38 by yzeghari         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -171,30 +171,40 @@ HTTPRequest::HTTPRequest(std::string &buffer, const Server& serv)
 	}
 
 	// body
-	if (((pos = buffer.find("\r\n\r\n")) != std::string::npos) && m_headers.count("Content-Length"))
+	const std::string delimiter = "\r\n\r\n";
+	size_t headerEnd = buffer.find(delimiter);
+
+	if (headerEnd == std::string::npos)
 	{
-		int	len;
-
-		if (!safe_atoi(m_headers["content-length"].c_str(), len))
-		throw HTTPRequest::HTTPRequestException(m_version + ",400,Bad Request");
-
-		if (len < 0)
-			throw HTTPRequest::HTTPRequestException(m_version + ",400,Bad Request");
-
-		// if (len > MAX_BODY_SIZE)	//! A recup ds config serv
-		// 	throw HTTPRequest::HTTPRequestException(m_version + ",400,Bad Request");
-
-		size_t body_start = buffer.find("\r\n\r\n");
-		if (body_start == std::string::npos)
-			throw HTTPRequest::HTTPRequestException(m_version + ",400,Bad Request");
-
-		body_start += 4;
-
-		if (buffer.size() < body_start + static_cast<size_t>(len))
-			throw HTTPRequest::HTTPRequestException(m_version + ",400,Bad Request");
-
-		m_body = buffer.substr(body_start, len);
+		throw HTTPRequest::HTTPRequestException("restart getbuffer");
 	}
+
+	// No body expected if no Content-Length
+	if (!m_headers.count("content-length"))
+	{
+		return;
+	}
+
+	int contentLength = 0;
+	if (!safe_atoi(m_headers["content-length"].c_str(), contentLength) || contentLength < 0)
+	{
+		throw HTTPRequest::HTTPRequestException(m_version + ",400,Bad Request");
+	}
+
+	// Optional max body size check
+	// if (contentLength > MAX_BODY_SIZE)
+	// 	throw HTTPRequest::HTTPRequestException(m_version + ",400,Bad Request");
+
+	size_t bodyStart = headerEnd + delimiter.length();
+
+	// Wait until full body is received
+	if (buffer.size() < bodyStart + static_cast<size_t>(contentLength))
+	{
+		throw HTTPRequest::HTTPRequestException("restart getbuffer");
+	}
+
+	m_body = buffer.substr(bodyStart, contentLength);
+
 }
 
 void HTTPRequest::query_creation(std::string line)
