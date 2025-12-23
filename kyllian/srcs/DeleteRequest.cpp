@@ -6,7 +6,7 @@
 /*   By: kjolly <kjolly@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/28 12:27:58 by yzeghari          #+#    #+#             */
-/*   Updated: 2025/12/23 12:43:15 by kjolly           ###   ########.fr       */
+/*   Updated: 2025/12/23 15:35:53 by kjolly           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -84,5 +84,5 @@ HTTPResponse DeleteRequest::generateResponse()
 		delresponse.setStatus(404, "Not Found");
 		return (delresponse);
 	}
-
+	return (delresponse);
 }

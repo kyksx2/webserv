@@ -6,7 +6,7 @@
 /*   By: kjolly <kjolly@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/24 13:37:27 by yzeghari          #+#    #+#             */
-/*   Updated: 2025/12/23 13:04:37 by kjolly           ###   ########.fr       */
+/*   Updated: 2025/12/23 15:44:16 by kjolly           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,12 +14,11 @@
 # define  HTTPREQUEST_HPP
 
 #include "HTTPResponse.hpp"
+#include "Server.hpp"
 
 //! la recuperation des config du serv, besoin pour les methodes
 
 //! IL FAUT PEUT ETRE VERIFIE LES HEADERS OBLIGATOIRE SOIT ICI SOIT DANC CHAQUE METHODE
-
-struct Server;
 
 class HTTPRequest
 {
@@ -48,7 +47,6 @@ class HTTPRequest
 				std::string	_err;
 			public :
 				HTTPRequestException(std::string err) throw();
-				
 				virtual const char	*what() const throw();
 				virtual ~HTTPRequestException() throw();
 		};

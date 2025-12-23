@@ -42,6 +42,8 @@ size_t  Client::getDataSent() { return this->data_sent; }
 
 int Client::getClientFd() { return this->client_fd; }
 
+std::string& Client::getRequestBuffer() { return this->requestBuffer; }
+
 void    Client::setDataSent(int n) { this->data_sent = n; }
 
 
@@ -72,7 +74,7 @@ bool    Client::completeRequest()
     }
     catch(const std::exception& e)
     {
-		std::string	error = e.what()
+		std::string	error = e.what();
 		if (error == "restart getbuffer")
 		{
 			// liberez tout mes copain nan en sah delete request si il faut
@@ -86,19 +88,19 @@ bool    Client::completeRequest()
     }
 }
 
-void    Client::generateResponse() {
-    try
-    {
-        requestCreation();
-    }
-    catch(const std::exception& e)
-    {
-        //! il faut verifier si response existe deja
-        std::vector<std::string> err_line = split(e.what(), ',');
-        // ajout de std::atoi
-        HTTPResponse response(err_line[0], std::atoi(err_line[1].c_str()), err_line[2]);
-    }
-}
+// void    Client::generateResponse() {
+//     try
+//     {
+//         requestCreation();
+//     }
+//     catch(const std::exception& e)
+//     {
+//         //! il faut verifier si response existe deja
+//         std::vector<std::string> err_line = split(e.what(), ',');
+//         // ajout de std::atoi
+//         HTTPResponse response(err_line[0], std::atoi(err_line[1].c_str()), err_line[2]);
+//     }
+// }
 
 //	Utilise le polymorphisme pour creer la bonne classe
 void Client::requestCreation()
@@ -135,10 +137,9 @@ void Client::requestCreation()
             }
         }
 
-        if (version == "HTTP/1.0" || version == "HTTP/1.1")
+        if (version == "HTTP/1.0" || version == "HTTP/1.1") 
             this->response = HTTPResponse (version , 400, "Bad Request");
-
-            throw std::runtime_error("400 Bad Request");
+        throw std::runtime_error("400 Bad Request");
     }
     catch (const std::exception& e)
     {

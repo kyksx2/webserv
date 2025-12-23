@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   HTTPRequest.cpp                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: yzeghari <yzeghari@student.42.fr>          +#+  +:+       +#+        */
+/*   By: kjolly <kjolly@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/24 13:45:23 by yzeghari          #+#    #+#             */
-/*   Updated: 2025/12/23 15:06:38 by yzeghari         ###   ########.fr       */
+/*   Updated: 2025/12/23 15:50:12 by kjolly           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,6 +77,7 @@ HTTPRequest::HTTPRequest(std::string &buffer, const Server& serv)
 	std::string line;
 	std::getline(ss, line);
 
+	(void) serv;
 	std::vector<std::string> firstline = split(line, ' ');
 	if (firstline.size() < 3)
 		throw HTTPRequest::HTTPRequestException("HTTP/1.1,400,Bad Request");
@@ -85,8 +86,12 @@ HTTPRequest::HTTPRequest(std::string &buffer, const Server& serv)
 	std::string version = firstline[2];
 
 	// Commence par version pour pouvoir le throw si je dois
-	if (!version.empty() && version.back() == '\r')// nettoyage du \r final
-		version.pop_back();
+	if (!version.empty() && version[this->m_version.length() - 1] == '\r')// nettoyage du \r final
+		if (!version.empty() && line[version.length() - 1] == '\r')
+		{
+			if (!version.empty())
+    			version.erase(version.length() - 1);
+		}
 
 	m_version = version;
 	if (m_version != "HTTP/1.0" && m_version != "HTTP/1.1")
@@ -108,8 +113,12 @@ HTTPRequest::HTTPRequest(std::string &buffer, const Server& serv)
 
 	while (std::getline(ss, line))
 	{
-		if (!line.empty() && line.back() == '\r')
-			line.pop_back();
+		if (!line.empty() && line[line.length() - 1] == '\r')
+			if (!line.empty() && line[line.length() - 1] == '\r')
+			{
+				if (!line.empty())
+					line.erase(line.length() - 1);
+			}
 		if (line.empty())
 			break;
 
@@ -274,6 +283,7 @@ bool HTTPRequest::IsKeepAlive()
 
 HTTPRequest::HTTPRequestException::HTTPRequestException(std::string err) throw()
 {
+	this->_err = err;
 }
 
 const char *HTTPRequest::HTTPRequestException::what() const throw()

@@ -6,7 +6,7 @@
 /*   By: kjolly <kjolly@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/25 14:31:54 by yzeghari          #+#    #+#             */
-/*   Updated: 2025/12/23 12:47:09 by kjolly           ###   ########.fr       */
+/*   Updated: 2025/12/23 15:40:13 by kjolly           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -155,4 +155,5 @@ HTTPResponse PostRequest::generateResponse()
 			return (postresponse);
 		}
 	}
+	return (postresponse);
 }

@@ -6,7 +6,7 @@
 /*   By: kjolly <kjolly@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/25 13:45:13 by yzeghari          #+#    #+#             */
-/*   Updated: 2025/12/23 12:43:25 by kjolly           ###   ########.fr       */
+/*   Updated: 2025/12/23 15:39:36 by kjolly           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,8 +56,8 @@ HTTPResponse GetRequest::generateResponse()
 	{
 		if (S_ISDIR(st.st_mode))
 		{
-			if (this->m_target.empty() || this->m_target.back() != '/')
-			{
+// Version compatible C++98
+			if (this->m_target.empty() || this->m_target[this->m_target.length() - 1] != '/')			{
 				// 301 redirect
 				getresponse.setHeader("Location", this->m_target + "/");
 				getresponse.setStatus(301, "Moved Permanently");
@@ -205,5 +205,6 @@ HTTPResponse GetRequest::generateResponse()
 		);
 		return(getresponse);
 	}
+	return (getresponse);
 }
 

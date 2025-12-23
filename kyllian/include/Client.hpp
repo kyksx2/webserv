@@ -15,9 +15,9 @@ class Client {
    Client&  operator=(const Client& src);
 
    void appendRequest(const char* request, int size);
-  //  bool completeRequest();
+   bool completeRequest();
   //  void parseRequest();
-   void generateResponse();
+  //  void generateResponse();
    void requestCreation();
    bool isKeepAlive();
    void clearState();
@@ -25,16 +25,17 @@ class Client {
    std::string& getResponseBuffer();
    int getClientFd();
    size_t getDataSent();
+   std::string& getRequestBuffer();
 
    void setDataSent(int n);
     void setResponseBuffer(std::string& response);
-
- private:
-   int client_fd;
-   size_t data_sent; 
-   Server* dad_serv;
-   std::string requestBuffer;
-   std::string responseBuffer;
+    
+    private:
+    int client_fd;
+    size_t data_sent; 
+    Server* dad_serv;
+    std::string requestBuffer;
+    std::string responseBuffer;
    HTTPRequest *request;
    HTTPResponse response;
 };
