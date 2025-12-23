@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   HTTPRequest.hpp                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: yzeghari <yzeghari@student.42.fr>          +#+  +:+       +#+        */
+/*   By: kjolly <kjolly@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/24 13:37:27 by yzeghari          #+#    #+#             */
-/*   Updated: 2025/12/19 17:00:09 by yzeghari         ###   ########.fr       */
+/*   Updated: 2025/12/23 13:04:37 by kjolly           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,6 +39,7 @@ class HTTPRequest
 		std::string	GetVersion() const;
 		std::string	GetBody() const;
 		std::map<std::string, std::string>	GetHeaders() const;
+		bool	IsKeepAlive();
 		virtual	HTTPResponse	generateResponse() = 0;
 
 		class	HTTPRequestException : public std::exception
@@ -47,6 +48,7 @@ class HTTPRequest
 				std::string	_err;
 			public :
 				HTTPRequestException(std::string err) throw();
+				
 				virtual const char	*what() const throw();
 				virtual ~HTTPRequestException() throw();
 		};

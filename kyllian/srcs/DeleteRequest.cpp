@@ -3,14 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   DeleteRequest.cpp                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: yzeghari <yzeghari@student.42.fr>          +#+  +:+       +#+        */
+/*   By: kjolly <kjolly@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/28 12:27:58 by yzeghari          #+#    #+#             */
-/*   Updated: 2025/12/19 15:16:25 by yzeghari         ###   ########.fr       */
+/*   Updated: 2025/12/23 12:43:15 by kjolly           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "DeleteRequest.hpp"
+#include "../include/DeleteRequest.hpp"
 
 DeleteRequest::DeleteRequest(std::string &buffer, const Server& serv)
 : HTTPRequest(buffer, serv)

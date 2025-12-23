@@ -3,14 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   HTTPRequest.cpp                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: yzeghari <yzeghari@student.42.fr>          +#+  +:+       +#+        */
+/*   By: kjolly <kjolly@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/24 13:45:23 by yzeghari          #+#    #+#             */
-/*   Updated: 2025/12/19 17:00:32 by yzeghari         ###   ########.fr       */
+/*   Updated: 2025/12/23 13:04:50 by kjolly           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "HTTPRequest.hpp"
+#include "../include/HTTPRequest.hpp"
 
 std::vector<std::string>	split(const std::string &chaine, char delimiteur)
 {
@@ -70,8 +70,6 @@ bool safe_atoi(const char *str, int &result)
 	result = value * sign;
 	return true;
 }
-
-
 
 HTTPRequest::HTTPRequest(std::string &buffer, const Server& serv)
 {
@@ -151,16 +149,20 @@ HTTPRequest::HTTPRequest(std::string &buffer, const Server& serv)
 
 	if (!m_headers.count("connection"))
 	{
+
+		if (this->m_version == "HTTP/1.0")
+		{
+			this->m_headers["connection"] = "keep-alive";
+		}
+		else
+			this->m_headers["connection"] = "close";
+	}
+	else
+	{
 		if (this->m_headers["connection"] != "keep-alive" && this->m_headers["connection"] != "close")
 		{
 			throw HTTPRequest::HTTPRequestException(m_version + ",400,Bad Request");
 		}
-		if (this->m_version == "HTTP/1.0")
-		{
-			this->m_headers["connection"] == "keep-alive";
-		}
-		else
-			this->m_headers["connection"] == "close";
 	}
 
 	if (!m_headers.count("host") && m_version == "HTTP/1.1")
@@ -251,6 +253,13 @@ std::string HTTPRequest::GetBody() const
 std::map<std::string, std::string> HTTPRequest::GetHeaders() const
 {
 	return (this->m_headers);
+}
+
+bool HTTPRequest::IsKeepAlive()
+{
+    if (this->m_headers["connection"] == "keep-alive")
+		return true;
+	return false;
 }
 
 HTTPRequest::HTTPRequestException::HTTPRequestException(std::string err) throw()

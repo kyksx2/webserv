@@ -3,14 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   HTTPResponse.cpp                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: yzeghari <yzeghari@student.42.fr>          +#+  +:+       +#+        */
+/*   By: kjolly <kjolly@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/04 12:59:01 by yzeghari          #+#    #+#             */
-/*   Updated: 2025/12/18 16:51:38 by yzeghari         ###   ########.fr       */
+/*   Updated: 2025/12/23 12:02:08 by kjolly           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "HTTPResponse.hpp"
+#include "../include/HTTPResponse.hpp"
 
 HTTPResponse::HTTPResponse()
 {

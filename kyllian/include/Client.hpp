@@ -1,6 +1,11 @@
 #ifndef CLIENT_H
 #define CLIENT_H
 #include "Server.hpp"
+#include "HTTPResponse.hpp"
+#include "HTTPRequest.hpp"
+#include "RequestMethod.hpp"
+
+class HTTPRequest;
 
 class Client {
  public:
@@ -12,8 +17,9 @@ class Client {
    void appendRequest(const char* request, int size);
   //  bool completeRequest();
   //  void parseRequest();
-  //  void generateResponse();
-  //  int isKeepAlive();
+   void generateResponse();
+   void requestCreation();
+   bool isKeepAlive();
    void clearState();
 
    std::string& getResponseBuffer();
@@ -29,8 +35,8 @@ class Client {
    Server* dad_serv;
    std::string requestBuffer;
    std::string responseBuffer;
-  //  httpRequest request;
-  //  httpResponse response;
+   HTTPRequest *request;
+   HTTPResponse response;
 };
 
 #endif

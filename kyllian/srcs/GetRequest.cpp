@@ -3,14 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   GetRequest.cpp                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: yzeghari <yzeghari@student.42.fr>          +#+  +:+       +#+        */
+/*   By: kjolly <kjolly@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/25 13:45:13 by yzeghari          #+#    #+#             */
-/*   Updated: 2025/12/19 15:18:00 by yzeghari         ###   ########.fr       */
+/*   Updated: 2025/12/23 12:43:25 by kjolly           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "GetRequest.hpp"
+#include "../include/GetRequest.hpp"
 
 GetRequest::GetRequest(std::string &buffer, const Server& serv)
 : HTTPRequest(buffer, serv)

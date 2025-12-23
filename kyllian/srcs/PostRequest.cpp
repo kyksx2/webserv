@@ -3,14 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   PostRequest.cpp                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: yzeghari <yzeghari@student.42.fr>          +#+  +:+       +#+        */
+/*   By: kjolly <kjolly@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/25 14:31:54 by yzeghari          #+#    #+#             */
-/*   Updated: 2025/12/19 15:22:06 by yzeghari         ###   ########.fr       */
+/*   Updated: 2025/12/23 12:47:09 by kjolly           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "PostRequest.hpp"
+#include "../include/PostRequest.hpp"
 
 PostRequest::PostRequest(std::string &buffer, const Server& serv)
 : HTTPRequest(buffer, serv)
