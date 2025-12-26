@@ -16,7 +16,7 @@ static HTTPRequest    *post_creation(std::string buffer, const Server &serv)
     return (new PostRequest(buffer, serv));
 }
 
-Client::Client(int fd, Server* find_server) : client_fd(fd), data_sent(0), dad_serv(find_server), requestBuffer(""), responseBuffer("") {}
+Client::Client(int fd, Server* find_server) : client_fd(fd), data_sent(0), dad_serv(find_server), headerParse(false), contentLength(0), isChunked(false), requestBuffer(""), responseBuffer("") {}
 
 Client::Client(const Client& src) {
     *this = src;
@@ -65,26 +65,30 @@ void    Client::setResponseBuffer(std::string& response) {
     this->responseBuffer = response;
 }
 
+// POST /dossier/page.html?query=123 HTTP/1.1\r\n      <-- 1. Request Line
+// Host: localhost:8080\r\n                            <-- 2. Headers
+// User-Agent: curl/7.68.0\r\n
+// Content-Length: 15\r\n
+// \r\n                                                <-- 3. Séparateur
+// nom=bob&age=22                                      <-- 4. Body
+
 bool    Client::completeRequest()
 {
-	try
-    {
-        requestCreation();
-		return true;
+    //? parser -> requestBuffer en 2 partie le header puis le body
+    if (this->headerParse = false) {
+        if (this->requestBuffer.find("/n/r/n/r") == std::string::npos)
+            return false;
+        else {
+            this->parseHeader();
+        }
     }
-    catch(const std::exception& e)
-    {
-		std::string	error = e.what();
-		if (error == "restart getbuffer")
-		{
-			// liberez tout mes copain nan en sah delete request si il faut
-			return false;
-		}
-        //! il faut verifier si response existe deja
-        std::vector<std::string> err_line = split(e.what(), ',');
-        // ajout de std::atoi
-        HTTPResponse response(err_line[0], std::atoi(err_line[1].c_str()), err_line[2]);
-		return true;
+    else if (this->headerParse = true) {
+        // if (this->isChunked) {
+        //     return true;
+        // }
+        if (this->contentLength > 0) {
+            size_t headerSize = this->requestBuffer.find("\n\r\n\r") + 4;
+        }
     }
 }
 
