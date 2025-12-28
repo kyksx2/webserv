@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   HTTPRequest.cpp                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kjolly <kjolly@student.42.fr>              +#+  +:+       +#+        */
+/*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/24 13:45:23 by yzeghari          #+#    #+#             */
-/*   Updated: 2025/12/23 15:50:12 by kjolly           ###   ########.fr       */
+/*   Updated: 2025/12/28 02:52:02 by marvin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,149 +71,102 @@ bool safe_atoi(const char *str, int &result)
 	return true;
 }
 
+
 HTTPRequest::HTTPRequest(std::string &buffer, const Server& serv)
 {
-	std::stringstream ss(buffer);
-	std::string line;
-	std::getline(ss, line);
+    std::stringstream ss(buffer);
+    std::string line;
+    std::getline(ss, line);
 
-	(void) serv;
-	std::vector<std::string> firstline = split(line, ' ');
-	if (firstline.size() < 3)
-		throw HTTPRequest::HTTPRequestException("HTTP/1.1,400,Bad Request");
+    (void) serv;
+    std::vector<std::string> firstline = split(line, ' ');
+    if (firstline.size() < 3)
+        throw HTTPRequest::HTTPRequestException("HTTP/1.1,400,Bad Request");
 
-	std::string target = firstline[1];
-	std::string version = firstline[2];
+    std::string method = firstline[0];
+    std::string target = firstline[1];
+    std::string version = firstline[2];
 
-	// Commence par version pour pouvoir le throw si je dois
-	if (!version.empty() && version[this->m_version.length() - 1] == '\r')// nettoyage du \r final
-		if (!version.empty() && line[version.length() - 1] == '\r')
-		{
-			if (!version.empty())
-    			version.erase(version.length() - 1);
-		}
+    // nettoyage du \r final sur la version
+    if (!version.empty() && version[version.length() - 1] == '\r')
+        version.erase(version.length() - 1);
 
-	m_version = version;
-	if (m_version != "HTTP/1.0" && m_version != "HTTP/1.1")
-		throw HTTPRequest::HTTPRequestException("HTTP/1.1,501,Not Implemented");
+    m_version = version;
+    if (m_version != "HTTP/1.0" && m_version != "HTTP/1.1")
+        throw HTTPRequest::HTTPRequestException("HTTP/1.1,501,Not Implemented");
 
+    // validation méthode minimale
+    if (method != "GET" && method != "POST" && method != "DELETE")
+        throw HTTPRequest::HTTPRequestException(m_version + ",405,Method Not Allowed");
 
-	// séparateur query
-	size_t pos = target.find('?');
-	if (pos != std::string::npos)
-	{		//separe le maillon avant/apres "?"
-		m_target = target.substr(0, pos);
-		query_creation(line);
-	}
-	else
-		m_target = target;
+    // séparateur query
+    size_t qpos = target.find('?');
+    if (qpos != std::string::npos)
+    {
+        m_target = target.substr(0, qpos);
+        query_creation(target.substr(qpos + 1));
+    }
+    else
+        m_target = target;
 
-	if (m_target.empty())
-		throw HTTPRequest::HTTPRequestException(m_version + ",400,Bad Request");
+    if (m_target.empty())
+        throw HTTPRequest::HTTPRequestException(m_version + ",400,Bad Request");
 
-	while (std::getline(ss, line))
-	{
-		if (!line.empty() && line[line.length() - 1] == '\r')
-			if (!line.empty() && line[line.length() - 1] == '\r')
-			{
-				if (!line.empty())
-					line.erase(line.length() - 1);
-			}
-		if (line.empty())
-			break;
+    while (std::getline(ss, line))
+    {
+        if (!line.empty() && line[line.length() - 1] == '\r')
+            line.erase(line.length() - 1);
 
-	// chercher le séparateur clé/valeur
-		size_t pos = line.find(':');
-		if (pos == std::string::npos)
-			throw HTTPRequest::HTTPRequestException(m_version + ",400,Bad Request");
+        if (line.empty())
+            break;
 
-		std::string key = line.substr(0, pos);
-		std::transform(key.begin(), key.end(), key.begin(), ::tolower);
-		std::string value = line.substr(pos + 1);
+        // séparateur clé/valeur
+        size_t pos = line.find(':');
+        if (pos == std::string::npos)
+            throw HTTPRequest::HTTPRequestException(m_version + ",400,Bad Request");
 
-		// trim espace(s) au début de la valeur
-		while (!value.empty() && value[0] == ' ')
-			value.erase(0, 1);
+        std::string key = line.substr(0, pos);
+        std::transform(key.begin(), key.end(), key.begin(), ::tolower);
+        std::string value = line.substr(pos + 1);
 
-		// gerer headers multiples (concat avec ", ")
-		if (m_headers.count(key))
-			m_headers[key] += ", " + value;
-		else
-			m_headers[key] = value;
-	}
-	// Verification des headers
+        // trim espaces au début de la valeur
+        while (!value.empty() && value[0] == ' ')
+            value.erase(0, 1);
 
-	if (m_headers.count("transfer-encoding"))
-	{
-		if (this->m_headers["transfer-encoding"] == "chunked" && this->m_version == "HTTP/1.0")
-		{
-			throw HTTPRequest::HTTPRequestException(m_version + "501 NotImplemented");
-		}
-	}
+        // headers multiples
+        if (m_headers.count(key))
+            m_headers[key] += ", " + value;
+        else
+            m_headers[key] = value;
+    }
 
-	if (m_headers.count("transfer-encoding") && m_headers.count("content-length"))
-	{
-		throw HTTPRequest::HTTPRequestException(m_version+",400,Bad Request");
-	}
+    // Transfer-Encoding + HTTP/1.0
+    if (m_headers.count("transfer-encoding") && m_headers.count("content-length"))
+    {
+        throw HTTPRequest::HTTPRequestException(m_version + ",400,Bad Request");
+    }
 
-	if (!m_headers.count("connection"))
-	{
+    // Transfer-Encoding + Content-Length interdits ensemble
+    if (m_headers.count("transfer-encoding") && m_headers.count("content-length"))
+        throw HTTPRequest::HTTPRequestException(m_version + ",400,Bad Request");
 
-		if (this->m_version == "HTTP/1.0")
-		{
-			this->m_headers["connection"] = "keep-alive";
-		}
-		else
-			this->m_headers["connection"] = "close";
-	}
-	else
-	{
-		if (this->m_headers["connection"] != "keep-alive" && this->m_headers["connection"] != "close")
-		{
-			throw HTTPRequest::HTTPRequestException(m_version + ",400,Bad Request");
-		}
-	}
-
-	if (!m_headers.count("host") && m_version == "HTTP/1.1")
-	{
-		throw HTTPRequest::HTTPRequestException(m_version + ",400,Bad Request");
-	}
-
-	// body
-	const std::string delimiter = "\r\n\r\n";
-	size_t headerEnd = buffer.find(delimiter);
-
-	if (headerEnd == std::string::npos)
-	{
-		throw HTTPRequest::HTTPRequestException("restart getbuffer");
-	}
-
-	// No body expected if no Content-Length
-	if (!m_headers.count("content-length"))
-	{
-		return;
-	}
-
-	int contentLength = 0;
-	if (!safe_atoi(m_headers["content-length"].c_str(), contentLength) || contentLength < 0)
-	{
-		throw HTTPRequest::HTTPRequestException(m_version + ",400,Bad Request");
-	}
-
-	// Optional max body size check
-	// if (contentLength > MAX_BODY_SIZE)
-	// 	throw HTTPRequest::HTTPRequestException(m_version + ",400,Bad Request");
-
-	size_t bodyStart = headerEnd + delimiter.length();
-
-	// Wait until full body is received
-	if (buffer.size() < bodyStart + static_cast<size_t>(contentLength))
-	{
-		throw HTTPRequest::HTTPRequestException("restart getbuffer");
-	}
-
-	m_body = buffer.substr(bodyStart, contentLength);
-
+    // Connection par défaut (corrigé)
+    if (!m_headers.count("connection"))
+    {
+        if (m_version == "HTTP/1.1")
+            m_headers["connection"] = "keep-alive";
+        else
+            m_headers["connection"] = "close";
+    }
+    else
+    {
+        if (m_headers["connection"] != "keep-alive" &&
+            m_headers["connection"] != "close")
+            throw HTTPRequest::HTTPRequestException(m_version + ",400,Bad Request");
+    }
+    // Host obligatoire en HTTP/1.1
+    if (!m_headers.count("host") && m_version == "HTTP/1.1")
+        throw HTTPRequest::HTTPRequestException(m_version + ",400,Bad Request");
 }
 
 void HTTPRequest::query_creation(std::string line)
@@ -242,6 +195,31 @@ void HTTPRequest::query_creation(std::string line)
 
 		this->m_query[key] = val;
 	}
+}
+
+void HTTPRequest::SetBody(std::string &buffer)
+{
+	const std::string delimiter = "\r\n\r\n";
+	size_t headerEnd = buffer.find(delimiter);
+
+	if (headerEnd == std::string::npos)
+		throw HTTPRequest::HTTPRequestException("restart getbuffer");
+
+	// Pas de body attendu sans Content-Length
+	if (!m_headers.count("content-length"))
+		return;
+
+	int contentLength = 0;
+	if (!safe_atoi(m_headers["content-length"].c_str(), contentLength) || contentLength < 0)
+		throw HTTPRequest::HTTPRequestException(m_version + ",400,Bad Request");
+
+	size_t bodyStart = headerEnd + delimiter.length();
+
+	// attendre body complet
+	if (buffer.size() < bodyStart + static_cast<size_t>(contentLength))
+		throw HTTPRequest::HTTPRequestException("restart getbuffer");
+
+	m_body = buffer.substr(bodyStart, contentLength);
 }
 
 HTTPRequest::~HTTPRequest()
@@ -274,6 +252,17 @@ std::map<std::string, std::string> HTTPRequest::GetHeaders() const
 	return (this->m_headers);
 }
 
+std::string HTTPRequest::GetHeaders_value(std::string key)
+{
+	std::string	val;
+
+	if (this->m_headers.count(key))
+	{
+		val = this->m_headers[key];
+	}
+	return val;
+}
+
 bool HTTPRequest::IsKeepAlive()
 {
     if (this->m_headers["connection"] == "keep-alive")
@@ -293,4 +282,36 @@ const char *HTTPRequest::HTTPRequestException::what() const throw()
 
 HTTPRequest::HTTPRequestException::~HTTPRequestException() throw()
 {
+}
+
+#include "HTTPRequest.hpp"
+
+std::ostream& operator<<(std::ostream& os, const HTTPRequest& req)
+{
+	os << "===== HTTPRequest =====" << std::endl;
+
+	os << "Target  : " << req.GetTarget() << std::endl;
+	os << "Version : " << req.GetVersion() << std::endl;
+
+	os << "--- Query ---" << std::endl;
+	std::map<std::string, std::string> query = req.GetQuery();
+	for (std::map<std::string, std::string>::const_iterator it = query.begin();
+		it != query.end(); ++it)
+	{
+		os << it->first << " = " << it->second << std::endl;
+	}
+
+	os << "--- Headers ---" << std::endl;
+	std::map<std::string, std::string> headers = req.GetHeaders();
+	for (std::map<std::string, std::string>::const_iterator it = headers.begin();
+		it != headers.end(); ++it)
+	{
+		os << it->first << ": " << it->second << std::endl;
+	}
+
+	os << "--- Body ---" << std::endl;
+	os << req.GetBody() << std::endl;
+
+	os << "=======================" << std::endl;
+	return os;
 }

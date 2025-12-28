@@ -5,7 +5,10 @@
 
 class Server {
  public:
-  Server(const Server_Config& conf);
+
+//   Server(const Server_Config& conf);
+Server(); // a supprimer plus tard
+
   ~Server();
   int getListenFd();
   struct sockaddr_in getAddr();
@@ -18,5 +21,6 @@ class Server {
   bool isAlive;
   struct sockaddr_in addr;
 };
+
 
 #endif
