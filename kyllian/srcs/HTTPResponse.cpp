@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   HTTPResponse.cpp                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kjolly <kjolly@student.42.fr>              +#+  +:+       +#+        */
+/*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/04 12:59:01 by yzeghari          #+#    #+#             */
-/*   Updated: 2025/12/23 12:02:08 by kjolly           ###   ########.fr       */
+/*   Updated: 2025/12/28 22:46:51 by marvin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,9 +63,12 @@ std::string	HTTPResponse::generate()
 
 	if (this->_status_code == 204 || this->_status_code == 304)
 		_body = "";
-		
+
 	//ptet a mttre en minuscule pour debug
-	_headers["Content-Length"] = _body.size();
+
+	std::ostringstream oss;
+	oss << _body.size();
+	_headers["Content-Length"] = oss.str();
 	for (std::map<std::string, std::string>::const_iterator it = _headers.begin();
 		it != _headers.end();
 		++it)

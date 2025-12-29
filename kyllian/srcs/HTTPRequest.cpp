@@ -6,7 +6,7 @@
 /*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/24 13:45:23 by yzeghari          #+#    #+#             */
-/*   Updated: 2025/12/28 02:52:02 by marvin           ###   ########.fr       */
+/*   Updated: 2025/12/28 22:23:32 by marvin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -199,28 +199,20 @@ void HTTPRequest::query_creation(std::string line)
 
 void HTTPRequest::SetBody(std::string &buffer)
 {
-	const std::string delimiter = "\r\n\r\n";
-	size_t headerEnd = buffer.find(delimiter);
-
-	if (headerEnd == std::string::npos)
-		throw HTTPRequest::HTTPRequestException("restart getbuffer");
-
-	// Pas de body attendu sans Content-Length
+	// Pas de body attendu
 	if (!m_headers.count("content-length"))
 		return;
 
 	int contentLength = 0;
 	if (!safe_atoi(m_headers["content-length"].c_str(), contentLength) || contentLength < 0)
-		throw HTTPRequest::HTTPRequestException(m_version + ",400,Bad Request");
+		throw HTTPRequestException(m_version + ",400,Bad Request");
 
-	size_t bodyStart = headerEnd + delimiter.length();
+	if (buffer.size() < static_cast<size_t>(contentLength))
+		return; // body incomplet → PAS une erreur
 
-	// attendre body complet
-	if (buffer.size() < bodyStart + static_cast<size_t>(contentLength))
-		throw HTTPRequest::HTTPRequestException("restart getbuffer");
-
-	m_body = buffer.substr(bodyStart, contentLength);
+	m_body = buffer.substr(0, contentLength);
 }
+
 
 HTTPRequest::~HTTPRequest()
 {

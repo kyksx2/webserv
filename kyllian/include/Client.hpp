@@ -16,16 +16,22 @@ class Client {
 	bool completeRequest();
 	void printHeader();
 	void printBody();
+
  	void requestCreation();
+	void	generateBufferResponse();
+	void	printBufferResponse();
+
 
  private:
 	bool headerParse;
+	bool	hasresponse;
 	size_t headerSize;
 	size_t contentLength;
 	bool isChunked;
 	HTTPRequest *request;
 	HTTPResponse response;
 	std::string requestBuffer;
+	std::string responseBuffer;
 };
 
 // class Client {

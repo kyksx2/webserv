@@ -6,7 +6,7 @@
 /*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/16 13:05:43 by kjolly            #+#    #+#             */
-/*   Updated: 2025/12/28 02:56:18 by marvin           ###   ########.fr       */
+/*   Updated: 2025/12/29 01:07:25 by marvin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,13 +53,17 @@ volatile int signal_running = 1;
 // }
 
 int main() {
-	std::string requet = "POST /index.html HTTP/1.1\r\nHost: 127.0.0.1\r\nContent-Length: 10\r\n\r\nHelloWorld";
+	std::string requet = "GET /index.html HTTP/1.1\r\nHost: 127.0.0.1\r\nContent-Length: 10\r\n\r\nHelloworld";
 	Client client;
 
 	client.setRequest(requet);
 	if (client.completeRequest())
 	{
 		client.printHeader();
+		std::cout << "______________response_______" << std::endl;
+		client.generateBufferResponse();
+		client.printBufferResponse();
+		std::cout << "_____________________________" << std::endl;
 		std::cout << "request complete" << std::endl;
 	}
 	else {

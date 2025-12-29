@@ -1,4 +1,5 @@
 #include "../include/Client.hpp"
+#include "Client.hpp"
 
 static HTTPRequest    *get_creation(std::string buffer, const Server &serv)
 {
@@ -72,7 +73,7 @@ static HTTPRequest    *post_creation(std::string buffer, const Server &serv)
 // // nom=bob&age=22                                      <-- 4. Body
 
 //! ici
-Client::Client() : headerParse(false), headerSize(0),contentLength(0), isChunked(false) {}
+Client::Client() : headerParse(false), hasresponse(false), headerSize(0), contentLength(0), isChunked(false), request(NULL) {}
 
 Client::~Client() {}
 
@@ -92,92 +93,6 @@ void Client::printBody() {
 	std::cout << this->requestBuffer.substr(this->headerSize) << std::endl;
 	std:: cout << " ---------------- " << std::endl;
 }
-
-//! ici
-bool    Client::completeRequest()
-{
-    // parser -> requestBuffer en 2 parties : header puis body
-    size_t pos;
-
-    // Séparateur HTTP correct
-    if ((pos = this->requestBuffer.find("\r\n\r\n")) == std::string::npos)
-        return false;
-
-    if (this->headerParse == false)
-    {
-        try
-        {
-            this->isChunked = false;
-
-            // Création de la requête (header only)
-            requestCreation();
-            this->headerParse = true;
-
-            // Vérification Content-Length
-            std::string contentlenght =
-                this->request->GetHeaders_value("content-length");
-
-            if (contentlenght.empty())
-            {
-                this->contentLength = 0;
-                return true;
-            }
-
-            int tmp;
-            if (!safe_atoi(contentlenght.c_str(), tmp))
-                return false;
-
-            // Content-Length négatif interdit
-            if (tmp < 0)
-                return false;
-
-            this->contentLength = tmp;
-            return true;
-        }
-        catch (const std::exception& e)
-        {
-            // il faut verifier si response existe deja
-            std::vector<std::string> err_line = split(e.what(), ',');
-
-            HTTPResponse response(
-                err_line[0],
-                std::atoi(err_line[1].c_str()),
-                err_line[2]
-            );
-
-            this->response = response;
-            return true;
-        }
-    }
-
-    // Récupération du body
-    std::string body_buffer = this->requestBuffer.substr(pos + 4);
-
-    if (this->headerParse == true &&
-        body_buffer.size() >= this->contentLength)
-    {
-		std::string body_buffer_b = body_buffer.substr(0, this->contentLength);
-        this->request->SetBody(body_buffer_b);
-        return true;
-    }
-
-    return false;
-}
-
-
-// void    Client::generateResponse() {
-//     try
-//     {
-//         requestCreation();
-//     }
-//     catch(const std::exception& e)
-//     {
-//         //! il faut verifier si response existe deja
-//         std::vector<std::string> err_line = split(e.what(), ',');
-//         // ajout de std::atoi
-//         HTTPResponse response(err_line[0], std::atoi(err_line[1].c_str()), err_line[2]);
-//     }
-// }
 
 //	Utilise le polymorphisme pour creer la bonne classe
 void Client::requestCreation()
@@ -199,7 +114,10 @@ void Client::requestCreation()
 	std::getline(ss, line);
 	std::vector<std::string> firstline = split(line, ' ');
 	if (firstline.size() < 3)
+	{
 		this->response = HTTPResponse ("HTTP/1.1", 400, "Bad Request");
+		this->hasresponse = true;
+	}
 
 	std::string		method_buffer = firstline[0];
 	std::string		version = firstline[2];
@@ -212,16 +130,110 @@ void Client::requestCreation()
 			if (method[i] == method_buffer)
 			{ // plus besoin de creer response direct
 				this->request = ft_method[i](this->requestBuffer, serv);
+				return;
 			}
 		}
 
 		if (version == "HTTP/1.0" || version == "HTTP/1.1")
+		{
 			this->response = HTTPResponse (version , 400, "Bad Request");
+			this->hasresponse = true;
+			return
+		}
 		throw std::runtime_error("400 Bad Request");
 	}
 	catch (const std::exception& e)
 	{
 		this->response = HTTPResponse("HTTP/1.1", 400, "Bad Request");
+		this->hasresponse = true;
 		return;
 	}
+}
+
+bool Client::completeRequest()
+{
+	size_t pos = this->requestBuffer.find("\r\n\r\n");
+	if (pos == std::string::npos)
+		return false;
+
+	// ===== HEADER =====
+	if (!this->headerParse)
+	{
+		try
+		{
+			this->isChunked = false;
+			requestCreation();
+
+			this->headerParse = true;
+
+			if (this->hasresponse)
+				return true;
+
+			std::string cl = this->request->GetHeaders_value("content-length");
+			if (cl.empty())
+			{
+				this->contentLength = 0;
+				return true;
+			}
+
+			int tmp;
+			if (!safe_atoi(cl.c_str(), tmp) || tmp < 0)
+				throw HTTPRequest::HTTPRequestException("HTTP/1.1,400,Bad Request");
+
+			this->contentLength = tmp;
+		}
+		catch (const std::exception& e)
+		{
+			std::vector<std::string> err = split(e.what(), ',');
+			this->response = HTTPResponse(err[0], atoi(err[1].c_str()), err[2]);
+			this->hasresponse = true;
+			return true;
+		}
+	}
+
+	// ===== BODY =====
+	std::string body = this->requestBuffer.substr(pos + 4);
+
+	if (body.size() < this->contentLength)
+		return false; // attendre plus de données
+
+	try
+	{
+		this->request->SetBody(body);
+		return true;
+	}
+	catch (const std::exception& e)
+	{
+		std::vector<std::string> err = split(e.what(), ',');
+		this->response = HTTPResponse(err[0], atoi(err[1].c_str()), err[2]);
+		this->hasresponse = true;
+		return true;
+	}
+}
+
+void	Client::generateBufferResponse()
+{
+	this->responseBuffer.clear();
+
+	if (this->hasresponse)
+	{
+		this->responseBuffer = this->response.generate();
+	}
+	else if (this->request)
+	{
+		this->response = this->request->generateResponse();
+		this->responseBuffer = this->response.generate();
+	}
+
+	if (this->request)
+	{
+		delete this->request;
+		this->request = NULL;
+	}
+}
+
+
+void Client::printBufferResponse()
+{
+	std::cout << this->responseBuffer;
 }
