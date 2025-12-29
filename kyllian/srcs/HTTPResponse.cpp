@@ -3,14 +3,15 @@
 /*                                                        :::      ::::::::   */
 /*   HTTPResponse.cpp                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
+/*   By: yzeghari <yzeghari@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/04 12:59:01 by yzeghari          #+#    #+#             */
-/*   Updated: 2025/12/28 22:46:51 by marvin           ###   ########.fr       */
+/*   Updated: 2025/12/29 11:49:28 by yzeghari         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../include/HTTPResponse.hpp"
+#include "HTTPResponse.hpp"
 
 HTTPResponse::HTTPResponse()
 {
@@ -50,7 +51,32 @@ void HTTPResponse::setBody(std::string body)
 	this->_body = body;
 }
 
-std::string	HTTPResponse::generate()
+std::string HTTPResponse::GetVersion() const
+{
+	return (this->_version);
+}
+
+int HTTPResponse::GetStatusCode() const
+{
+	return (this->_status_code);
+}
+
+std::string HTTPResponse::GetReason() const
+{
+	return (this->_reason_phrase);
+}
+
+std::map<std::string, std::string> HTTPResponse::GetHeaders() const
+{
+	return (this->_headers);
+}
+
+std::string HTTPResponse::GetBody() const
+{
+	return (this->_body);
+}
+
+std::string HTTPResponse::generate()
 {
 	std::ostringstream	response;
 
@@ -78,4 +104,27 @@ std::string	HTTPResponse::generate()
 	response << "\r\n";
 	response << this->_body;
 	return response.str();
+}
+
+std::ostream& operator<<(std::ostream& os, const HTTPResponse& res)
+{
+	os << "===== HTTPResponse =====" << std::endl;
+
+	os << "Version : " << res.GetVersion() << std::endl;
+	os << "Status Code : " << res.GetStatusCode() << std::endl;
+	os << "Reason : " << res.GetReason() << std::endl;
+
+	os << "--- Headers ---" << std::endl;
+	std::map<std::string, std::string> headers = res.GetHeaders();
+	for (std::map<std::string, std::string>::const_iterator it = headers.begin();
+		it != headers.end(); ++it)
+	{
+		os << it->first << ": " << it->second << std::endl;
+	}
+
+	os << "--- Body ---" << std::endl;
+	os << res.GetBody() << std::endl;
+
+	os << "=======================" << std::endl;
+	return os;
 }

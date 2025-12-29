@@ -12,26 +12,29 @@ class Client {
 	Client();
 	~Client();
 
-	void setRequest(std::string& buffer);
-	bool completeRequest();
-	void printHeader();
-	void printBody();
+	void 	setRequest(std::string& buffer);
+	bool 	completeRequest();
+ 	void 	requestCreation();
 
- 	void requestCreation();
+	void	printHeader();
+	void	printBody();
+	void	printRequest() const;
+	void	printResponse() const;
+
 	void	generateBufferResponse();
 	void	printBufferResponse();
 
 
  private:
-	bool headerParse;
+	bool	headerParse;
 	bool	hasresponse;
-	size_t headerSize;
-	size_t contentLength;
-	bool isChunked;
-	HTTPRequest *request;
-	HTTPResponse response;
-	std::string requestBuffer;
-	std::string responseBuffer;
+	size_t	headerSize;
+	size_t	contentLength;
+	bool	isChunked;
+	HTTPRequest	*request;
+	HTTPResponse	response;
+	std::string	requestBuffer;
+	std::string	responseBuffer;
 };
 
 // class Client {

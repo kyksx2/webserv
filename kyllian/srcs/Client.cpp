@@ -94,6 +94,30 @@ void Client::printBody() {
 	std:: cout << " ---------------- " << std::endl;
 }
 
+void Client::printRequest() const
+{
+	if (this->request == NULL)
+	{
+		std::cout << "________________" << std::endl;
+		std::cout << "Nothing to Print" << std::endl;
+		std::cout << "________________" << std::endl;
+		return ;
+	}
+	std::cout << this->request;
+}
+
+void Client::printResponse() const
+{
+	if (!this->hasresponse)
+	{
+		std::cout << "________________" << std::endl;
+		std::cout << "Nothing to Print" << std::endl;
+		std::cout << "________________" << std::endl;
+		return ;
+	}
+	std::cout << this->response;
+}
+
 //	Utilise le polymorphisme pour creer la bonne classe
 void Client::requestCreation()
 {
@@ -130,7 +154,7 @@ void Client::requestCreation()
 			if (method[i] == method_buffer)
 			{ // plus besoin de creer response direct
 				this->request = ft_method[i](this->requestBuffer, serv);
-				return;
+				return ;
 			}
 		}
 
@@ -138,7 +162,7 @@ void Client::requestCreation()
 		{
 			this->response = HTTPResponse (version , 400, "Bad Request");
 			this->hasresponse = true;
-			return
+			return;
 		}
 		throw std::runtime_error("400 Bad Request");
 	}
