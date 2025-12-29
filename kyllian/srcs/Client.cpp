@@ -16,7 +16,8 @@ static HTTPRequest    *post_creation(std::string buffer, const Server &serv)
     return (new PostRequest(buffer, serv));
 }
 
-Client::Client(int fd, Server* find_server) : client_fd(fd), data_sent(0), dad_serv(find_server), headerParse(false), contentLength(0), isChunked(false), requestBuffer(""), responseBuffer("") {}
+Client::Client(int fd, Server* find_server) : client_fd(fd), data_sent(0), dad_serv(find_server), headerParse(false), headerSize(0),contentLength(0),
+    isChunked(false), requestBuffer(""), responseBuffer("") {}
 
 Client::Client(const Client& src) {
     *this = src;
@@ -79,15 +80,21 @@ bool    Client::completeRequest()
         if (this->requestBuffer.find("/n/r/n/r") == std::string::npos)
             return false;
         else {
-            this->parseHeader();
+            this->headerSize = this->requestBuffer.find("\n\r\n\r") + 4;
+            this->printHeader();
         }
     }
     else if (this->headerParse = true) {
-        // if (this->isChunked) {
-        //     return true;
-        // }
+        if (this->isChunked) {
+            if (this->requestBuffer.find("/0/n/r/n/r") == std::string::npos)
+                return false;
+        }
         if (this->contentLength > 0) {
-            size_t headerSize = this->requestBuffer.find("\n\r\n\r") + 4;
+            size_t buffer_size = this->requestBuffer.size();
+            size_t i = buffer_size - this->headerSize;
+            if (this->contentLength <= i) {
+                this->printBody();
+            }
         }
     }
 }

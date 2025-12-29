@@ -35,6 +35,7 @@ class Client {
 	size_t data_sent; 
 	Server* dad_serv;
 	bool headerParse;
+	size_t headerSize;
 	size_t contentLength;
 	bool isChunked;
 	std::string requestBuffer;

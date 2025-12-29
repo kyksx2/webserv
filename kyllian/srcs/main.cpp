@@ -6,13 +6,13 @@
 /*   By: kjolly <kjolly@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/16 13:05:43 by kjolly            #+#    #+#             */
-/*   Updated: 2025/12/22 13:43:20 by kjolly           ###   ########.fr       */
+/*   Updated: 2025/12/27 16:31:26 by kjolly           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../include/Webserv.hpp"
 
-//! add a signal handler
+//! gerer les timeout -> 60secondes sans activites = deconnection
 
 volatile int signal_running = 1;
 
