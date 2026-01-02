@@ -16,8 +16,10 @@ static HTTPRequest    *post_creation(std::string buffer, const Server &serv)
     return (new PostRequest(buffer, serv));
 }
 
-Client::Client(int fd, Server* find_server) : client_fd(fd), data_sent(0), dad_serv(find_server), headerParse(false), headerSize(0),contentLength(0),
-    isChunked(false), requestBuffer(""), responseBuffer("") {}
+Client::Client(int fd, Server* find_server) : client_fd(fd), data_sent(0), dad_serv(find_server), /*headerParse(false), headerSize(0),contentLength(0),
+    isChunked(false), */requestBuffer(""), responseBuffer("") {
+        start = time(NULL);
+}
 
 Client::Client(const Client& src) {
     *this = src;
@@ -60,6 +62,10 @@ void    Client::clearState() {
     this->requestBuffer.clear();
 }
 
+void Client::restartTimer() { this->start = time(NULL); } //?????????????????????????????????? changement
+
+time_t Client::getStart() { return (this->start); } //???????????????????????????????? changement
+
 std::string& Client::getResponseBuffer() { return this->responseBuffer; }
 
 void    Client::setResponseBuffer(std::string& response) {
@@ -73,31 +79,31 @@ void    Client::setResponseBuffer(std::string& response) {
 // \r\n                                                <-- 3. Séparateur
 // nom=bob&age=22                                      <-- 4. Body
 
-bool    Client::completeRequest()
-{
-    //? parser -> requestBuffer en 2 partie le header puis le body
-    if (this->headerParse = false) {
-        if (this->requestBuffer.find("/n/r/n/r") == std::string::npos)
-            return false;
-        else {
-            this->headerSize = this->requestBuffer.find("\n\r\n\r") + 4;
-            this->printHeader();
-        }
-    }
-    else if (this->headerParse = true) {
-        if (this->isChunked) {
-            if (this->requestBuffer.find("/0/n/r/n/r") == std::string::npos)
-                return false;
-        }
-        if (this->contentLength > 0) {
-            size_t buffer_size = this->requestBuffer.size();
-            size_t i = buffer_size - this->headerSize;
-            if (this->contentLength <= i) {
-                this->printBody();
-            }
-        }
-    }
-}
+// bool    Client::completeRequest()
+// {
+//     //? parser -> requestBuffer en 2 partie le header puis le body
+//     if (this->headerParse = false) {
+//         if (this->requestBuffer.find("/n/r/n/r") == std::string::npos)
+//             return false;
+//         else {
+//             this->headerSize = this->requestBuffer.find("\n\r\n\r") + 4;
+//             this->printHeader();
+//         }
+//     }
+//     else if (this->headerParse = true) {
+//         if (this->isChunked) {
+//             if (this->requestBuffer.find("/0/n/r/n/r") == std::string::npos)
+//                 return false;
+//         }
+//         if (this->contentLength > 0) {
+//             size_t buffer_size = this->requestBuffer.size();
+//             size_t i = buffer_size - this->headerSize;
+//             if (this->contentLength <= i) {
+//                 this->printBody();
+//             }
+//         }
+//     }
+// }
 
 // void    Client::generateResponse() {
 //     try
@@ -124,8 +130,8 @@ void Client::requestCreation()
 	const	Server &serv = *(this->dad_serv); // conversion pointeur -> reference
     HTTPRequest *(*ft_method[])(std::string, const Server&) = {
         get_creation,
-        delete_creation,
-        post_creation
+        post_creation,
+        delete_creation
     };
     std::stringstream ss(this->requestBuffer);
     std::string line;

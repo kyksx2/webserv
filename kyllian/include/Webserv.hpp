@@ -30,26 +30,27 @@ extern volatile sig_atomic_t signal_running;
 
 class WebServ {
  public:
-    WebServ(const std::string& conf);
-    ~WebServ();
+	WebServ(const std::string& conf);
+	~WebServ();
 
-    void run();
-    void epollInit();
-    void handleNewClient(Server* find_server);
-    void readClientData(int event_fd);
-    void sendClientData(int event_fd);
-    void closeClient(int event_fd);
+	void run();
+	void epollInit();
+	void handleNewClient(Server* find_server);
+	void readClientData(int event_fd);
+	void sendClientData(int event_fd);
+	void closeClient(int event_fd);
+	void checkTimeout();
 
-   // void printEverythings();
+	// void printEverythings();
 
-    class initException : public std::exception {
-      public:
-         const char* what() const throw();
-    };
+	class initException : public std::exception {
+		public:
+			const char* what() const throw();
+	};
  private:
-    std::map<int, Server*> servers;
-    std::map<int, Client*> clients;
-    int epoll_fd;
+	std::map<int, Server*> servers;
+	std::map<int, Client*> clients;
+	int epoll_fd;
 };
 
 #endif

@@ -15,29 +15,32 @@ class Client {
 	Client&  operator=(const Client& src);
 
 	void appendRequest(const char* request, int size);
-	bool completeRequest();
+	// bool completeRequest();
 	//void parseRequest();
 	//void generateResponse();
 	void requestCreation();
 	bool isKeepAlive();
 	void clearState();
+	void restartTimer();
 
 	std::string& getResponseBuffer();
 	int getClientFd();
 	size_t getDataSent();
 	std::string& getRequestBuffer();
+	time_t	getStart();
 
 	void setDataSent(int n);
 	void setResponseBuffer(std::string& response);
 
  private:
+	time_t start; //? new a ajouter
 	int client_fd;
 	size_t data_sent; 
 	Server* dad_serv;
-	bool headerParse;
-	size_t headerSize;
-	size_t contentLength;
-	bool isChunked;
+	// bool headerParse;
+	// size_t headerSize;
+	// size_t contentLength;
+	// bool isChunked;
 	std::string requestBuffer;
 	std::string responseBuffer;
 	HTTPRequest *request;
