@@ -1,5 +1,4 @@
 #include "../include/Client.hpp"
-#include "Client.hpp"
 
 static HTTPRequest    *get_creation(std::string buffer, const Server &serv)
 {
@@ -16,7 +15,10 @@ static HTTPRequest    *post_creation(std::string buffer, const Server &serv)
     return (new PostRequest(buffer, serv));
 }
 
-// Client::Client(int fd, Server* find_server) : client_fd(fd), data_sent(0), dad_serv(find_server), headerParse(false), contentLength(0), isChunked(false), requestBuffer(""), responseBuffer("") {}
+Client::Client(int fd, Server* find_server) : client_fd(fd), data_sent(0), dad_serv(find_server), /*headerParse(false), headerSize(0),contentLength(0),
+    isChunked(false), */requestBuffer(""), responseBuffer("") {
+        start = time(NULL);
+}
 
 // Client::Client(const Client& src) {
 //     *this = src;
@@ -88,23 +90,48 @@ void Client::printHeader() {
 	std::cout << *(this->request);
 }
 
-void Client::printBody() {
-	std::cout << "---- BODY -----" << std::endl;
-	std::cout << this->requestBuffer.substr(this->headerSize) << std::endl;
-	std:: cout << " ---------------- " << std::endl;
+void Client::restartTimer() { this->start = time(NULL); } //?????????????????????????????????? changement
+
+time_t Client::getStart() { return (this->start); } //???????????????????????????????? changement
+
+std::string& Client::getResponseBuffer() { return this->responseBuffer; }
+
+void    Client::setResponseBuffer(std::string& response) {
+    this->responseBuffer = response;
 }
 
-void Client::printRequest() const
-{
-	if (this->request == NULL)
-	{
-		std::cout << "________________" << std::endl;
-		std::cout << "Nothing to Print" << std::endl;
-		std::cout << "________________" << std::endl;
-		return ;
-	}
-	std::cout << this->request;
-}
+// POST /dossier/page.html?query=123 HTTP/1.1\r\n      <-- 1. Request Line
+// Host: localhost:8080\r\n                            <-- 2. Headers
+// User-Agent: curl/7.68.0\r\n
+// Content-Length: 15\r\n
+// \r\n                                                <-- 3. Séparateur
+// nom=bob&age=22                                      <-- 4. Body
+
+// bool    Client::completeRequest()
+// {
+//     //? parser -> requestBuffer en 2 partie le header puis le body
+//     if (this->headerParse = false) {
+//         if (this->requestBuffer.find("/n/r/n/r") == std::string::npos)
+//             return false;
+//         else {
+//             this->headerSize = this->requestBuffer.find("\n\r\n\r") + 4;
+//             this->printHeader();
+//         }
+//     }
+//     else if (this->headerParse = true) {
+//         if (this->isChunked) {
+//             if (this->requestBuffer.find("/0/n/r/n/r") == std::string::npos)
+//                 return false;
+//         }
+//         if (this->contentLength > 0) {
+//             size_t buffer_size = this->requestBuffer.size();
+//             size_t i = buffer_size - this->headerSize;
+//             if (this->contentLength <= i) {
+//                 this->printBody();
+//             }
+//         }
+//     }
+// }
 
 void Client::printResponse() const
 {
@@ -122,9 +149,22 @@ void Client::printResponse() const
 void Client::requestCreation()
 {
 	//! pensez a delete request && a verifier si response existe avent d essayer de le creer grace a generate (= solution envisageable throw)
-	int			i;
-	std::string method[] = {"GET", "POST", "DELETE"};
-	// const	Server &serv = *(this->dad_serv); // conversion pointeur -> reference
+    HTTPRequest     *request;
+    HTTPResponse    response;
+    int    i;
+    std::string method[] = {"GET", "POST", "DELETE"};
+	const	Server &serv = *(this->dad_serv); // conversion pointeur -> reference
+    HTTPRequest *(*ft_method[])(std::string, const Server&) = {
+        get_creation,
+        post_creation,
+        delete_creation
+    };
+    std::stringstream ss(this->requestBuffer);
+    std::string line;
+    std::getline(ss, line);
+    std::vector<std::string> firstline = split(line, ' ');
+    if (firstline.size() < 3)
+        this->response = HTTPResponse ("HTTP/1.1", 400, "Bad Request");
 
 	const	Server &serv = (Server ());
 
