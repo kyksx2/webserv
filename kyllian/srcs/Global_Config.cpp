@@ -1,7 +1,7 @@
-#include "../include/Config.hpp"
+#include "../include/Global_Config.hpp"
 #include "../include/parsing.hpp"
 
-Config::Config(const std::string& filepath) {
+Global_Config::Global_Config(const std::string& filepath) {
     parsing(filepath);
 }
 
@@ -14,7 +14,7 @@ Config::Config(const std::string& filepath) {
 //     }
 // }
 
-Server_Config Config::buildServer(const ConfigNode& node)
+Server_Config Global_Config::buildServer(const ConfigNode& node)
 {
     std::stringstream   ss;
     Server_Config       server;
@@ -70,7 +70,7 @@ Server_Config Config::buildServer(const ConfigNode& node)
     return (server);
 }
 
-Location_config Config::buildLocation(const ConfigNode& node)
+Location_config Global_Config::buildLocation(const ConfigNode& node)
 {
     Location_config location;
     std::stringstream   ss;
@@ -121,7 +121,7 @@ Location_config Config::buildLocation(const ConfigNode& node)
     return (location);
 }
 
-void    Config::parsing(const std::string& filepath)
+void    Global_Config::parsing(const std::string& filepath)
 {
     try
     {
@@ -147,13 +147,13 @@ void    Config::parsing(const std::string& filepath)
     
 }
 
-const std::vector<Server_Config>& Config::getConfVect() const {
+const std::vector<Server_Config>& Global_Config::getConfVect() const {
     return (this->_servers);
 }
 
 /*-----------------------UTILS-----------------------------*/
 
-void Config::print() const {
+void Global_Config::print() const {
     std::cout << "=== Configuration ===" << std::endl;
     std::cout << "File: " << _configFilePath << std::endl;
     std::cout << "Servers (" << _servers.size() << "):" << std::endl;
@@ -163,5 +163,3 @@ void Config::print() const {
         std::cout << std::endl;
     }
 }
-
-

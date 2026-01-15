@@ -1,17 +1,17 @@
-#ifndef CONFIG_HPP
-#define CONFIG_HPP
+#ifndef GLOBAL_CONFIG_HPP
+#define GLOBAL_CONFIG_HPP
 
 #include "Server_config.hpp"
 #include "parsing.hpp"
 
 // CLASSE CONFIG QUI PREND TOUT LES SERVEURS DANS UN VECTOR
-class Config{
+class Global_Config{
 private:
     std::vector<Server_Config> _servers;
     std::string _configFilePath;
 
 public:
-    explicit Config(const std::string& filepath);
+    explicit Global_Config(const std::string& filepath);
     
     // Parsing
     void parsing(const std::string& filepath);

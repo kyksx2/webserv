@@ -1,4 +1,4 @@
-#include "../include/Config.hpp"
+#include "../include/Global_Config.hpp"
 #include "../include/parsing.hpp"
 
 bool isStringDigit(std::string str)

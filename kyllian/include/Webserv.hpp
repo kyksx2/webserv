@@ -16,7 +16,7 @@
 
 #include "Server.hpp"
 #include "Client.hpp"
-#include "Config.hpp"
+#include "Global_Config.hpp"
 #include "Server_config.hpp"
 
 #define EVENTS_MAX 1024
