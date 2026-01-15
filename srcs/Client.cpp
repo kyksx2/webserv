@@ -1,4 +1,5 @@
 #include "../include/Client.hpp"
+#include "Client.hpp"
 
 static HTTPRequest    *get_creation(std::string buffer, const Server &serv)
 {
@@ -77,24 +78,20 @@ void    Client::setResponseBuffer(std::string& response) {
 //! ici
 Client::Client() : headerParse(false), headerSize(0), contentLength(0), isChunked(false), parsresponse(false), request(NULL) {}
 
-// void	Client::setRequest(std::string& buffer) {
-// 	this->requestBuffer = buffer;
-// }
+void	Client::setRequest(std::string& buffer) {
+	this->requestBuffer = buffer;
+}
 
-// void Client::printHeader() {
-// 	std::cout << "---- HEADER -----" << std::endl;
-// 	std::cout << this->requestBuffer.substr(0, this->headerSize - 4) << std::endl;
-// 	std:: cout << " ---------------- " << std::endl;
-// 	std::cout << *(this->request);
-// }
+void Client::printHeader() {
+	std::cout << "---- HEADER -----" << std::endl;
+	std::cout << this->requestBuffer.substr(0, this->headerSize - 4) << std::endl;
+	std:: cout << " ---------------- " << std::endl;
+	std::cout << *(this->request);
+}
 
 void Client::restartTimer() { this->start = time(NULL); } //?????????????????????????????????? changement
 
 time_t Client::getStart() { return (this->start); } //???????????????????????????????? changement
-
-// void    Client::setResponseBuffer(std::string& response) {
-//     this->responseBuffer = response;
-// }
 
 // POST /dossier/page.html?query=123 HTTP/1.1\r\n      <-- 1. Request Line
 // Host: localhost:8080\r\n                            <-- 2. Headers
@@ -253,7 +250,7 @@ void	Client::generateBufferResponse()
 }
 
 
-// void Client::printBufferResponse()
-// {
-// 	std::cout << this->responseBuffer;
-// }
+void Client::printBufferResponse()
+{
+	std::cout << this->responseBuffer;
+}

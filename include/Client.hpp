@@ -10,7 +10,7 @@ class HTTPRequest;
 class Client {
  public:
 	Client();
-	Client(int fd, Server* find_server);
+	Client(int fd, Server *find_server);
 	Client(const Client& src);
 	Client&	operator=(const Client& src);
 	~Client();
@@ -19,7 +19,7 @@ class Client {
 	bool	completeRequest();
 	void	requestCreation();
 	void	generateBufferResponse();
-	void	clearState();
+	void clearState();
 	void	restartTimer();
 	int	getClientFd() const;
 	Server*	getServer() const;
@@ -33,7 +33,12 @@ class Client {
 	void	setResponseBuffer(std::string& response);
 	time_t			getStart();
 
- private:
+	void setRequest(std::string &buffer);
+	void printHeader();
+	void printBufferResponse();
+
+
+private:
 	int	client_fd;
 	Server*	dad_serv;
 	time_t	start;
