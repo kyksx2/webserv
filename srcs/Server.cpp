@@ -1,9 +1,9 @@
 #include "../include/Server.hpp"
 #include "../include/Webserv.hpp"
 
-// Server::Server(const Server_Config& conf) : config(conf), listen_fd(-1), isAlive(true) {
-//     memset(&this->addr, 0, sizeof(addr));
-// }
+Server::Server(const Server_Config& conf) : config(conf), listen_fd(-1), isAlive(true) {
+    memset(&this->addr, 0, sizeof(addr));
+}
 
 Server::Server(){} //! a supprimer plus tard
 

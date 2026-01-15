@@ -15,57 +15,57 @@ static HTTPRequest    *post_creation(std::string buffer, const Server &serv)
     return (new PostRequest(buffer, serv));
 }
 
-Client::Client(int fd, Server* find_server) : client_fd(fd), data_sent(0), dad_serv(find_server), /*headerParse(false), headerSize(0),contentLength(0),
+Client::Client(int fd, Server* find_server) : client_fd(fd), dad_serv(find_server), data_sent(0),/*headerParse(false), headerSize(0),contentLength(0),
     isChunked(false), */requestBuffer(""), responseBuffer("") {
         start = time(NULL);
 }
 
-// Client::Client(const Client& src) {
-//     *this = src;
-// }
+Client::Client(const Client& src) {
+    *this = src;
+}
 
-// Client&  Client::operator=(const Client& src) {
-//     if (this != &src) {
-//         this->client_fd = src.client_fd;
-//         this->data_sent = src.data_sent;
-//         this->dad_serv = src.dad_serv;
-//         // this->requestBuffer = src.requestBuffer;
-//         // this->responseBuffer = src.responseBuffer;
-//         //! pour les 2 classe request et responses verifier qu'il y a bien un constructeur de copie
-//     }
-//     return (*this);
-// }
+Client&  Client::operator=(const Client& src) {
+    if (this != &src) {
+        this->client_fd = src.client_fd;
+        this->data_sent = src.data_sent;
+        this->dad_serv = src.dad_serv;
+        // this->requestBuffer = src.requestBuffer;
+        // this->responseBuffer = src.responseBuffer;
+        //! pour les 2 classe request et responses verifier qu'il y a bien un constructeur de copie
+    }
+    return (*this);
+}
 
-// Client::~Client() {}
+Client::~Client() {}
 
 // bool Client::isKeepAlive() { return this->request->IsKeepAlive(); }
 
-// size_t  Client::getDataSent() { return this->data_sent; }
+size_t  Client::getDataSent() const { return this->data_sent; }
 
-// int Client::getClientFd() { return this->client_fd; }
+int Client::getClientFd() const { return this->client_fd; }
 
-// std::string& Client::getRequestBuffer() { return this->requestBuffer; }
+std::string& Client::getRequestBuffer() { return this->requestBuffer; }
 
-// void    Client::setDataSent(int n) { this->data_sent = n; }
+void    Client::setDataSent(size_t n) { this->data_sent = n; }
 
 
-// void    Client::appendRequest(const char* request, int size) {
-//     if (!request || size <= 0)
-//         return;
-//     this->requestBuffer.append(request, size);
-// }
+void    Client::appendRequest(const char* request, int size) {
+    if (!request || size <= 0)
+        return;
+    this->requestBuffer.append(request, size);
+}
 
-// void    Client::clearState() {
-//     this->data_sent = 0;
-//     this->responseBuffer.clear();
-//     this->requestBuffer.clear();
-// }
+void    Client::clearState() {
+    this->data_sent = 0;
+    this->responseBuffer.clear();
+    this->requestBuffer.clear();
+}
 
-// std::string& Client::getResponseBuffer() { return this->responseBuffer; }
+std::string& Client::getResponseBuffer() { return this->responseBuffer; }
 
-// void    Client::setResponseBuffer(std::string& response) {
-//     this->responseBuffer = response;
-// }
+void    Client::setResponseBuffer(std::string& response) {
+    this->responseBuffer = response;
+}
 
 // // POST /dossier/page.html?query=123 HTTP/1.1\r\n      <-- 1. Request Line
 // // Host: localhost:8080\r\n                            <-- 2. Headers
@@ -75,20 +75,20 @@ Client::Client(int fd, Server* find_server) : client_fd(fd), data_sent(0), dad_s
 // // nom=bob&age=22                                      <-- 4. Body
 
 //! ici
-Client::Client() : headerParse(false), hasresponse(false), headerSize(0), contentLength(0), isChunked(false), request(NULL) {}
+Client::Client() : headerParse(false), headerSize(0), contentLength(0), isChunked(false), parsresponse(false), request(NULL) {}
 
 Client::~Client() {}
 
-void	Client::setRequest(std::string& buffer) {
-	this->requestBuffer = buffer;
-}
+// void	Client::setRequest(std::string& buffer) {
+// 	this->requestBuffer = buffer;
+// }
 
-void Client::printHeader() {
-	std::cout << "---- HEADER -----" << std::endl;
-	std::cout << this->requestBuffer.substr(0, this->headerSize - 4) << std::endl;
-	std:: cout << " ---------------- " << std::endl;
-	std::cout << *(this->request);
-}
+// void Client::printHeader() {
+// 	std::cout << "---- HEADER -----" << std::endl;
+// 	std::cout << this->requestBuffer.substr(0, this->headerSize - 4) << std::endl;
+// 	std:: cout << " ---------------- " << std::endl;
+// 	std::cout << *(this->request);
+// }
 
 void Client::restartTimer() { this->start = time(NULL); } //?????????????????????????????????? changement
 
@@ -96,9 +96,9 @@ time_t Client::getStart() { return (this->start); } //??????????????????????????
 
 std::string& Client::getResponseBuffer() { return this->responseBuffer; }
 
-void    Client::setResponseBuffer(std::string& response) {
-    this->responseBuffer = response;
-}
+// void    Client::setResponseBuffer(std::string& response) {
+//     this->responseBuffer = response;
+// }
 
 // POST /dossier/page.html?query=123 HTTP/1.1\r\n      <-- 1. Request Line
 // Host: localhost:8080\r\n                            <-- 2. Headers
@@ -107,49 +107,23 @@ void    Client::setResponseBuffer(std::string& response) {
 // \r\n                                                <-- 3. Séparateur
 // nom=bob&age=22                                      <-- 4. Body
 
-// bool    Client::completeRequest()
+// void Client::printResponse() const
 // {
-//     //? parser -> requestBuffer en 2 partie le header puis le body
-//     if (this->headerParse = false) {
-//         if (this->requestBuffer.find("/n/r/n/r") == std::string::npos)
-//             return false;
-//         else {
-//             this->headerSize = this->requestBuffer.find("\n\r\n\r") + 4;
-//             this->printHeader();
-//         }
-//     }
-//     else if (this->headerParse = true) {
-//         if (this->isChunked) {
-//             if (this->requestBuffer.find("/0/n/r/n/r") == std::string::npos)
-//                 return false;
-//         }
-//         if (this->contentLength > 0) {
-//             size_t buffer_size = this->requestBuffer.size();
-//             size_t i = buffer_size - this->headerSize;
-//             if (this->contentLength <= i) {
-//                 this->printBody();
-//             }
-//         }
-//     }
+// 	if (!this->parsresponse)
+// 	{
+// 		std::cout << "________________" << std::endl;
+// 		std::cout << "Nothing to Print" << std::endl;
+// 		std::cout << "________________" << std::endl;
+// 		return ;
+// 	}
+// 	std::cout << this->response;
 // }
-
-void Client::printResponse() const
-{
-	if (!this->hasresponse)
-	{
-		std::cout << "________________" << std::endl;
-		std::cout << "Nothing to Print" << std::endl;
-		std::cout << "________________" << std::endl;
-		return ;
-	}
-	std::cout << this->response;
-}
 
 //	Utilise le polymorphisme pour creer la bonne classe
 void Client::requestCreation()
 {
 	//! pensez a delete request && a verifier si response existe avent d essayer de le creer grace a generate (= solution envisageable throw)
-    HTTPRequest     *request;
+    // HTTPRequest     *request;
     HTTPResponse    response;
     int    i;
     std::string method[] = {"GET", "POST", "DELETE"};
@@ -163,24 +137,10 @@ void Client::requestCreation()
     std::string line;
     std::getline(ss, line);
     std::vector<std::string> firstline = split(line, ' ');
-    if (firstline.size() < 3)
-        this->response = HTTPResponse ("HTTP/1.1", 400, "Bad Request");
-
-	const	Server &serv = (Server ());
-
-	HTTPRequest *(*ft_method[])(std::string, const Server&) = {
-		get_creation,
-		delete_creation,
-		post_creation
-	};
-	std::stringstream ss(this->requestBuffer);
-	std::string line;
-	std::getline(ss, line);
-	std::vector<std::string> firstline = split(line, ' ');
 	if (firstline.size() < 3)
 	{
 		this->response = HTTPResponse ("HTTP/1.1", 400, "Bad Request");
-		this->hasresponse = true;
+		this->parsresponse = true;
 	}
 
 	std::string		method_buffer = firstline[0];
@@ -201,7 +161,7 @@ void Client::requestCreation()
 		if (version == "HTTP/1.0" || version == "HTTP/1.1")
 		{
 			this->response = HTTPResponse (version , 400, "Bad Request");
-			this->hasresponse = true;
+			this->parsresponse = true;
 			return;
 		}
 		throw std::runtime_error("400 Bad Request");
@@ -209,7 +169,7 @@ void Client::requestCreation()
 	catch (const std::exception& e)
 	{
 		this->response = HTTPResponse("HTTP/1.1", 400, "Bad Request");
-		this->hasresponse = true;
+		this->parsresponse = true;
 		return;
 	}
 }
@@ -230,7 +190,7 @@ bool Client::completeRequest()
 
 			this->headerParse = true;
 
-			if (this->hasresponse)
+			if (this->parsresponse)
 				return true;
 
 			std::string cl = this->request->GetHeaders_value("content-length");
@@ -250,7 +210,7 @@ bool Client::completeRequest()
 		{
 			std::vector<std::string> err = split(e.what(), ',');
 			this->response = HTTPResponse(err[0], atoi(err[1].c_str()), err[2]);
-			this->hasresponse = true;
+			this->parsresponse = true;
 			return true;
 		}
 	}
@@ -270,7 +230,7 @@ bool Client::completeRequest()
 	{
 		std::vector<std::string> err = split(e.what(), ',');
 		this->response = HTTPResponse(err[0], atoi(err[1].c_str()), err[2]);
-		this->hasresponse = true;
+		this->parsresponse = true;
 		return true;
 	}
 }
@@ -279,7 +239,7 @@ void	Client::generateBufferResponse()
 {
 	this->responseBuffer.clear();
 
-	if (this->hasresponse)
+	if (this->parsresponse)
 	{
 		this->responseBuffer = this->response.generate();
 	}
@@ -297,7 +257,7 @@ void	Client::generateBufferResponse()
 }
 
 
-void Client::printBufferResponse()
-{
-	std::cout << this->responseBuffer;
-}
+// void Client::printBufferResponse()
+// {
+// 	std::cout << this->responseBuffer;
+// }
