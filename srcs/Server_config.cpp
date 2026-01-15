@@ -1,6 +1,6 @@
 #include "../include/Server_config.hpp"
 #include "../include/parsing.hpp"
-#include "../include/Config.hpp"
+#include "../include/Global_Config.hpp"
 
 
 Server_Config::Server_Config(){
