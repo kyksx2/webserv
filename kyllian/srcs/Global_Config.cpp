@@ -5,15 +5,6 @@ Global_Config::Global_Config(const std::string& filepath) {
     parsing(filepath);
 }
 
-// void Config::buildFromTree(const std::vector<ConfigNode>& nodes) {
-//     for (size_t i = 0; i < nodes.size(); i++) {
-//         if (nodes[i].directive == "server") {
-//             Server_Config server = buildServer(nodes[i]);
-//             _servers.push_back(server);
-//         }
-//     }
-// }
-
 Server_Config Global_Config::buildServer(const ConfigNode& node)
 {
     std::stringstream   ss;
