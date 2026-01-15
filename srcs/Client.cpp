@@ -67,17 +67,15 @@ void    Client::setResponseBuffer(std::string& response) {
     this->responseBuffer = response;
 }
 
-// // POST /dossier/page.html?query=123 HTTP/1.1\r\n      <-- 1. Request Line
-// // Host: localhost:8080\r\n                            <-- 2. Headers
-// // User-Agent: curl/7.68.0\r\n
-// // Content-Length: 15\r\n
-// // \r\n                                                <-- 3. Séparateur
-// // nom=bob&age=22                                      <-- 4. Body
+// POST /dossier/page.html?query=123 HTTP/1.1\r\n      <-- 1. Request Line
+// Host: localhost:8080\r\n                            <-- 2. Headers
+// User-Agent: curl/7.68.0\r\n
+// Content-Length: 15\r\n
+// \r\n                                                <-- 3. Séparateur
+// nom=bob&age=22                                      <-- 4. Body
 
 //! ici
 Client::Client() : headerParse(false), headerSize(0), contentLength(0), isChunked(false), parsresponse(false), request(NULL) {}
-
-Client::~Client() {}
 
 // void	Client::setRequest(std::string& buffer) {
 // 	this->requestBuffer = buffer;
@@ -93,8 +91,6 @@ Client::~Client() {}
 void Client::restartTimer() { this->start = time(NULL); } //?????????????????????????????????? changement
 
 time_t Client::getStart() { return (this->start); } //???????????????????????????????? changement
-
-std::string& Client::getResponseBuffer() { return this->responseBuffer; }
 
 // void    Client::setResponseBuffer(std::string& response) {
 //     this->responseBuffer = response;
