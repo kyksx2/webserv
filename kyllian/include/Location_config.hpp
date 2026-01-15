@@ -23,7 +23,9 @@ private:
     std::string _uploadStore;                        // Où stocker les uploads
     std::map<std::string, std::string> _cgiHandlers; // Ex: ".php", ".py" -> "/usr/bin/php-cgi"
     std::pair<int, std::string> _redirect;           // Ex: {301, "/new-path"}
+    std::map<int, std::string> _errorPages;      // Ex: {404 -> "/errors/404.html"}
     size_t _clientMaxBodySize;                       // Taille max du body
+
 
 public:
     Location_config();
@@ -36,12 +38,13 @@ public:
     const std::vector<std::string>& getAllowedMethods() const;
     bool isAutoindexEnabled() const;
     const std::string& getUploadStore() const;
-    const std::string& getCgiExtension() const;
-    const std::string& getCgiPath() const;
+    const std::map<std::string, std::string>& getCgiHandlers() const;
     const std::pair<int, std::string>& getRedirect() const;
+    const std::map<int, std::string>& getErrorPages() const;
     size_t getClientMaxBodySize() const;
 
     // Setters
+    void setPath(const std::string& path);
     void setRoot(const std::string& root);
     void addIndex(const std::string& index);
     void addAllowedMethod(const std::string& method);
