@@ -38,7 +38,7 @@ Client&  Client::operator=(const Client& src) {
 
 Client::~Client() {}
 
-// bool Client::isKeepAlive() { return this->request->IsKeepAlive(); }
+bool Client::isKeepAlive() { return this->request->IsKeepAlive(); }
 
 size_t  Client::getDataSent() const { return this->data_sent; }
 

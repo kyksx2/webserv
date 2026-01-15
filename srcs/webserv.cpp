@@ -172,8 +172,7 @@ void    WebServ::readClientData(int event_fd) { //!!!!!! verifier avec yasser
     }
 }
 
-//!!!!!
-void    WebServ::sendClientData(int event_fd) { //!!!!!! verifier avec yasser
+void    WebServ::sendClientData(int event_fd) {
     Client* client = this->clients[event_fd];
     const std::string& message_send = client->getResponseBuffer();
     size_t sent_bytes = client->getDataSent(); //? on recupere ce qu'on a deja envoyer

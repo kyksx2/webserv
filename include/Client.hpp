@@ -26,6 +26,7 @@ class Client {
 	std::string&	getRequestBuffer();
 	std::string&	getResponseBuffer();
 	size_t	getDataSent() const;
+	bool	isKeepAlive();
 	time_t	getStart() const;
 	bool	hasResponse() const;
 	void	setDataSent(size_t n);
