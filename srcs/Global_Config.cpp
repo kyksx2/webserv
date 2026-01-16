@@ -44,6 +44,25 @@ Server_Config Global_Config::buildServer(const ConfigNode& node)
                 server.addServerName(*vec_it);
             }
         }
+        if (child.directive == "root")
+            server.setRoot(child.arguments[0]);
+        if (child.directive == "index") {
+            for (std::vector<std::string>::const_iterator vec_it = child.arguments.begin();
+                 vec_it != child.arguments.end(); ++vec_it) {
+                server.addIndex(*vec_it);
+            }
+        }
+        if (child.directive == "autoindex")
+        {
+            if (child.arguments[0] == "on")
+                server.setAutoindex(true);
+            else if (child.arguments[0] == "off")
+                server.setAutoindex(false);
+            else
+                throw std::runtime_error("Erreur : Probleme d'argument avec autoindex");
+        }
+        if (child.directive == "cgi_handler")
+            server.setCgi(child.arguments[0], child.arguments[1]);
 		if (child.directive == "error_page"){
                 ss << child.arguments[0];
                 ss >> code;

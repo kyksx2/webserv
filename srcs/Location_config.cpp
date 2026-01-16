@@ -60,10 +60,57 @@ void Location_config::setClientMaxBodySize(size_t size)
     _clientMaxBodySize = size;
 }
 
+/*---------------------------GUETTER------------------------------*/
 
+const std::string& Location_config::getPath() const
+{
+    return (_path);
+}
 
+const std::string& Location_config::getRoot() const
+{
+    return (_root);
+}
 
+const std::vector<std::string>& Location_config::getIndex() const
+{
+    return (_index);
+}
 
+const std::vector<std::string>& Location_config::getAllowedMethods() const
+{
+    return (_allowedMethods);
+}
+
+bool Location_config::isAutoindexEnabled() const
+{
+    return (_autoindex);
+}
+
+const std::string& Location_config::getUploadStore() const
+{
+    return (_uploadStore);
+}
+
+const std::map<std::string, std::string>& Location_config::getCgiHandlers() const
+{
+    return this->_cgiHandlers;
+}
+
+const std::pair<int, std::string>& Location_config::getRedirect() const
+{
+    return (_redirect);
+}
+
+const std::map<int, std::string>& Location_config::getErrorPages() const
+{
+    return (_errorPages);
+}
+
+size_t Location_config::getClientMaxBodySize() const
+{
+    return (_clientMaxBodySize);
+}
 
 
 /*---------------------------UTILS--------------------------------*/

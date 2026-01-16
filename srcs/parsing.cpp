@@ -8,7 +8,7 @@ Parsing::Parsing(const std::string& filepath)
     std::vector<Token> token = tokeniseContent(fileContent);
 	_tree = setTree(token);
     validateNode(_tree);
-	print_node(_tree, 0);
+	// print_node(_tree, 0);
 }
 
 enum TokenType  Parsing::determineType(const std::string& word)
@@ -155,27 +155,16 @@ const ConfigNode Parsing::getTree(void)
 
 bool Parsing::validateNode(const ConfigNode& node)
 {
-    bool has_listen;
-    bool has_root;
-
-    // Verifier si une directive est presente ou voir les doublons
+    //voir les doublons
     if (node.directive == "server")
     {
         for (std::vector<ConfigNode>::const_iterator it = node.children.begin(); 
             it != node.children.end(); ++it)
         {
             const ConfigNode& child = *it; 
-            if (child.directive == "listen")
-                has_listen = true;
-            if (child.directive == "root")
-                has_root = true;
             if (child.directive == "server")
                 throw std::runtime_error("Erreur : block serveur a l'interieur d'un block serveur");
         }
-        if (!has_listen)
-            throw std::runtime_error("Erreur : le serveur n'a pas de port attribué");
-        if (!has_root)
-            throw std::runtime_error("Erreur : le serveur n'a pas de repertoire attribué");
     }
     if (caseByCase_directive(node))
         return (false);
@@ -214,10 +203,10 @@ bool    Parsing::ArgCase(const ConfigNode& node)
             throw std::runtime_error(error_msg.str());
         }
     }
-    if (node.directive == "error_page" && node.arguments.size() != 2)
-        throw std::runtime_error("Error : directive 'error_page' should have two arguments");
-    if (node.directive == "cgi_handler" && node.arguments.size() < 2)
-        throw std::runtime_error("Error : directive 'cgi_handler' should have at least two arguments");
+    if (node.directive == "error_page" && node.arguments.size() < 2)
+        throw std::runtime_error("Error : directive 'error_page' should have at least two arguments");
+    if (node.directive == "cgi_handler" && node.arguments.size() != 2)
+        throw std::runtime_error("Error : directive 'cgi_handler' should have two arguments");
     return (true);
 }
 

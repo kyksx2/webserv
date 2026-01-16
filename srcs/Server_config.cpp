@@ -28,6 +28,33 @@ void Server_Config::addServerName(const std::string& name)
     _serverNames.push_back(name);
 }
 
+
+void Server_Config::setRoot(const std::string& root)
+{
+    if (!root.empty())
+        _root = root;
+}
+
+void Server_Config::addIndex(const std::string& index)
+{
+    if (!index.empty())
+        _index.push_back(index);
+}
+
+void Server_Config::setAutoindex(bool value)
+{
+    _autoindex = value;
+}
+
+void Server_Config::setCgi(const std::string& extension, const std::string& path)
+{
+    // faire la gestion des erreurs extensions;
+    // if (extension != ".py")
+
+    if (!extension.empty() && !path.empty())
+        _cgiHandlers[extension] = path;
+}
+
 void Server_Config::setErrorPage(int code, const std::string& path)
 {
     if (code >= 300 && code < 600)
@@ -60,6 +87,26 @@ int Server_Config::getPort() const
 const std::vector<std::string>& Server_Config::getServerNames() const
 {
     return (_serverNames);
+}
+
+const std::string& Server_Config::getRoot() const
+{
+    return (_root);
+}
+
+const std::vector<std::string>& Server_Config::getIndex() const
+{
+    return (_index);
+}
+
+bool Server_Config::isAutoindexEnabled() const
+{
+    return (_autoindex);
+}
+
+const std::map<std::string, std::string>& Server_Config::getCgiHandlers() const
+{
+    return this->_cgiHandlers;
 }
 
 const std::map<int, std::string>& Server_Config::getErrorPages() const
