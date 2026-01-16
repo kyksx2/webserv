@@ -1,5 +1,5 @@
-#include "../include/Global_Config.hpp"
-#include "../include/parsing.hpp"
+#include "Global_Config.hpp"
+#include "parsing.hpp"
 
 Global_Config::Global_Config(const std::string& filepath) {
     parsing(filepath);
