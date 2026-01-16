@@ -71,7 +71,6 @@ Server_Config Global_Config::buildServer(const ConfigNode& node)
 		}
 		if (child.directive == "client_max_body_size")
             server.setClientMaxBodySize(parseBodySize(child.arguments[0]));
-        
         if (child.directive == "location")
         {
             server.addLocation(buildLocation(child));
@@ -86,7 +85,8 @@ Location_config Global_Config::buildLocation(const ConfigNode& node)
     std::stringstream   ss;
     int code = 0;
 
-        for (std::vector<ConfigNode>::const_iterator it = node.children.begin(); 
+    location.setPath(node.arguments[0]);
+    for (std::vector<ConfigNode>::const_iterator it = node.children.begin(); 
          it != node.children.end(); ++it)
     {
         const ConfigNode& child = *it; 
@@ -125,6 +125,12 @@ Location_config Global_Config::buildLocation(const ConfigNode& node)
             else if (isStringDigit(child.arguments[0]))
                 location.setRedirect(code, NULL);
         }
+		if (child.directive == "error_page"){
+                ss << child.arguments[0];
+                ss >> code;
+			    location.setErrorPage(code, child.arguments[1]);
+                ss.clear();
+		}
         if (child.directive == "client_max_body_size")
             location.setClientMaxBodySize(parseBodySize(child.arguments[0]));
     }

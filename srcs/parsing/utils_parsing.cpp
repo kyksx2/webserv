@@ -13,23 +13,20 @@ bool isStringDigit(std::string str)
 
 size_t parseBodySize(const std::string &value)
 {
+    size_t number = 0;
+    size_t multiplier = 0;
+
+    std::cout << number << std::endl;
     if (value.empty())
         throw std::runtime_error("Error : format listen invalide (host:port)");
-    
     std::stringstream ss(value);
-    double number;
     ss >> number;
     if (ss.fail() || number < 0)
         throw std::runtime_error("Error : Invalid body size format");
     std::string unit;
     ss >> unit;
-
-    for (size_t i = 0; i < unit.size(); ++i){
+    for (size_t i = 0; i < unit.size(); ++i)
         unit[i] = std::tolower(unit[i]);
-        // std::cout << unit[i] << std::endl;
-    }
-
-    size_t multiplier = 1;
     if (unit.empty() || unit == "b")
         multiplier = 1;
     else if (unit == "k" || unit == "kb")
@@ -37,9 +34,13 @@ size_t parseBodySize(const std::string &value)
     else if (unit == "m" || unit == "mb")
         multiplier = 1024 * 1024;
     else if (unit == "g" || unit == "gb")
-        multiplier = 1024 * 1024 * 1024;
+        multiplier = 1024ULL * 1024 * 1024;
     else
-        throw std::runtime_error("Unknown unit: " + unit);
+        throw std::runtime_error("Unite inconnue : " + unit);
+    if (number > SIZE_MAX / multiplier)
+        throw std::runtime_error("Body size exceeds maximum allowed");
+    std::cout << (number * multiplier) << std::endl;
+    std::cout << static_cast<size_t>(number * multiplier) << std::endl;
     return static_cast<size_t>(number * multiplier);
 }
 

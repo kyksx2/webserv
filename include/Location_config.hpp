@@ -1,6 +1,7 @@
 #ifndef LOCATION_CONFIG_HPP
 #define LOCATION_CONFIG_HPP
 
+// #include "Server_config.hpp"
 #include <string>
 #include <vector>
 #include <map>
@@ -10,8 +11,12 @@
 #include <string.h>
 #include <algorithm>
 #include <cctype>
+#include <stdint.h>
+
 
 // CLASSE LOCATION QUI PREND TOUTES LES VARIABLES DE LOCATION
+
+class Server_Config;
 
 class Location_config {
 private:
@@ -29,7 +34,8 @@ private:
 
 public:
     Location_config();
-    // Location_config(const std::string& path);
+    Location_config(const Server_Config &server);
+    Location_config(const std::string& path);
     
     // Getters
     const std::string& getPath() const;
@@ -52,6 +58,7 @@ public:
     void setUploadStore(const std::string& path);
     void setCgi(const std::string& extension, const std::string& path);
     void setRedirect(int code, const std::string& url);
+    void setErrorPage(int code, const std::string& path);
     void setClientMaxBodySize(size_t size);
     
     // Utilitaires

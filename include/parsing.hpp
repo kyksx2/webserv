@@ -6,6 +6,7 @@
 #include <map>
 #include <fstream>
 #include <iostream>
+#include <stdint.h>
 
 enum TokenType {
     KEYWORD,      // server, location, listen, etc.

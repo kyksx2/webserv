@@ -1,9 +1,24 @@
-#include "../include/Location_config.hpp"
+#include "Location_config.hpp"
+#include "Server_config.hpp"
 
-Location_config::Location_config(){    
+Location_config::Location_config() {
+//! METTRE LES VALEURS PAR DEFAULT OU AVEC L"HERITAGE DE SERVER
+    _clientMaxBodySize = 0;
 }
 
+// Location_config::Location_config(const Server_Config &server)
+// {
+//     if (!server.getRoot().empty())
+//         _root = server.getRoot();
+// }
+
 /*-----------------------SETTER----------------------------------*/
+
+void Location_config::setPath(const std::string& path)
+{
+    if (!path.empty())
+        _path = path;
+}
 
 void Location_config::setRoot(const std::string& root)
 {
@@ -55,9 +70,16 @@ void Location_config::setRedirect(int code, const std::string& url)
     }
 }
 
+void Location_config::setErrorPage(int code, const std::string& path)
+{
+    if (code >= 300 && code < 600)
+        _errorPages[code] = path;
+}
+
 void Location_config::setClientMaxBodySize(size_t size)
 {
-    _clientMaxBodySize = size;
+    if (size < SIZE_MAX)
+        _clientMaxBodySize = size;
 }
 
 /*---------------------------GUETTER------------------------------*/
@@ -150,4 +172,11 @@ void Location_config::print() const {
         std::cout << "      redirect: " << _redirect.first << " " << _redirect.second << std::endl;
     if (_clientMaxBodySize != 0)
         std::cout << "      client_max_body_size: " << _clientMaxBodySize << std::endl;
+    if (!_errorPages.empty()) {
+        std::cout << "    error_pages:" << std::endl;
+        for (std::map<int, std::string>::const_iterator it = _errorPages.begin();
+             it != _errorPages.end(); ++it) {
+            std::cout << "      " << it->first << " -> " << it->second << std::endl;
+        }
+    }
 }

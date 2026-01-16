@@ -62,7 +62,7 @@ void Server_Config::setErrorPage(int code, const std::string& path)
 
 void Server_Config::setClientMaxBodySize(size_t size)
 {
-    if (size < 2000000)
+    if (size < SIZE_MAX)
         _clientMaxBodySize = size;
 }
 
@@ -137,10 +137,28 @@ void Server_Config::print() const {
         }
         std::cout << std::endl;
     }
-    
+    if (!_root.empty())
+        std::cout << "    root: " << _root << std::endl;
+    if (!_index.empty()) {
+        std::cout << "    index: ";
+        for (size_t i = 0; i < _index.size(); i++) {
+            std::cout << _index[i];
+            if (i < _index.size() - 1) std::cout << ", ";
+        }
+        std::cout << std::endl;
+    }
+    if (_autoindex)
+        std::cout << "      autoindex: on" << std::endl;
     if (_clientMaxBodySize != 0)
         std::cout << "    client_max_body_size: " << _clientMaxBodySize << std::endl;
-    
+    if (!_cgiHandlers.empty())
+    {
+        std::cout << "      cgi_handlers: " << std::endl;
+        for (std::map<std::string, std::string>::const_iterator it = _cgiHandlers.begin(); 
+             it != _cgiHandlers.end(); 
+             ++it)
+            std::cout << "        " << it->first << " -> " << it->second << std::endl;
+    }
     if (!_errorPages.empty()) {
         std::cout << "    error_pages:" << std::endl;
         for (std::map<int, std::string>::const_iterator it = _errorPages.begin();
@@ -148,7 +166,6 @@ void Server_Config::print() const {
             std::cout << "      " << it->first << " -> " << it->second << std::endl;
         }
     }
-    
     std::cout << "    Locations (" << _locations.size() << "):" << std::endl;
     for (size_t i = 0; i < _locations.size(); i++) {
         _locations[i].print();
