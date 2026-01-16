@@ -10,9 +10,11 @@ SRC_DIR = srcs
 OBJ_DIR = objs
 
 # Recherche de tous les .cpp automatiquement
-SRCS = $(wildcard $(SRC_DIR)/*.cpp)
+SRCS = $(wildcard $(SRC_DIR)/*.cpp) \
+       $(wildcard $(SRC_DIR)/parsing/*.cpp)
+
 OBJS = $(SRCS:$(SRC_DIR)/%.cpp=$(OBJ_DIR)/%.o)
-DEPS	= $(wildcard include/*.hpp)
+DEPS = $(wildcard include/*.hpp)
 
 # Règle par défaut
 all: $(NAME)
@@ -23,7 +25,7 @@ $(NAME): $(OBJS)
 
 # Compilation des .o
 $(OBJ_DIR)/%.o: $(SRC_DIR)/%.cpp $(DEPS)
-	@mkdir -p $(OBJ_DIR)
+	@mkdir -p $(dir $@)
 	$(CXX) $(CXXFLAGS) -c $< -o $@
 
 # Nettoyage
