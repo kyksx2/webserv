@@ -5,10 +5,11 @@ Global_Config::Global_Config(const std::string& filepath) {
     parsing(filepath);
 }
 
-Server_Config Global_Config::buildServer(const ConfigNode& node)
+void Global_Config::buildServer(const ConfigNode& node)
 {
+    _servers.push_back(Server_Config());
+    Server_Config& server = _servers.back();
     std::stringstream   ss;
-    Server_Config       server;
     int                 code;
 
     for (std::vector<ConfigNode>::const_iterator it = node.children.begin(); 
@@ -73,15 +74,14 @@ Server_Config Global_Config::buildServer(const ConfigNode& node)
             server.setClientMaxBodySize(parseBodySize(child.arguments[0]));
         if (child.directive == "location")
         {
-            server.addLocation(buildLocation(child));
+            server.addLocation(buildLocation(child, &server));
         }
     }
-    return (server);
 }
 
-Location_config Global_Config::buildLocation(const ConfigNode& node)
+Location_config Global_Config::buildLocation(const ConfigNode& node, Server_Config *server)
 {
-    Location_config location;
+    Location_config location(node.arguments[0], server);
     std::stringstream   ss;
     int code = 0;
 
@@ -148,7 +148,7 @@ void    Global_Config::parsing(const std::string& filepath)
             it != tree.children.end(); ++it)
         {
             const ConfigNode& child = *it; 
-            _servers.push_back(buildServer(child));
+            buildServer(child);
         }
         // std::cout << "--- Serveurs charges : " << _servers.size() << " ---" << std::endl; //! il faut croire que le vector est ok ici
         // for (size_t i = 0; i < _servers.size(); i++)

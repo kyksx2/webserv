@@ -6,11 +6,9 @@ Location_config::Location_config() {
     _clientMaxBodySize = 0;
 }
 
-// Location_config::Location_config(const Server_Config &server)
-// {
-//     if (!server.getRoot().empty())
-//         _root = server.getRoot();
-// }
+Location_config::Location_config(const std::string& path, const Server_Config *server)
+    :  _server(server) , _path(path)
+{}
 
 /*-----------------------SETTER----------------------------------*/
 
@@ -91,11 +89,14 @@ const std::string& Location_config::getPath() const
 
 const std::string& Location_config::getRoot() const
 {
-    return (_root);
+    if (!_root.empty())
+        return _root;
+    return _server->getRoot();  // Hérite de serveur
 }
 
 const std::vector<std::string>& Location_config::getIndex() const
 {
+
     return (_index);
 }
 
@@ -140,6 +141,8 @@ void Location_config::print() const {
     std::cout << "    Location: " << _path << std::endl;
     if (!_root.empty())
         std::cout << "      root: " << _root << std::endl;
+    // else if (!_server->getRoot().empty())
+    //     std::cout << "      root: " << _server->getRoot() << std::endl;
     if (!_index.empty()) {
         std::cout << "      index: ";
         for (size_t i = 0; i < _index.size(); i++) {

@@ -22,8 +22,8 @@ public:
     
     // Utilitaires
     // void buildFromTree(const std::vector<ConfigNode>& nodes);
-    Location_config buildLocation(const ConfigNode& node);
-    Server_Config buildServer(const ConfigNode& node);
+    Location_config buildLocation(const ConfigNode& node, Server_Config *server);
+    void buildServer(const ConfigNode& node);
     void print() const;
 };
 
