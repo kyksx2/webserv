@@ -16,8 +16,8 @@ static HTTPRequest    *post_creation(std::string buffer, const Server &serv)
     return (new PostRequest(buffer, serv));
 }
 
-Client::Client(int fd, Server* find_server) : client_fd(fd), dad_serv(find_server), data_sent(0),/*headerParse(false), headerSize(0),contentLength(0),
-    isChunked(false), */requestBuffer(""), responseBuffer("") {
+Client::Client(int fd, Server* find_server) : client_fd(fd), dad_serv(find_server), data_sent(0), headerParse(false), headerSize(0),contentLength(0),
+    isChunked(false), requestBuffer(""), responseBuffer("") {
         start = time(NULL);
 }
 

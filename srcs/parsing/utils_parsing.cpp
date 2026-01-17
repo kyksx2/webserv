@@ -16,7 +16,6 @@ size_t parseBodySize(const std::string &value)
     size_t number = 0;
     size_t multiplier = 0;
 
-    std::cout << number << std::endl;
     if (value.empty())
         throw std::runtime_error("Error : format listen invalide (host:port)");
     std::stringstream ss(value);
@@ -39,8 +38,6 @@ size_t parseBodySize(const std::string &value)
         throw std::runtime_error("Unite inconnue : " + unit);
     if (number > SIZE_MAX / multiplier)
         throw std::runtime_error("Body size exceeds maximum allowed");
-    std::cout << (number * multiplier) << std::endl;
-    std::cout << static_cast<size_t>(number * multiplier) << std::endl;
     return static_cast<size_t>(number * multiplier);
 }
 
