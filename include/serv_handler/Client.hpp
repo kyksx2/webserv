@@ -9,7 +9,7 @@ class HTTPRequest;
 
 class Client {
  public:
-	Client();
+	// Client();
 	Client(int fd, Server *find_server);
 	Client(const Client& src);
 	Client&	operator=(const Client& src);
@@ -47,7 +47,7 @@ private:
 	size_t	headerSize;
 	size_t	contentLength;
 	bool	isChunked;
-	bool	parsresponse;
+	bool	hasresponse;
 	std::string	requestBuffer;
 	std::string	responseBuffer;
 	HTTPRequest* request;

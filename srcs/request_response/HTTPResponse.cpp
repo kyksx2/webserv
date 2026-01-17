@@ -6,7 +6,7 @@
 /*   By: kjolly <kjolly@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/04 12:59:01 by yzeghari          #+#    #+#             */
-/*   Updated: 2026/01/17 12:47:03 by kjolly           ###   ########.fr       */
+/*   Updated: 2026/01/17 18:47:11 by kjolly           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -102,7 +102,6 @@ std::string HTTPResponse::generate()
 		_body = "";
 
 	//ptet a mttre en minuscule pour debug
-
 	std::ostringstream oss;
 	oss << _body.size();
 	_headers["Content-Length"] = oss.str();

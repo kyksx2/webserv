@@ -79,8 +79,8 @@ void    WebServ::readClientData(int event_fd) { //!!!!!! verifier avec yasser
     while((receive_bits = recv(event_fd, buffer, BUFFER_SIZE, 0)) > 0) {
 		client->appendRequest(buffer, receive_bits);
         if (client->completeRequest()) { //! il faut remplir le buffer, le parser et generer la reponse
-            // client->(); //? generer la reponse
-            std::cout << client->getResponseBuffer() << std::endl;
+            client->generateBufferResponse(); //? generer la reponse
+            // std::cout << client->getResponseBuffer() << std::endl;
             struct epoll_event change_ev;
             change_ev.data.fd = event_fd;
             change_ev.events = EPOLLOUT;
