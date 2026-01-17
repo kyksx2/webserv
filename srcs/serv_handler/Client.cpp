@@ -1,5 +1,4 @@
-#include "../include/Client.hpp"
-#include "Client.hpp"
+#include "serv_handler/Client.hpp"
 
 static HTTPRequest    *get_creation(std::string buffer, const Server &serv)
 {
@@ -28,11 +27,18 @@ Client::Client(const Client& src) {
 Client&  Client::operator=(const Client& src) {
     if (this != &src) {
         this->client_fd = src.client_fd;
-        this->data_sent = src.data_sent;
-        this->dad_serv = src.dad_serv;
-        // this->requestBuffer = src.requestBuffer;
-        // this->responseBuffer = src.responseBuffer;
-        //! pour les 2 classe request et responses verifier qu'il y a bien un constructeur de copie
+		this->contentLength = src.contentLength;
+		this->dad_serv = src.dad_serv;
+		this->data_sent = src.data_sent;
+		this->headerParse = src.headerParse;
+		this->headerSize = src.headerSize;
+		this->isChunked = src.isChunked;
+		this->parsresponse = src.parsresponse;
+		this->request = src.request;
+		this->requestBuffer = src.requestBuffer;
+		this->response = src.response;
+		this->responseBuffer = src.responseBuffer;
+		this->start = src.start;
     }
     return (*this);
 }
@@ -172,6 +178,7 @@ bool Client::completeRequest()
 	size_t pos = this->requestBuffer.find("\r\n\r\n");
 	if (pos == std::string::npos)
 		return false;
+	std::cout <<"ici"<<std::endl;
 
 	// ===== HEADER =====
 	if (!this->headerParse)

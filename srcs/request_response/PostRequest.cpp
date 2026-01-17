@@ -6,11 +6,11 @@
 /*   By: kjolly <kjolly@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/25 14:31:54 by yzeghari          #+#    #+#             */
-/*   Updated: 2025/12/23 15:40:13 by kjolly           ###   ########.fr       */
+/*   Updated: 2026/01/17 11:52:35 by kjolly           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../include/PostRequest.hpp"
+#include "request_response/PostRequest.hpp"
 
 PostRequest::PostRequest(std::string &buffer, const Server& serv)
 : HTTPRequest(buffer, serv)

@@ -1,12 +1,21 @@
-#include "../include/Server.hpp"
-#include "../include/Webserv.hpp"
+#include "serv_handler/Server.hpp"
+#include "serv_handler/Webserv.hpp"
+
+Server::Server() {}
 
 Server::Server(const Server_Config& conf) : config(conf), listen_fd(-1), isAlive(true) {
     memset(&this->addr, 0, sizeof(addr));
 }
 
-Server::Server() {}
-
+Server& Server::operator=(const Server& src) {
+    if (this != &src) {
+        this->addr = src.addr;
+        this->config = src.config;
+        this->isAlive = src.isAlive;
+        this->listen_fd = src.listen_fd;
+    }
+    return (*this);
+}
 
 Server::~Server() {}
 
@@ -50,11 +59,13 @@ void Server::init(int epoll_fd) {
     }
 }
 
-int Server::getListenFd() { return this->listen_fd; }
+int Server::getListenFd() const { return this->listen_fd; }
 
-sockaddr_in Server::getAddr() { return this->addr; }
+sockaddr_in Server::getAddr() const { return this->addr; }
 
+std::string Server::getHost() const { return this->config.getHost(); }
 
-// int Server::getPort() {
-//     return this->config.getPort();
-// }
+int Server::getPort() const {
+    return this->config.getPort();
+}
+

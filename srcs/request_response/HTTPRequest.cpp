@@ -3,14 +3,128 @@
 /*                                                        :::      ::::::::   */
 /*   HTTPRequest.cpp                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
+/*   By: kjolly <kjolly@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/24 13:45:23 by yzeghari          #+#    #+#             */
-/*   Updated: 2025/12/28 22:23:32 by marvin           ###   ########.fr       */
+/*   Updated: 2026/01/17 12:38:11 by kjolly           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../include/HTTPRequest.hpp"
+#include "request_response/HTTPRequest.hpp"
+
+HTTPRequest::HTTPRequest(std::string &buffer, const Server& serv)
+{
+	std::stringstream ss(buffer);
+	std::string line;
+	std::getline(ss, line);
+
+	this->m_serv = serv;
+	std::vector<std::string> firstline = split(line, ' ');
+	if (firstline.size() < 3)
+		throw HTTPRequest::HTTPRequestException("HTTP/1.1,400,Bad Request");
+
+	std::string method = firstline[0];
+	std::string target = firstline[1];
+	std::string version = firstline[2];
+
+	// nettoyage du \r final sur la version
+	if (!version.empty() && version[version.length() - 1] == '\r')
+		version.erase(version.length() - 1);
+
+	m_version = version;
+	if (m_version != "HTTP/1.0" && m_version != "HTTP/1.1")
+		throw HTTPRequest::HTTPRequestException("HTTP/1.1,501,Not Implemented");
+
+	// validation méthode minimale
+	if (method != "GET" && method != "POST" && method != "DELETE")
+		throw HTTPRequest::HTTPRequestException(m_version + ",405,Method Not Allowed");
+
+	// séparateur query
+	size_t qpos = target.find('?');
+	if (qpos != std::string::npos)
+	{
+		m_target = target.substr(0, qpos);
+		query_creation(target.substr(qpos + 1));
+	}
+	else
+		m_target = target;
+
+	if (m_target.empty())
+		throw HTTPRequest::HTTPRequestException(m_version + ",400,Bad Request");
+
+	while (std::getline(ss, line))
+	{
+		if (!line.empty() && line[line.length() - 1] == '\r')
+			line.erase(line.length() - 1);
+
+		if (line.empty())
+			break;
+
+		// séparateur clé/valeur
+		size_t pos = line.find(':');
+		if (pos == std::string::npos)
+			throw HTTPRequest::HTTPRequestException(m_version + ",400,Bad Request");
+
+		std::string key = line.substr(0, pos);
+		std::transform(key.begin(), key.end(), key.begin(), ::tolower);
+		std::string value = line.substr(pos + 1);
+
+		// trim espaces au début de la valeur
+		while (!value.empty() && value[0] == ' ')
+			value.erase(0, 1);
+
+		// headers multiples
+		if (m_headers.count(key))
+			m_headers[key] += ", " + value;
+		else
+			m_headers[key] = value;
+	}
+
+	// Transfer-Encoding + HTTP/1.0
+	if (m_headers.count("transfer-encoding") && m_headers.count("content-length"))
+	{
+		throw HTTPRequest::HTTPRequestException(m_version + ",400,Bad Request");
+	}
+
+	// Transfer-Encoding + Content-Length interdits ensemble
+	if (m_headers.count("transfer-encoding") && m_headers.count("content-length"))
+		throw HTTPRequest::HTTPRequestException(m_version + ",400,Bad Request");
+
+	// Connection par défaut (corrigé)
+	if (!m_headers.count("connection"))
+	{
+		if (m_version == "HTTP/1.1")
+			m_headers["connection"] = "keep-alive";
+		else
+			m_headers["connection"] = "close";
+	}
+	else
+	{
+		if (m_headers["connection"] != "keep-alive" &&
+			m_headers["connection"] != "close")
+			throw HTTPRequest::HTTPRequestException(m_version + ",400,Bad Request");
+	}
+	// Host obligatoire en HTTP/1.1
+	if (!m_headers.count("host") && m_version == "HTTP/1.1")
+		throw HTTPRequest::HTTPRequestException(m_version + ",400,Bad Request");
+}
+
+HTTPRequest &HTTPRequest::operator=(const HTTPRequest &src)
+{
+	if (this == &src)
+		return (*this);
+	this->m_serv = src.m_serv;
+	this->m_target = src.m_target;
+	this->m_query = src.m_query;
+	this->m_version = src.m_version;
+	this->m_headers = src.m_headers;
+	this->m_body = src.m_body;
+	return *this;
+}
+
+HTTPRequest::~HTTPRequest()
+{
+}
 
 std::vector<std::string>	split(const std::string &chaine, char delimiteur)
 {
@@ -71,104 +185,6 @@ bool safe_atoi(const char *str, int &result)
 	return true;
 }
 
-
-HTTPRequest::HTTPRequest(std::string &buffer, const Server& serv)
-{
-    std::stringstream ss(buffer);
-    std::string line;
-    std::getline(ss, line);
-
-    (void) serv;
-    std::vector<std::string> firstline = split(line, ' ');
-    if (firstline.size() < 3)
-        throw HTTPRequest::HTTPRequestException("HTTP/1.1,400,Bad Request");
-
-    std::string method = firstline[0];
-    std::string target = firstline[1];
-    std::string version = firstline[2];
-
-    // nettoyage du \r final sur la version
-    if (!version.empty() && version[version.length() - 1] == '\r')
-        version.erase(version.length() - 1);
-
-    m_version = version;
-    if (m_version != "HTTP/1.0" && m_version != "HTTP/1.1")
-        throw HTTPRequest::HTTPRequestException("HTTP/1.1,501,Not Implemented");
-
-    // validation méthode minimale
-    if (method != "GET" && method != "POST" && method != "DELETE")
-        throw HTTPRequest::HTTPRequestException(m_version + ",405,Method Not Allowed");
-
-    // séparateur query
-    size_t qpos = target.find('?');
-    if (qpos != std::string::npos)
-    {
-        m_target = target.substr(0, qpos);
-        query_creation(target.substr(qpos + 1));
-    }
-    else
-        m_target = target;
-
-    if (m_target.empty())
-        throw HTTPRequest::HTTPRequestException(m_version + ",400,Bad Request");
-
-    while (std::getline(ss, line))
-    {
-        if (!line.empty() && line[line.length() - 1] == '\r')
-            line.erase(line.length() - 1);
-
-        if (line.empty())
-            break;
-
-        // séparateur clé/valeur
-        size_t pos = line.find(':');
-        if (pos == std::string::npos)
-            throw HTTPRequest::HTTPRequestException(m_version + ",400,Bad Request");
-
-        std::string key = line.substr(0, pos);
-        std::transform(key.begin(), key.end(), key.begin(), ::tolower);
-        std::string value = line.substr(pos + 1);
-
-        // trim espaces au début de la valeur
-        while (!value.empty() && value[0] == ' ')
-            value.erase(0, 1);
-
-        // headers multiples
-        if (m_headers.count(key))
-            m_headers[key] += ", " + value;
-        else
-            m_headers[key] = value;
-    }
-
-    // Transfer-Encoding + HTTP/1.0
-    if (m_headers.count("transfer-encoding") && m_headers.count("content-length"))
-    {
-        throw HTTPRequest::HTTPRequestException(m_version + ",400,Bad Request");
-    }
-
-    // Transfer-Encoding + Content-Length interdits ensemble
-    if (m_headers.count("transfer-encoding") && m_headers.count("content-length"))
-        throw HTTPRequest::HTTPRequestException(m_version + ",400,Bad Request");
-
-    // Connection par défaut (corrigé)
-    if (!m_headers.count("connection"))
-    {
-        if (m_version == "HTTP/1.1")
-            m_headers["connection"] = "keep-alive";
-        else
-            m_headers["connection"] = "close";
-    }
-    else
-    {
-        if (m_headers["connection"] != "keep-alive" &&
-            m_headers["connection"] != "close")
-            throw HTTPRequest::HTTPRequestException(m_version + ",400,Bad Request");
-    }
-    // Host obligatoire en HTTP/1.1
-    if (!m_headers.count("host") && m_version == "HTTP/1.1")
-        throw HTTPRequest::HTTPRequestException(m_version + ",400,Bad Request");
-}
-
 void HTTPRequest::query_creation(std::string line)
 {
 	std::stringstream ss(line);
@@ -213,12 +229,6 @@ void HTTPRequest::SetBody(std::string &buffer)
 	m_body = buffer.substr(0, contentLength);
 }
 
-
-HTTPRequest::~HTTPRequest()
-{
-}
-
-
 std::string HTTPRequest::GetTarget() const
 {
 	return (this->m_target);
@@ -257,7 +267,7 @@ std::string HTTPRequest::GetHeaders_value(std::string key)
 
 bool HTTPRequest::IsKeepAlive()
 {
-    if (this->m_headers["connection"] == "keep-alive")
+	if (this->m_headers["connection"] == "keep-alive")
 		return true;
 	return false;
 }
@@ -275,8 +285,6 @@ const char *HTTPRequest::HTTPRequestException::what() const throw()
 HTTPRequest::HTTPRequestException::~HTTPRequestException() throw()
 {
 }
-
-#include "HTTPRequest.hpp"
 
 std::ostream& operator<<(std::ostream& os, const HTTPRequest& req)
 {

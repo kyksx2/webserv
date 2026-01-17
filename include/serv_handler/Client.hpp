@@ -1,9 +1,9 @@
 #ifndef CLIENT_H
 #define CLIENT_H
 #include "Server.hpp"
-#include "HTTPResponse.hpp"
-#include "HTTPRequest.hpp"
-#include "RequestMethod.hpp"
+#include "request_response/HTTPResponse.hpp"
+#include "request_response/HTTPRequest.hpp"
+#include "request_response/RequestMethod.hpp"
 
 class HTTPRequest;
 

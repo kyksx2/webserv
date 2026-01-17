@@ -1,4 +1,4 @@
-// #include "../include/CgiHandler.hpp"
+// #include "CGI/CgiHandler.hpp"
 
 // //? creation de 2 processus avec fork() -> le child devient un interpreteur de texte
 // //? puis il genere du code html via un programme (recette) python, php, bash, ...

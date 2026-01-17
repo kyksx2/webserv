@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   HTTPResponse.hpp                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: yzeghari <yzeghari@student.42.fr>          +#+  +:+       +#+        */
+/*   By: kjolly <kjolly@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/04 12:52:24 by yzeghari          #+#    #+#             */
-/*   Updated: 2025/12/29 11:49:02 by yzeghari         ###   ########.fr       */
+/*   Updated: 2026/01/17 12:49:15 by kjolly           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,29 +48,32 @@ enum HTTPStatusCode {
 
 class HTTPResponse
 {
-	private:
-		std::string	_version;
-		int	_status_code;
-		std::string	_reason_phrase;
-		std::map<std::string, std::string>	_headers;
-		std::string	_body;
+ private:
+	std::string	_version;
+	int	_status_code;
+	std::string	_reason_phrase;
+	std::map<std::string, std::string>	_headers;
+	std::string	_body;
 
-	public:
-		HTTPResponse();
-		HTTPResponse(std::string version, int status_code, std::string reason_phrase);
-		~HTTPResponse();
-		void	setVersion(std::string version);
-		void	setStatus(int status_code, std::string reason_phrase);
-		void	setHeader(std::string key, std::string value);
-		void	setBody(std::string	body);
+ public:
+	HTTPResponse();
+	HTTPResponse(std::string version, int status_code, std::string reason_phrase);
+	HTTPResponse& operator=(const HTTPResponse& src);
+	~HTTPResponse();
 
-		std::string							GetVersion() const;
-		int									GetStatusCode() const;
-		std::string							GetReason() const;
-		std::map<std::string, std::string>	GetHeaders() const;
-		std::string							GetBody() const;
-		std::string		generate();
-		//! pense a rajouter les headers obligatoire tel que lenght ou connection ds generate
+	void	setVersion(std::string version);
+	void	setStatus(int status_code, std::string reason_phrase);
+	void	setHeader(std::string key, std::string value);
+	void	setBody(std::string	body);
+
+	std::string			GetVersion() const;
+	int					GetStatusCode() const;
+	std::string			GetReason() const;
+	std::map<std::string, std::string>	GetHeaders() const;
+	std::string			GetBody() const;
+
+	std::string		generate();
+	//! pense a rajouter les headers obligatoire tel que lenght ou connection ds generate
 };
 
 std::ostream& operator<<(std::ostream& os, const HTTPResponse& res);

@@ -16,8 +16,8 @@
 
 #include "Server.hpp"
 #include "Client.hpp"
-#include "Global_Config.hpp"
-#include "Server_config.hpp"
+#include "parsing/Global_Config.hpp"
+#include "parsing/Server_config.hpp"
 
 #define EVENTS_MAX 1024
 #define BUFFER_SIZE 1024

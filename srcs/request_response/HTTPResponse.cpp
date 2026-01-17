@@ -3,15 +3,15 @@
 /*                                                        :::      ::::::::   */
 /*   HTTPResponse.cpp                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: yzeghari <yzeghari@student.42.fr>          +#+  +:+       +#+        */
+/*   By: kjolly <kjolly@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/04 12:59:01 by yzeghari          #+#    #+#             */
-/*   Updated: 2025/12/29 11:49:28 by yzeghari         ###   ########.fr       */
+/*   Updated: 2026/01/17 12:47:03 by kjolly           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../include/HTTPResponse.hpp"
-#include "HTTPResponse.hpp"
+#include "request_response/HTTPResponse.hpp"
+#include "request_response/HTTPResponse.hpp"
 
 HTTPResponse::HTTPResponse()
 {
@@ -22,8 +22,19 @@ HTTPResponse::HTTPResponse(std::string version, int status_code, std::string rea
 	this->_version = version;
 	this->_status_code = status_code;
 	this->_reason_phrase = reason_phrase;
-
 	this->_body = reason_phrase;
+}
+
+HTTPResponse &HTTPResponse::operator=(const HTTPResponse &src)
+{
+	if (this == &src)
+		return (*this);
+	this->_version = src._version;
+	this->_status_code = src._status_code;
+	this->_reason_phrase = src._reason_phrase;
+	this->_headers = src._headers;
+	this->_body = src._body;
+	return *this;
 }
 
 HTTPResponse::~HTTPResponse()

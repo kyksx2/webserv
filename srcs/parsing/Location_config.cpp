@@ -1,5 +1,5 @@
-#include "Location_config.hpp"
-#include "Server_config.hpp"
+#include "parsing/Location_config.hpp"
+#include "parsing/Server_config.hpp"
 
 Location_config::Location_config() {
 //! METTRE LES VALEURS PAR DEFAULT OU AVEC L"HERITAGE DE SERVER

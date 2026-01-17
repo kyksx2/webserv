@@ -1,5 +1,5 @@
-#include "Global_Config.hpp"
-#include "parsing.hpp"
+#include "parsing/Global_Config.hpp"
+#include "parsing/parsing.hpp"
 
 bool isStringDigit(std::string str)
 {

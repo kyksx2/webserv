@@ -6,11 +6,11 @@
 /*   By: kjolly <kjolly@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/28 12:27:58 by yzeghari          #+#    #+#             */
-/*   Updated: 2025/12/23 15:35:53 by kjolly           ###   ########.fr       */
+/*   Updated: 2026/01/17 11:49:44 by kjolly           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../include/DeleteRequest.hpp"
+#include "request_response/DeleteRequest.hpp"
 
 DeleteRequest::DeleteRequest(std::string &buffer, const Server& serv)
 : HTTPRequest(buffer, serv)

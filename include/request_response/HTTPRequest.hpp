@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   HTTPRequest.hpp                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
+/*   By: kjolly <kjolly@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/24 13:37:27 by yzeghari          #+#    #+#             */
-/*   Updated: 2025/12/28 02:48:26 by marvin           ###   ########.fr       */
+/*   Updated: 2026/01/17 12:28:43 by kjolly           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,15 +14,15 @@
 # define  HTTPREQUEST_HPP
 
 #include "HTTPResponse.hpp"
-#include "Server.hpp"
+#include "serv_handler/Server.hpp"
 
 //! la recuperation des config du serv, besoin pour les methodes
-
 //! IL FAUT PEUT ETRE VERIFIE LES HEADERS OBLIGATOIRE SOIT ICI SOIT DANC CHAQUE METHODE
 
 class HTTPRequest
 {
 	protected :
+		Server	m_serv;
 		std::string	m_target;
 		std::map<std::string, std::string>	m_query;
 		std::string	m_version;
@@ -31,19 +31,20 @@ class HTTPRequest
 
 	public :
 		HTTPRequest(std::string &buffer, const Server& serv);
-		void query_creation(std::string line);
+		HTTPRequest& operator=(const HTTPRequest& src);
 		virtual ~HTTPRequest();
 
+		
 		void SetBody(std::string &buffer);
-
+		
 		std::string							GetTarget() const;
 		std::map<std::string, std::string>	GetQuery() const;
 		std::string							GetVersion() const;
 		std::string							GetBody() const;
 		std::map<std::string, std::string>	GetHeaders() const;
-
 		std::string		GetHeaders_value(std::string key);
-
+		
+		void query_creation(std::string line);
 		bool	IsKeepAlive();
 		virtual	HTTPResponse	generateResponse() = 0;
 
@@ -61,4 +62,5 @@ class HTTPRequest
 std::ostream& operator<<(std::ostream& os, const HTTPRequest& req);
 std::vector<std::string>	split(const std::string &chaine, char delimiteur);
 bool						safe_atoi(const char *str, int &result);
+
 #endif

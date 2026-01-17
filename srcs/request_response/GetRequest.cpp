@@ -6,11 +6,11 @@
 /*   By: kjolly <kjolly@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/25 13:45:13 by yzeghari          #+#    #+#             */
-/*   Updated: 2025/12/23 15:39:36 by kjolly           ###   ########.fr       */
+/*   Updated: 2026/01/17 11:50:19 by kjolly           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../include/GetRequest.hpp"
+#include "request_response/GetRequest.hpp"
 
 GetRequest::GetRequest(std::string &buffer, const Server& serv)
 : HTTPRequest(buffer, serv)
