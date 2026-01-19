@@ -91,9 +91,7 @@ const std::string& Location_config::getPath() const
 
 const std::string& Location_config::getRoot() const
 {
-    if (!_root.empty())
         return _root;
-    return _server->getRoot();  // Hérite de serveur
 }
 
 const std::vector<std::string>& Location_config::getIndex() const
