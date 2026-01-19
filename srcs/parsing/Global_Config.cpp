@@ -74,14 +74,14 @@ void Global_Config::buildServer(const ConfigNode& node)
             server.setClientMaxBodySize(parseBodySize(child.arguments[0]));
         if (child.directive == "location")
         {
-            server.addLocation(buildLocation(child, &server));
+            server.addLocation(buildLocation(child));
         }
     }
 }
 
-Location_config Global_Config::buildLocation(const ConfigNode& node, Server_Config *server)
+Location_config Global_Config::buildLocation(const ConfigNode& node)
 {
-    Location_config location(node.arguments[0], server);
+    Location_config location(node.arguments[0]);
     std::stringstream   ss;
     int code = 0;
 

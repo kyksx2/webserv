@@ -6,9 +6,11 @@ Location_config::Location_config() {
     _clientMaxBodySize = 0;
 }
 
-Location_config::Location_config(const std::string& path, const Server_Config *server)
-    :  _server(server) , _path(path)
-{}
+Location_config::Location_config(const std::string& path)
+    :  _path(path)
+{
+    _clientMaxBodySize = 0;
+}
 
 /*-----------------------SETTER----------------------------------*/
 

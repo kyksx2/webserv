@@ -35,7 +35,7 @@ private:
 
 public:
     Location_config();
-    Location_config(const std::string& path, const Server_Config *server);
+    Location_config(const std::string& path);
     
     // Getters
     const std::string& getPath() const;

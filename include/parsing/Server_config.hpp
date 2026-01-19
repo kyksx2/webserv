@@ -63,6 +63,7 @@ public:
 
     // Utilitaires
     void print() const;
+    const Location_config* findLocation(const std::string& uri) const;
     // std::string getErrorPage(int code) const;
     // const Location_config* matchLocation(const std::string& uri) const;
     // bool matchesServerName(const std::string& host) const;
