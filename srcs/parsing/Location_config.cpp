@@ -1,16 +1,14 @@
 #include "parsing/Location_config.hpp"
 #include "parsing/Server_config.hpp"
 
-Location_config::Location_config() {
-//! METTRE LES VALEURS PAR DEFAULT OU AVEC L"HERITAGE DE SERVER
-    _clientMaxBodySize = 0;
+Location_config::Location_config() : _autoindex(false), _clientMaxBodySize(0) {
+    addAllowedMethod("GET");
+    addAllowedMethod("POST");
 }
 
 Location_config::Location_config(const std::string& path)
-    :  _path(path)
-{
-    _clientMaxBodySize = 0;
-}
+    :  _path(path), _autoindex(0), _clientMaxBodySize(0)
+{}
 
 /*-----------------------SETTER----------------------------------*/
 
@@ -137,6 +135,30 @@ size_t Location_config::getClientMaxBodySize() const
 
 
 /*---------------------------UTILS--------------------------------*/
+
+bool Location_config::isMethodAllowed(const std::string& method) const
+{
+    for (size_t i = 0; i < _allowedMethods.size(); ++i)
+    {
+        if (_allowedMethods[i] == method)
+            return (true);
+    }
+    return (false);
+}
+
+bool Location_config::isCgiRequest(const std::string& filename) const
+{
+    size_t pos = filename.find_last_of(".");
+
+    if (pos == std::string::npos)
+        return (false);
+    std::string extension = filename.substr(pos);
+    if (_cgiHandlers.count(extension) > 0)  
+        return (true);
+    return (false);
+}
+
+
 void Location_config::print() const {
     std::cout << "    Location: " << _path << std::endl;
     if (!_root.empty())

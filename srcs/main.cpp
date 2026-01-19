@@ -6,7 +6,7 @@
 /*   By: tnolent <tnolent@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/16 13:05:43 by kjolly            #+#    #+#             */
-/*   Updated: 2026/01/19 11:09:10 by tnolent          ###   ########.fr       */
+/*   Updated: 2026/01/19 12:19:30 by tnolent          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,9 +25,9 @@ void handle_sig(int sig) {
 // Main de timothee
 int main(int ac, char **av)
 {
-    std::string const file_path(av[1]);
     if (ac == 2)
     {
+        std::string const file_path(av[1]);
         Global_Config config(file_path);
         config.print();
         const std::vector<Server_Config> server = config.getConfVect();
@@ -35,7 +35,11 @@ int main(int ac, char **av)
         fLoc->print();
     }
     else
-        std::cout << "Pas de fichier de configuration";
+    {
+        Global_Config config;
+        config.print();   
+        // std::cout << "Pas de fichier de configuration";
+    }
 }
 
 // main pour kiki

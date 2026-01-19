@@ -62,8 +62,8 @@ public:
     
     // Utilitaires
     void print() const;
-    // bool isMethodAllowed(const std::string& method) const;
-    // bool isCgiRequest(const std::string& filename) const;
+    bool isMethodAllowed(const std::string& method) const;
+    bool isCgiRequest(const std::string& filename) const;
 };
 
 #endif

@@ -1,8 +1,27 @@
 #include "parsing/Global_Config.hpp"
 #include "parsing/parsing.hpp"
 
-Global_Config::Global_Config(const std::string& filepath) {
-    parsing(filepath);
+Global_Config::Global_Config(const std::string& filepath) : _configFilePath(filepath) {
+    parsing(_configFilePath);
+}
+
+Global_Config::Global_Config() {
+    _servers.push_back(Server_Config());
+    Server_Config& server = _servers.back();
+    server.setHost("0.0.0.0");
+    server.setPort(8080);
+    server.addServerName("");
+    server.setRoot("html");
+    server.addIndex("index.html");
+    server.setAutoindex(false);
+    server.setClientMaxBodySize(1000000);
+    server.addLocation(Location_config());
+    // const std::vector<Location_config> &loc = server.getLocations();
+    // loc[0].addAllowedMethod("GET");
+    // loc[0].addAllowedMethod("POST");
+}
+
+Global_Config::~Global_Config() {
 }
 
 void Global_Config::buildServer(const ConfigNode& node)
@@ -150,17 +169,11 @@ void    Global_Config::parsing(const std::string& filepath)
             const ConfigNode& child = *it; 
             buildServer(child);
         }
-        // std::cout << "--- Serveurs charges : " << _servers.size() << " ---" << std::endl; //! il faut croire que le vector est ok ici
-        // for (size_t i = 0; i < _servers.size(); i++)
-        // {
-        //     _servers[i].print(); // ou _servers[i]->print() si ce sont des pointeurs
-        // }
     }
-    catch(const std::exception& e) {
+    catch (const std::exception& e) {
         std::cerr << e.what() << std::endl;
         throw;
     }
-    
 }
 
 const std::vector<Server_Config>& Global_Config::getConfVect() const {

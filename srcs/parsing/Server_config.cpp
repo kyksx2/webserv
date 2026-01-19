@@ -2,7 +2,7 @@
 #include "parsing/parsing.hpp"
 #include "parsing/Global_Config.hpp"
 
-Server_Config::Server_Config() : _port(0), _clientMaxBodySize(0) {
+Server_Config::Server_Config() : _port(0), _autoindex(false), _clientMaxBodySize(0)  {
 
 }
 
@@ -167,8 +167,10 @@ void Server_Config::print() const {
         }
         std::cout << std::endl;
     }
+
     if (_autoindex)
         std::cout << "      autoindex: on" << std::endl;
+
     if (_clientMaxBodySize != 0)
         std::cout << "    client_max_body_size: " << _clientMaxBodySize << std::endl;
     if (!_cgiHandlers.empty())

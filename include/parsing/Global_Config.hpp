@@ -11,17 +11,17 @@ private:
     std::string _configFilePath;
 
 public:
+    Global_Config();
     explicit Global_Config(const std::string& filepath);
-    
+    ~Global_Config();
+
     // Parsing
     void parsing(const std::string& filepath);
     
     // Getters
     const std::vector<Server_Config>& getConfVect() const;
-    // const std::string& getConfigFilePath() const;
     
     // Utilitaires
-    // void buildFromTree(const std::vector<ConfigNode>& nodes);
     Location_config buildLocation(const ConfigNode& node);
     void buildServer(const ConfigNode& node);
     void print() const;
