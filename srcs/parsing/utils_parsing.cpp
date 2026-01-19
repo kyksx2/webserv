@@ -57,42 +57,7 @@ std::vector<std::string> modifyArgListen(const ConfigNode& node)
     std::vector<std::string> parts;
     parts.push_back(host);
     parts.push_back(port);
-    return parts;
-}
-
-bool    Parsing::listenCase(const ConfigNode& node)
-{
-    if (node.directive == "listen")
-    {
-        if (node.arguments.size() != 1)
-            return false;
-
-        std::vector<std::string> parts = modifyArgListen(node);
-        
-        if (parts.empty()) {
-            return false;
-        }
-        std::string portStr;
-        if (parts.size() == 2)
-        {
-            if (parts[1].empty())
-                throw std::runtime_error("Error : port vide"); // Cas "127.0.0.1:"
-            if (!isStringDigit(parts[1]))
-                throw std::runtime_error("Error : port non digit");
-            portStr = parts[1];
-        }
-        else
-            portStr = parts[0];
-        if (portStr.empty())
-            throw std::runtime_error("Error : port vide");
-
-        int code;
-        std::stringstream ss(portStr);
-        if (!(ss >> code) || code < 1 || code > 65535) {
-            throw std::runtime_error("Error : port invalide");
-        }
-    }
-    return (true);
+    return (parts);
 }
 
 void print_node(ConfigNode &node, int layer)

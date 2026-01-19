@@ -5,6 +5,7 @@ Global_Config::Global_Config(const std::string& filepath) : _configFilePath(file
     parsing(_configFilePath);
 }
 
+// Configuration par default si pas de conf_file 
 Global_Config::Global_Config() {
     _servers.push_back(Server_Config());
     Server_Config& server = _servers.back();
@@ -16,9 +17,6 @@ Global_Config::Global_Config() {
     server.setAutoindex(false);
     server.setClientMaxBodySize(1000000);
     server.addLocation(Location_config());
-    // const std::vector<Location_config> &loc = server.getLocations();
-    // loc[0].addAllowedMethod("GET");
-    // loc[0].addAllowedMethod("POST");
 }
 
 Global_Config::~Global_Config() {
@@ -55,7 +53,7 @@ void Global_Config::buildServer(const ConfigNode& node)
                 ss.clear();
 			}
             else
-                throw std::runtime_error("Erreur : Probleme de port");
+                throw std::runtime_error("Error : Probleme de port");
         }
         if (child.directive == "server_name")
         {
@@ -79,7 +77,7 @@ void Global_Config::buildServer(const ConfigNode& node)
             else if (child.arguments[0] == "off")
                 server.setAutoindex(false);
             else
-                throw std::runtime_error("Erreur : Probleme d'argument avec autoindex");
+                throw std::runtime_error("Error : Probleme d'argument avec autoindex");
         }
         if (child.directive == "cgi_handler")
             server.setCgi(child.arguments[0], child.arguments[1]);
