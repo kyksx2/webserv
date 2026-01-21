@@ -7,6 +7,7 @@
 #include <fstream>
 #include <iostream>
 #include <stdint.h>
+#include <unistd.h>
 
 enum TokenType {
     KEYWORD,      // server, location, listen, etc.
@@ -37,7 +38,8 @@ class Parsing {
         Parsing(const std::string& filepath);
 
         bool                errorPageCase(const ConfigNode& node);
-        bool                ArgCase(const ConfigNode& node);
+        bool                numberArgCase(const ConfigNode& node);
+        bool                cgiCase(const ConfigNode& node);
         bool                listenCase(const ConfigNode& node);
         bool                validateNode(const ConfigNode& node);
         std::string         cleanContent(const std::string& fileContent);
@@ -46,6 +48,9 @@ class Parsing {
         std::vector<Token>  tokeniseContent(const std::string& fileContent);
         ConfigNode          parseBlock(const std::vector<Token>& tokens, size_t& i);
         bool                caseByCase_directive(const ConfigNode& node);
+        bool                isValidIp(const std::string ipAdress);
+        bool                validOctet(const std::string octet);
+
 
         /*-----------------Setter--------------------------*/
         ConfigNode          setTree(const std::vector<Token>& tokens);

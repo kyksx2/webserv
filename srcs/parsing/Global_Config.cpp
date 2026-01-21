@@ -170,7 +170,7 @@ void    Global_Config::parsing(const std::string& filepath)
     }
     catch (const std::exception& e) {
         std::cerr << e.what() << std::endl;
-        throw;
+        // #throw;
     }
 }
 
