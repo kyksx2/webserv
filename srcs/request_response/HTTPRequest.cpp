@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   HTTPRequest.cpp                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: yzeghari <yzeghari@student.42.fr>          +#+  +:+       +#+        */
+/*   By: kjolly <kjolly@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/24 13:45:23 by yzeghari          #+#    #+#             */
-/*   Updated: 2026/01/21 12:28:24 by yzeghari         ###   ########.fr       */
+/*   Updated: 2026/01/21 15:40:19 by kjolly           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -263,13 +263,6 @@ std::string HTTPRequest::GetHeaders_value(std::string key)
 		val = this->m_headers[key];
 	}
 	return val;
-}
-
-bool HTTPRequest::IsKeepAlive()
-{
-	if (this->m_headers["connection"] == "keep-alive")
-		return true;
-	return false;
 }
 
 HTTPRequest::HTTPRequestException::HTTPRequestException(std::string err) throw()

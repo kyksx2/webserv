@@ -6,7 +6,7 @@
 /*   By: kjolly <kjolly@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/04 12:52:24 by yzeghari          #+#    #+#             */
-/*   Updated: 2026/01/17 12:49:15 by kjolly           ###   ########.fr       */
+/*   Updated: 2026/01/21 15:42:14 by kjolly           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,6 +71,7 @@ class HTTPResponse
 	std::string			GetReason() const;
 	std::map<std::string, std::string>	GetHeaders() const;
 	std::string			GetBody() const;
+	bool 				IsKeepAlive();
 
 	std::string		generate();
 	//! pense a rajouter les headers obligatoire tel que lenght ou connection ds generate

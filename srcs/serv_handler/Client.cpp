@@ -48,7 +48,7 @@ Client::~Client() {
 		delete request;
 }
 
-bool Client::isKeepAlive() { return this->request->IsKeepAlive(); }
+bool Client::isKeepAlive() { return this->response.IsKeepAlive(); }
 
 size_t  Client::getDataSent() const { return this->data_sent; }
 

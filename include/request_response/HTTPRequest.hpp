@@ -6,7 +6,7 @@
 /*   By: kjolly <kjolly@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/24 13:37:27 by yzeghari          #+#    #+#             */
-/*   Updated: 2026/01/21 10:34:59 by kjolly           ###   ########.fr       */
+/*   Updated: 2026/01/21 15:42:49 by kjolly           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,7 +45,6 @@ class HTTPRequest
 		std::string		GetHeaders_value(std::string key);
 		
 		void query_creation(std::string line);
-		bool	IsKeepAlive();
 		virtual	HTTPResponse	generateResponse() = 0;
 
 		class	HTTPRequestException : public std::exception
