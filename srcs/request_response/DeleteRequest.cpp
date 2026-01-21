@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   DeleteRequest.cpp                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kjolly <kjolly@student.42.fr>              +#+  +:+       +#+        */
+/*   By: yzeghari <yzeghari@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/28 12:27:58 by yzeghari          #+#    #+#             */
-/*   Updated: 2026/01/17 11:49:44 by kjolly           ###   ########.fr       */
+/*   Updated: 2026/01/21 12:26:24 by yzeghari         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,6 +25,7 @@ HTTPResponse DeleteRequest::generateResponse()
 {
 	HTTPResponse	delresponse;
 	delresponse.setVersion(this->m_version);
+	delresponse.setHeader("connection", this->m_headers["connection"]);
 	struct stat st;
 
 	// Si DELETE n'est pas autorisé dans ta config (location) A rajouter
