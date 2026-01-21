@@ -59,6 +59,10 @@ void Server::init(int epoll_fd) {
     }
 }
 
+const Location_config*  Server::sendALocation() {
+    return this->config.findLocation(); //!!! debrouillez vous
+}
+
 int Server::getListenFd() const { return this->listen_fd; }
 
 sockaddr_in Server::getAddr() const { return this->addr; }

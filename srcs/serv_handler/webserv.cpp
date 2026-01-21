@@ -17,8 +17,8 @@ void    WebServ::run() {
 			u_int32_t events = ev[i].events;
 //? find return un iterateur qui correspond a la valeur chercher dans la map
 //? end signifie que l'iteratteur est hors champ, il n'a pas ete trouver
-std::map<int, Server*>::iterator it_server = this->servers.find(event_fd);
-if (it_server != this->servers.end()) {
+			std::map<int, Server*>::iterator it_server = this->servers.find(event_fd);
+			if (it_server != this->servers.end()) {
 					//? on a trouver un server existant donc accepter une nvl connexion
 					Server* find_server = it_server->second;
 					handleNewClient(find_server);
