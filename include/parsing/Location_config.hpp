@@ -20,7 +20,6 @@ class Server_Config;
 
 class Location_config {
 private:
-    const Server_Config* _server;             // Pour ajouter les valeurs iterees du serveur
     std::string _path;                               // Ex: "/", "/api", "/uploads"
     std::string _root;                               // Ex: "/var/www/html"
     std::vector<std::string> _index;                 // Ex: ["index.html", "index.htm"]
@@ -35,7 +34,7 @@ private:
 
 public:
     Location_config();
-    Location_config(const std::string& path, const Server_Config *server);
+    Location_config(const std::string& path);
     
     // Getters
     const std::string& getPath() const;
@@ -63,8 +62,8 @@ public:
     
     // Utilitaires
     void print() const;
-    // bool isMethodAllowed(const std::string& method) const;
-    // bool isCgiRequest(const std::string& filename) const;
+    bool isMethodAllowed(const std::string& method) const;
+    bool isCgiRequest(const std::string& filename) const;
 };
 
 #endif

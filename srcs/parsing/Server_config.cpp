@@ -2,7 +2,7 @@
 #include "parsing/parsing.hpp"
 #include "parsing/Global_Config.hpp"
 
-Server_Config::Server_Config(){
+Server_Config::Server_Config() : _port(0), _autoindex(false), _clientMaxBodySize(0)  {
 
 }
 
@@ -125,6 +125,26 @@ const std::vector<Location_config>& Server_Config::getLocations() const
 
 /*-----------------------UTILS-----------------------------*/
 
+const Location_config* Server_Config::findLocation(const std::string& uri) const
+{
+    const Location_config *locationFind = NULL;
+    size_t best_size = 0;
+
+    for (size_t i = 0; i < _locations.size(); ++i)
+    {
+        const std::string &path = _locations[i].getPath();
+        if (uri.compare(0, path.length(), path) == 0)
+        {
+            if (best_size < path.length())
+            {
+                locationFind = &_locations[i];
+                best_size = path.length();
+            }
+        } 
+    }
+    return (locationFind);
+}
+
 void Server_Config::print() const {
     std::cout << "  Server:" << std::endl;
     std::cout << "    listen: " << _host << ":" << _port << std::endl;
@@ -147,8 +167,10 @@ void Server_Config::print() const {
         }
         std::cout << std::endl;
     }
+
     if (_autoindex)
         std::cout << "      autoindex: on" << std::endl;
+
     if (_clientMaxBodySize != 0)
         std::cout << "    client_max_body_size: " << _clientMaxBodySize << std::endl;
     if (!_cgiHandlers.empty())

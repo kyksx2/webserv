@@ -8,7 +8,6 @@ Parsing::Parsing(const std::string& filepath)
     std::vector<Token> token = tokeniseContent(fileContent);
 	_tree = setTree(token);
     validateNode(_tree);
-	// print_node(_tree, 0);
 }
 
 enum TokenType  Parsing::determineType(const std::string& word)
@@ -30,14 +29,14 @@ ConfigNode Parsing::parseBlock(const std::vector<Token>& tokens, size_t& i)
 	if (tokens[i].type == KEYWORD)
 		node.directive = tokens[i++].value;
     else {
-        throw std::runtime_error("Erreur : mauvaise directive : [" + tokens[i].value + "]");
+        throw std::runtime_error("Error : mauvaise directive : [" + tokens[i].value + "]");
     }
 	while (i < tokens.size() && tokens[i].type != OPEN_BRACE && tokens[i].type != SEMICOLON)
 	{
 		if (tokens[i].type == VALUE)
 			node.arguments.push_back(tokens[i].value);
         else if (tokens[i].type == KEYWORD)
-            throw std::runtime_error("Erreur : Probleme de syntaxe");
+            throw std::runtime_error("Error : Probleme de syntaxe");
         i++;
 	}
     // Récursivité pour chercher tout les enfants
@@ -163,10 +162,10 @@ bool Parsing::validateNode(const ConfigNode& node)
         {
             const ConfigNode& child = *it; 
             if (child.directive == "server")
-                throw std::runtime_error("Erreur : block serveur a l'interieur d'un block serveur");
+                throw std::runtime_error("Error : block serveur a l'interieur d'un block serveur");
         }
     }
-    if (caseByCase_directive(node))
+    if (!caseByCase_directive(node))
         return (false);
     // Valider récursivement les enfants
     for (std::vector<ConfigNode>::const_iterator it = node.children.begin(); 
@@ -188,6 +187,36 @@ bool Parsing::caseByCase_directive(const ConfigNode& node)
     if (!errorPageCase(node))
         return (false);
     return true;
+}
+
+bool    Parsing::listenCase(const ConfigNode& node)
+{
+    int code;
+    std::string portStr;
+    std::vector<std::string> parts;
+
+    if (node.directive == "listen")
+    {
+        parts = modifyArgListen(node);
+        if (parts.size() == 2)
+        {
+            
+            if (!isStringDigit(parts[1]))
+                throw std::runtime_error("Error : port non digit");
+            portStr = parts[1];
+        }
+        else
+        {
+            if (!isStringDigit(parts[0]))
+                throw std::runtime_error("Error : port non digit");
+            portStr = parts[0];
+        }
+        std::stringstream ss(portStr);
+        if (!(ss >> code) || code < 1 || code > 65535) {
+            throw std::runtime_error("Error : port invalide");
+        }
+    }
+    return (true);
 }
 
 bool    Parsing::ArgCase(const ConfigNode& node)
@@ -214,14 +243,15 @@ bool    Parsing::errorPageCase(const ConfigNode& node)
 {
     if (node.directive == "error_page")
     {
+        int code = 0;
         if (node.arguments.size() != 2)
-            throw std::runtime_error("Error : directive error_page should have two arguments");
-        int code;
+            throw std::runtime_error("Error : La directive error_page doit avoir deux");
         std::stringstream ss(node.arguments[0]);
-        if (ss >> code)
-            throw std::runtime_error("Error : Invalid integer format for error_page.");
+        if (!isStringDigit(ss.str()))
+            throw std::runtime_error("Error : Nombre non valide pour le code erreur.");
+        ss >> code;
         if (code < 300 || code >= 600)
-            throw std::runtime_error("Error : directive error_page should have valid error number (Between 300 and 599)");
+            throw std::runtime_error("Error : La directive error_page doit avoir un code erreur valid (entre 300 et 599)");
     }
 	return (true);
 }

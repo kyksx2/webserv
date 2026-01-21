@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kjolly <kjolly@student.42.fr>              +#+  +:+       +#+        */
+/*   By: tnolent <tnolent@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/16 13:05:43 by kjolly            #+#    #+#             */
-/*   Updated: 2026/01/17 11:52:55 by kjolly           ###   ########.fr       */
+/*   Updated: 2026/01/19 16:02:37 by tnolent          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,17 +25,24 @@ void handle_sig(int sig) {
 // Main de timothee
 // int main(int ac, char **av)
 // {
-//     std::string const file_path(av[1]);
 //     if (ac == 2)
 //     {
+//         std::string const file_path(av[1]);
 //         Global_Config config(file_path);
 //         config.print();
+//         // const std::vector<Server_Config> server = config.getConfVect();
+//         // const Location_config *fLoc = server[0].findLocation("/uploadcaca");
+//         // fLoc->print();
 //     }
 //     else
-//         std::cout << "Pas de fichier de configuration";
+//     {
+//         Global_Config config;
+//         config.print();   
+//         // std::cout << "Pas de fichier de configuration";
+//     }
 // }
 
-// main pour kiki
+// // main pour kiki
 int main(int ac, char **av) {
     if (ac == 2 || ac == 1) {
         std::string conf;

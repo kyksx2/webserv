@@ -1,8 +1,25 @@
 #include "parsing/Global_Config.hpp"
 #include "parsing/parsing.hpp"
 
-Global_Config::Global_Config(const std::string& filepath) {
-    parsing(filepath);
+Global_Config::Global_Config(const std::string& filepath) : _configFilePath(filepath) {
+    parsing(_configFilePath);
+}
+
+// Configuration par default si pas de conf_file 
+Global_Config::Global_Config() {
+    _servers.push_back(Server_Config());
+    Server_Config& server = _servers.back();
+    server.setHost("0.0.0.0");
+    server.setPort(8080);
+    server.addServerName("");
+    server.setRoot("html");
+    server.addIndex("index.html");
+    server.setAutoindex(false);
+    server.setClientMaxBodySize(1000000);
+    server.addLocation(Location_config());
+}
+
+Global_Config::~Global_Config() {
 }
 
 void Global_Config::buildServer(const ConfigNode& node)
@@ -36,7 +53,7 @@ void Global_Config::buildServer(const ConfigNode& node)
                 ss.clear();
 			}
             else
-                throw std::runtime_error("Erreur : Probleme de port");
+                throw std::runtime_error("Error : Probleme de port");
         }
         if (child.directive == "server_name")
         {
@@ -60,7 +77,7 @@ void Global_Config::buildServer(const ConfigNode& node)
             else if (child.arguments[0] == "off")
                 server.setAutoindex(false);
             else
-                throw std::runtime_error("Erreur : Probleme d'argument avec autoindex");
+                throw std::runtime_error("Error : Probleme d'argument avec autoindex");
         }
         if (child.directive == "cgi_handler")
             server.setCgi(child.arguments[0], child.arguments[1]);
@@ -74,14 +91,14 @@ void Global_Config::buildServer(const ConfigNode& node)
             server.setClientMaxBodySize(parseBodySize(child.arguments[0]));
         if (child.directive == "location")
         {
-            server.addLocation(buildLocation(child, &server));
+            server.addLocation(buildLocation(child));
         }
     }
 }
 
-Location_config Global_Config::buildLocation(const ConfigNode& node, Server_Config *server)
+Location_config Global_Config::buildLocation(const ConfigNode& node)
 {
-    Location_config location(node.arguments[0], server);
+    Location_config location(node.arguments[0]);
     std::stringstream   ss;
     int code = 0;
 
@@ -150,17 +167,11 @@ void    Global_Config::parsing(const std::string& filepath)
             const ConfigNode& child = *it; 
             buildServer(child);
         }
-        // std::cout << "--- Serveurs charges : " << _servers.size() << " ---" << std::endl; //! il faut croire que le vector est ok ici
-        // for (size_t i = 0; i < _servers.size(); i++)
-        // {
-        //     _servers[i].print(); // ou _servers[i]->print() si ce sont des pointeurs
-        // }
     }
-    catch(const std::exception& e) {
+    catch (const std::exception& e) {
         std::cerr << e.what() << std::endl;
         throw;
     }
-    
 }
 
 const std::vector<Server_Config>& Global_Config::getConfVect() const {
