@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   GetRequest.cpp                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kjolly <kjolly@student.42.fr>              +#+  +:+       +#+        */
+/*   By: yzeghari <yzeghari@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/25 13:45:13 by yzeghari          #+#    #+#             */
-/*   Updated: 2026/01/17 11:50:19 by kjolly           ###   ########.fr       */
+/*   Updated: 2026/01/21 12:25:17 by yzeghari         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,6 +49,7 @@ HTTPResponse GetRequest::generateResponse()
 {
 	HTTPResponse	getresponse;
 	getresponse.setVersion(this->m_version);
+	getresponse.setHeader("connection", this->m_headers["connection"]);
 	std::string	inthefile;
 	struct stat st;
 
@@ -56,7 +57,6 @@ HTTPResponse GetRequest::generateResponse()
 	{
 		if (S_ISDIR(st.st_mode))
 		{
-// Version compatible C++98
 			if (this->m_target.empty() || this->m_target[this->m_target.length() - 1] != '/')			{
 				// 301 redirect
 				getresponse.setHeader("Location", this->m_target + "/");

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   PostRequest.cpp                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kjolly <kjolly@student.42.fr>              +#+  +:+       +#+        */
+/*   By: yzeghari <yzeghari@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/25 14:31:54 by yzeghari          #+#    #+#             */
-/*   Updated: 2026/01/17 11:52:35 by kjolly           ###   ########.fr       */
+/*   Updated: 2026/01/21 12:26:20 by yzeghari         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,6 +42,7 @@ HTTPResponse PostRequest::generateResponse()
 {
 	HTTPResponse	postresponse;
 	postresponse.setVersion(this->m_version);
+	postresponse.setHeader("connection", this->m_headers["connection"]);
 	struct stat st;
 	std::string	dir;
 	std::string	file;
