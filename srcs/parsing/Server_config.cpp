@@ -27,7 +27,6 @@ void Server_Config::addServerName(const std::string& name)
     _serverNames.push_back(name);
 }
 
-
 void Server_Config::setRoot(const std::string& root)
 {
     if (!root.empty())
@@ -47,9 +46,6 @@ void Server_Config::setAutoindex(bool value)
 
 void Server_Config::setCgi(const std::string& extension, const std::string& path)
 {
-    // faire la gestion des erreurs extensions;
-    // if (extension != ".py")
-
     if (!extension.empty() && !path.empty())
         _cgiHandlers[extension] = path;
 }
@@ -175,11 +171,11 @@ void Server_Config::print() const {
         std::cout << "    client_max_body_size: " << _clientMaxBodySize << std::endl;
     if (!_cgiHandlers.empty())
     {
-        std::cout << "      cgi_handlers: " << std::endl;
+        std::cout << "    cgi_handlers: " << std::endl;
         for (std::map<std::string, std::string>::const_iterator it = _cgiHandlers.begin(); 
              it != _cgiHandlers.end(); 
              ++it)
-            std::cout << "        " << it->first << " -> " << it->second << std::endl;
+            std::cout << "      " << it->first << " -> " << it->second << std::endl;
     }
     if (!_errorPages.empty()) {
         std::cout << "    error_pages:" << std::endl;

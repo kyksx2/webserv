@@ -165,6 +165,16 @@ bool Parsing::validateNode(const ConfigNode& node)
                 throw std::runtime_error("Error : block serveur a l'interieur d'un block serveur");
         }
     }
+    if (node.directive == "location")
+    {
+        for (std::vector<ConfigNode>::const_iterator it = node.children.begin(); 
+            it != node.children.end(); ++it)
+        {
+            const ConfigNode& child = *it; 
+            if (child.directive == "location")
+                throw std::runtime_error("Error : block location a l'interieur d'un block location");
+        }
+    }
     if (!caseByCase_directive(node))
         return (false);
     // Valider récursivement les enfants
@@ -180,13 +190,29 @@ bool Parsing::validateNode(const ConfigNode& node)
 
 bool Parsing::caseByCase_directive(const ConfigNode& node)
 {
-    if (!ArgCase(node))
+    if (!numberArgCase(node))
         return (false);
     if (!listenCase(node))
         return (false);
     if (!errorPageCase(node))
         return (false);
+    if (!cgiCase(node))
+        return (false);
     return true;
+}
+
+bool    Parsing::cgiCase(const ConfigNode& node)
+{
+    if (node.directive == "cgi_handler")
+    {
+        if (!(node.arguments[0][0] == '.'))
+            throw std::runtime_error("Error: L'extension du CGI ne commence pas par un point");
+        if (access(node.arguments[1].c_str(), X_OK) != 0)
+            throw std::runtime_error("Error: Le path du CGI n'est pas disponible");
+        if (access(node.arguments[1].c_str(), R_OK | X_OK) != 0) 
+            throw std::runtime_error("Error: Le path du CGI n'est pas executable");
+    }
+    return (true);
 }
 
 bool    Parsing::listenCase(const ConfigNode& node)
@@ -200,10 +226,11 @@ bool    Parsing::listenCase(const ConfigNode& node)
         parts = modifyArgListen(node);
         if (parts.size() == 2)
         {
-            
             if (!isStringDigit(parts[1]))
                 throw std::runtime_error("Error : port non digit");
             portStr = parts[1];
+            if (!isValidIp(parts[0]))
+                throw std::runtime_error("Error : Adresse IP non valide");
         }
         else
         {
@@ -219,13 +246,14 @@ bool    Parsing::listenCase(const ConfigNode& node)
     return (true);
 }
 
-bool    Parsing::ArgCase(const ConfigNode& node)
+bool    Parsing::numberArgCase(const ConfigNode& node)
 {
     std::stringstream error_msg;
 
     if (node.directive == "root" || node.directive == "autoindex" ||
         node.directive == "client_max_body_size" ||
-        node.directive == "listen" || node.directive == "upload_store")
+        node.directive == "listen" || node.directive == "upload_store" ||
+        node.directive == "location")
     {
         if (node.arguments.size() != 1){
             error_msg << "Error : directive '" << node.directive << "' should have only one argument";

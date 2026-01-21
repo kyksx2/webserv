@@ -60,6 +60,35 @@ std::vector<std::string> modifyArgListen(const ConfigNode& node)
     return (parts);
 }
 
+bool    Parsing::validOctet(const std::string octet)
+{
+    std::stringstream ss(octet);
+    int code;
+
+    if (!isStringDigit(octet))
+        return (false);
+    if (!(ss >> code) || code < 0  || code > 255)
+        return (false);
+    return (true);
+}
+
+bool    Parsing::isValidIp(const std::string ipAdress)
+{
+    std::stringstream   ss(ipAdress);
+    std::string         octets;
+    size_t              i = 0;
+
+    while (std::getline(ss, octets, '.'))
+    {
+        if (!validOctet(octets))
+            return (false);
+        i++;
+    }
+    if (i == 4)
+        return (true);
+    return (false);
+}
+
 void print_node(ConfigNode &node, int layer)
 {
 	int n = layer;
