@@ -54,7 +54,7 @@ size_t  Client::getDataSent() const { return this->data_sent; }
 
 int Client::getClientFd() const { return this->client_fd; }
 
-std::string& Client::getRequestBuffer() { return this->requestBuffer; }
+std::string Client::getRequestBuffer() const { return this->requestBuffer; }
 
 void    Client::setDataSent(size_t n) { this->data_sent = n; }
 
@@ -71,7 +71,7 @@ void    Client::clearState() {
     this->requestBuffer.clear();
 }
 
-std::string& Client::getResponseBuffer() { return this->responseBuffer; }
+std::string Client::getResponseBuffer() const { return this->responseBuffer; }
 
 void    Client::setResponseBuffer(std::string& response) {
     this->responseBuffer = response;
@@ -100,7 +100,7 @@ void Client::printHeader() {
 
 void Client::restartTimer() { this->start = time(NULL); } //?????????????????????????????????? changement
 
-time_t Client::getStart() { return (this->start); } //???????????????????????????????? changement
+time_t Client::getStart() const { return (this->start); } //???????????????????????????????? changement
 
 // POST /dossier/page.html?query=123 HTTP/1.1\r\n      <-- 1. Request Line
 // Host: localhost:8080\r\n                            <-- 2. Headers
@@ -185,7 +185,6 @@ bool Client::completeRequest()
 	// ===== HEADER =====
 	if (!this->headerParse)
 	{
-		std::cout << "ici" << std::endl;
 		try
 		{
 			this->isChunked = false;
@@ -251,12 +250,17 @@ void	Client::generateBufferResponse()
 		this->response = this->request->generateResponse();
 		this->responseBuffer = this->response.generate();
 	}
+	this->headerParse = false;
+	this->headerSize = 0;
+	this->contentLength = 0;
+	this->isChunked = false;
 	this->hasresponse = false;
 	if (this->request)
 	{
 		delete this->request;
 		this->request = NULL;
 	}
+
 }
 
 

@@ -21,22 +21,22 @@ class Client {
 	void	generateBufferResponse();
 	void	clearState();
 	void	restartTimer();
+	bool	isKeepAlive();
+	bool	hasResponse() const;
+	
+	time_t	getStart() const;
 	int		getClientFd() const;
 	Server*	getServer() const;
-	std::string&	getRequestBuffer();
-	std::string&	getResponseBuffer();
+	std::string	getRequestBuffer() const;
+	std::string	getResponseBuffer() const;
 	size_t	getDataSent() const;
-	bool	isKeepAlive();
-	time_t	getStart() const;
-	bool	hasResponse() const;
+
 	void	setDataSent(size_t n);
 	void	setResponseBuffer(std::string& response);
-	time_t			getStart();
-
-	void setRequest(std::string &buffer);
-	void printHeader();
-	void printBufferResponse();
-
+	void	setRequest(std::string &buffer);
+	
+	void	printHeader();
+	void	printBufferResponse();
 
 private:
 	int	client_fd;
