@@ -19,9 +19,9 @@ class Client {
 	bool	completeRequest();
 	void	requestCreation();
 	void	generateBufferResponse();
-	void clearState();
+	void	clearState();
 	void	restartTimer();
-	int	getClientFd() const;
+	int		getClientFd() const;
 	Server*	getServer() const;
 	std::string&	getRequestBuffer();
 	std::string&	getResponseBuffer();

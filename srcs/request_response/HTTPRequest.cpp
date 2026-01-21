@@ -6,7 +6,7 @@
 /*   By: kjolly <kjolly@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/24 13:45:23 by yzeghari          #+#    #+#             */
-/*   Updated: 2026/01/17 12:38:11 by kjolly           ###   ########.fr       */
+/*   Updated: 2026/01/21 11:34:41 by kjolly           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -267,9 +267,11 @@ std::string HTTPRequest::GetHeaders_value(std::string key)
 
 bool HTTPRequest::IsKeepAlive()
 {
-	if (this->m_headers["connection"] == "keep-alive")
-		return true;
-	return false;
+	//! a revoir
+	// if (this->m_headers["connection"] == "keep-alive")
+	// 	return true;
+	// return false;
+	return true;
 }
 
 HTTPRequest::HTTPRequestException::HTTPRequestException(std::string err) throw()

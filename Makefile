@@ -1,7 +1,9 @@
 NAME = webserv
 
 CXX = c++
-CXXFLAGS = -Wall -Wextra -Werror -std=c++98 -I include
+CXXFLAGS = -Wall -Wextra -Werror -std=c++98 -g3 -I include #-fsanitize=address
+# -g3 = ajoute les info de debug
+# -fsanitize=adress = message d'erreur rouge si on accede a une adresse non permise ou un pointeur mort
 
 # Dossiers
 SRC_DIR = srcs

@@ -16,7 +16,7 @@ static HTTPRequest    *post_creation(std::string buffer, const Server &serv)
 }
 
 Client::Client(int fd, Server* find_server) : client_fd(fd), dad_serv(find_server), data_sent(0), headerParse(false), headerSize(0),contentLength(0),
-    isChunked(false), requestBuffer(""), responseBuffer("") {
+    isChunked(false), hasresponse(false), requestBuffer(""), responseBuffer("") {
         start = time(NULL);
 }
 
@@ -43,7 +43,10 @@ Client&  Client::operator=(const Client& src) {
     return (*this);
 }
 
-Client::~Client() {}
+Client::~Client() {
+	if (this->request)
+		delete request;
+}
 
 bool Client::isKeepAlive() { return this->request->IsKeepAlive(); }
 
@@ -182,6 +185,7 @@ bool Client::completeRequest()
 	// ===== HEADER =====
 	if (!this->headerParse)
 	{
+		std::cout << "ici" << std::endl;
 		try
 		{
 			this->isChunked = false;
@@ -247,12 +251,12 @@ void	Client::generateBufferResponse()
 		this->response = this->request->generateResponse();
 		this->responseBuffer = this->response.generate();
 	}
-
-	// if (this->request)
-	// {
-	// 	delete this->request;
-	// 	this->request = NULL;
-	// }
+	this->hasresponse = false;
+	if (this->request)
+	{
+		delete this->request;
+		this->request = NULL;
+	}
 }
 
 

@@ -38,7 +38,7 @@ if (it_server != this->servers.end()) {
 						readClientData(event_fd);
 					}
 					if (events & EPOLLOUT) { //? idem
-						current_client->restartTimer(); 
+						current_client->restartTimer();
 						sendClientData(event_fd); 
 					}
 				}
@@ -131,7 +131,7 @@ void    WebServ::sendClientData(int event_fd) {
             client->clearState(); //? remet les conteurs a 0
         }
         else
-		closeClient(event_fd);
+			closeClient(event_fd);
     }
 }
 

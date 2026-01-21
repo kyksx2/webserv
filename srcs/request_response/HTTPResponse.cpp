@@ -6,16 +6,14 @@
 /*   By: kjolly <kjolly@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/04 12:59:01 by yzeghari          #+#    #+#             */
-/*   Updated: 2026/01/17 18:47:11 by kjolly           ###   ########.fr       */
+/*   Updated: 2026/01/21 11:33:57 by kjolly           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "request_response/HTTPResponse.hpp"
 #include "request_response/HTTPResponse.hpp"
 
-HTTPResponse::HTTPResponse()
-{
-}
+HTTPResponse::HTTPResponse() : _version("HTTP/1.1"), _status_code(200), _reason_phrase("OK") {} //!! mettre quelque chose par default
 
 HTTPResponse::HTTPResponse(std::string version, int status_code, std::string reason_phrase)
 {
