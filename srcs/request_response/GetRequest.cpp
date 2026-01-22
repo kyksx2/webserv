@@ -6,7 +6,7 @@
 /*   By: yzeghari <yzeghari@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/25 13:45:13 by yzeghari          #+#    #+#             */
-/*   Updated: 2026/01/22 12:50:24 by yzeghari         ###   ########.fr       */
+/*   Updated: 2026/01/22 15:23:52 by yzeghari         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,25 +57,28 @@ std::string vstos(const std::vector<std::string>& v, const std::string& separate
 	return str;
 }
 
-
 HTTPResponse GetRequest::generateResponse()
 {
 	//tester path../file/ != path../dir/
+	std::string		realPath = this->m_target;
 	HTTPResponse	getresponse;
 	getresponse.setVersion(this->m_version);
 	getresponse.setHeader("connection", this->m_headers["connection"]);
 	std::string	inthefile;
 	struct stat st;
 
+	//! faire le menage une fois tt pret
 	// Verifie si la Methode est autorise sur target
-	const Location_config* location = this->m_serv.sendALocation(this->m_target);
+	const Location_config* location = this->m_serv.sendALocation(realPath);
 	if (location == NULL)
 	{
-		std::cout << "print : timtim n'a pas fais ce que je lui ai demande et repete 8 fois";
+		//protection a rajouter plus tard
+		std::cout << "Besoin de la partie demande a kylian";
 	}
 	else
 	{
-		if (location->isMethodAllowed(this->m_target) == false)
+		realPath = location->getRoot() + this->m_target;
+		if (location->isMethodAllowed("GET") == false)
 		{
 			getresponse.setStatus(405, "Method Not Allowed");
 			location->getAllowedMethods();
@@ -85,12 +88,17 @@ HTTPResponse GetRequest::generateResponse()
 		}
 	}
 
-
-	if (!stat(this->m_target.c_str(), &st)) // recupere le type du fichier
+	std::cout << realPath << std::endl;
+	if (this->m_target.find("..") != std::string::npos)
+	{
+		getresponse.setStatus(403, "Forbidden");
+		return getresponse;
+	}
+	if (!stat(realPath.c_str(), &st)) // recupere le type du fichier
 	{
 		if (S_ISDIR(st.st_mode))
 		{
-			if (this->m_target.empty() || this->m_target[this->m_target.length() - 1] != '/')			{
+			if (this->m_target.empty() || this->m_target[this->m_target.length() - 1] != '/'){
 				// 301 redirect
 				getresponse.setHeader("Location", this->m_target + "/");
 				getresponse.setStatus(301, "Moved Permanently");
@@ -108,7 +116,7 @@ HTTPResponse GetRequest::generateResponse()
 
 				for (int i = 0; i < 2; ++i)
 				{
-					ntarget = this->m_target + lst_index[i];
+					ntarget = realPath + lst_index[i];
 					if (!stat(ntarget.c_str(), &st_index))
 					{
 						std::ifstream	infile(ntarget.c_str());
@@ -144,7 +152,7 @@ HTTPResponse GetRequest::generateResponse()
 
 					// Listing Generation
 					DIR	*fd_dir;
-					fd_dir = opendir(this->m_target.c_str()); // ouvre le dossier et stock dans une struct
+					fd_dir = opendir(realPath.c_str()); // ouvre le dossier et stock dans une struct
 					if (!fd_dir)
 					{
 						getresponse.setStatus(200, "OK");
@@ -203,7 +211,7 @@ HTTPResponse GetRequest::generateResponse()
 		if (S_ISREG(st.st_mode))
 		{
 			//recuperer avec un ifstream si erreur return perm denied
-			std::ifstream	infile(this->m_target.c_str());
+			std::ifstream	infile(realPath.c_str());
 			if (!infile)
 			{
 				// 403 forbidden

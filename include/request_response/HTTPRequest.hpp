@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   HTTPRequest.hpp                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kjolly <kjolly@student.42.fr>              +#+  +:+       +#+        */
+/*   By: yzeghari <yzeghari@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/24 13:37:27 by yzeghari          #+#    #+#             */
-/*   Updated: 2026/01/21 15:42:49 by kjolly           ###   ########.fr       */
+/*   Updated: 2026/01/22 14:48:12 by yzeghari         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,8 +16,7 @@
 #include "HTTPResponse.hpp"
 #include "serv_handler/Server.hpp"
 
-//! la recuperation des config du serv, besoin pour les methodes
-//! IL FAUT PEUT ETRE VERIFIE LES HEADERS OBLIGATOIRE SOIT ICI SOIT DANC CHAQUE METHODE
+//! IL FAUT PEUT ETRE VERIFIE LES HEADERS OBLIGATOIRE DANa CHAQUE METHODE
 
 class HTTPRequest
 {
@@ -34,16 +33,16 @@ class HTTPRequest
 		HTTPRequest& operator=(const HTTPRequest& src);
 		virtual ~HTTPRequest();
 
-		
+
 		void SetBody(std::string &buffer);
-		
+
 		std::string							GetTarget() const;
 		std::map<std::string, std::string>	GetQuery() const;
 		std::string							GetVersion() const;
 		std::string							GetBody() const;
 		std::map<std::string, std::string>	GetHeaders() const;
 		std::string		GetHeaders_value(std::string key);
-		
+
 		void query_creation(std::string line);
 		virtual	HTTPResponse	generateResponse() = 0;
 

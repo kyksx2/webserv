@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   HTTPRequest.cpp                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kjolly <kjolly@student.42.fr>              +#+  +:+       +#+        */
+/*   By: yzeghari <yzeghari@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/24 13:45:23 by yzeghari          #+#    #+#             */
-/*   Updated: 2026/01/21 15:40:19 by kjolly           ###   ########.fr       */
+/*   Updated: 2026/01/22 14:48:29 by yzeghari         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,7 +49,7 @@ HTTPRequest::HTTPRequest(std::string &buffer, const Server& serv)
 	else
 		m_target = target;
 
-	if (m_target.empty())
+	if (target.empty() || target[0] != '/')
 		throw HTTPRequest::HTTPRequestException(m_version + ",400,Bad Request");
 
 	while (std::getline(ss, line))

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kjolly <kjolly@student.42.fr>              +#+  +:+       +#+        */
+/*   By: yzeghari <yzeghari@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/16 13:05:43 by kjolly            #+#    #+#             */
-/*   Updated: 2026/01/21 16:11:24 by kjolly           ###   ########.fr       */
+/*   Updated: 2026/01/22 15:15:14 by yzeghari         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,7 +37,7 @@ void handle_sig(int sig) {
 //     else
 //     {
 //         Global_Config config;
-//         config.print();   
+//         config.print();
 //         // std::cout << "Pas de fichier de configuration";
 //     }
 // }
@@ -72,25 +72,3 @@ int main(int ac, char **av) {
     }
     return (0);
 }
-
-//! main de test pour yasser
-// int main() {
-// 	std::string requet = "POST /index.html HTTP/1.1\r\nHost: 127.0.0.1\r\nContent-Length: 10\r\n\r\nHelloworld";
-// 	Client client;
-
-// 	client.setRequest(requet);
-// 	if (client.completeRequest())
-// 	{
-// 		client.printHeader();
-// 		std::cout << "______________response_______" << std::endl;
-// 		client.generateBufferResponse();
-// 		client.printBufferResponse();
-// 		std::cout << "_____________________________" << std::endl;
-// 		std::cout << "request complete" << std::endl;
-// 	}
-// 	else {
-// 		client.printHeader();
-// 		std::cout << "request incomplete" << std::endl;
-// 	}
-// 	return (0);
-// }
