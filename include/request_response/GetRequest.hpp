@@ -6,7 +6,7 @@
 /*   By: yzeghari <yzeghari@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/25 13:46:05 by yzeghari          #+#    #+#             */
-/*   Updated: 2025/12/18 14:52:05 by yzeghari         ###   ########.fr       */
+/*   Updated: 2026/01/22 12:42:44 by yzeghari         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,4 +24,5 @@ class GetRequest : public HTTPRequest
 };
 
 std::string getMIME_Type(const std::string& target);
+std::string vstos(const std::vector<std::string>& v, const std::string& separateur);
 #endif

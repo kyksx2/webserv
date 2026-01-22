@@ -6,7 +6,7 @@
 /*   By: yzeghari <yzeghari@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/25 13:45:13 by yzeghari          #+#    #+#             */
-/*   Updated: 2026/01/21 12:25:17 by yzeghari         ###   ########.fr       */
+/*   Updated: 2026/01/22 12:50:24 by yzeghari         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,15 +43,48 @@ std::string getMIME_Type(const std::string& target)
 	return "text/html";
 }
 
-//! Rajouter l utilisation de query ABSOLUMENT
-//tester path../file/ != path../dir/
+//Vector to std::string Conversion
+std::string vstos(const std::vector<std::string>& v, const std::string& separateur)
+{
+	std::string str;
+
+	for (std::vector<std::string>::const_iterator it = v.begin(); it != v.end(); ++it)
+	{
+		if (it != v.begin())
+			str += separateur;
+		str += *it;
+	}
+	return str;
+}
+
+
 HTTPResponse GetRequest::generateResponse()
 {
+	//tester path../file/ != path../dir/
 	HTTPResponse	getresponse;
 	getresponse.setVersion(this->m_version);
 	getresponse.setHeader("connection", this->m_headers["connection"]);
 	std::string	inthefile;
 	struct stat st;
+
+	// Verifie si la Methode est autorise sur target
+	const Location_config* location = this->m_serv.sendALocation(this->m_target);
+	if (location == NULL)
+	{
+		std::cout << "print : timtim n'a pas fais ce que je lui ai demande et repete 8 fois";
+	}
+	else
+	{
+		if (location->isMethodAllowed(this->m_target) == false)
+		{
+			getresponse.setStatus(405, "Method Not Allowed");
+			location->getAllowedMethods();
+			std::string method_allowed = vstos(location->getAllowedMethods(), ", ");
+			getresponse.setHeader("Allow", method_allowed);
+			return getresponse;
+		}
+	}
+
 
 	if (!stat(this->m_target.c_str(), &st)) // recupere le type du fichier
 	{
@@ -103,64 +136,67 @@ HTTPResponse GetRequest::generateResponse()
 						return (getresponse);
 					}
 				}
-				// //! cas auto-index
+				//cas auto-index
+				if (location->isAutoindexEnabled())
 				{
-				// 	//      yes     |  no
-				// 	// Generate list|   403
+					//      yes     |  no
+					// Generate list|   403
 
-				// 	// Listing Generation
-				// 	DIR	*fd_dir;
-				// 	fd_dir = opendir(this->m_target.c_str()); // ouvre le dossier et stock dans une struct
-				// 	if (!fd_dir)
-				// 	{
-				// 		getresponse.setStatus(200, "OK");
-				// 		getresponse.setHeader("Content-Type", "text/html");
-				// 		getresponse.setBody(
-				// 		"<!DOCTYPE html>"
-				// 		"<html>"
-				// 		"<head>"
-				// 			"<title>Directory listing</title>"
-				// 		"</head>"
-				// 		"<body>"
-				// 			"<h1>Index of this directory</h1>"
-				// 			"<p>Directory is empty.</p>"
-				// 		"</body>"
-				// 		"</html>");
-				// 		return (getresponse);
-				// 	}
-				// 	struct dirent* entry;
-				// 	while ((entry = readdir(fd_dir)) != NULL)
-				// 	{
-				// 		inthefile += entry->d_name;
-				// 		inthefile += "<br>";  // ou conserver \n et mettre tout dans <pre>
-				// 	}
-				// 	closedir(fd_dir);
-				// 	getresponse.setStatus(200, "OK");
-				// 	getresponse.setHeader("Content-Type", "text/html");
-				// 	getresponse.setBody(
-				// 		"<!DOCTYPE html>"
-				// 		"<html>"
-				// 		"<head>"
-				// 			"<title>Directory listing</title>"
-				// 		"</head>"
-				// 		"<body>"
-				// 			"<h1>Index of this directory</h1>"
-				// 			"<p>" + inthefile + "</p>"
-				// 		"</body>"
-				// 		"</html>"
-				// 	);
-				// 	return (getresponse);
-
-					// // 403 forbidden
-					// getresponse.setStatus(403, "Forbidden");
-					// getresponse.setHeader("Content-Type", "text/html");
-					// getresponse.setBody(
-					// 	"<html><head><title>403 Forbidden</title></head>"
-					// 	"<body><h1>403 Forbidden</h1>"
-					// 	"<p>You don't have permission to access this resource.</p>"
-					// 	"</body></html>"
-					// );
-					// return (getresponse);
+					// Listing Generation
+					DIR	*fd_dir;
+					fd_dir = opendir(this->m_target.c_str()); // ouvre le dossier et stock dans une struct
+					if (!fd_dir)
+					{
+						getresponse.setStatus(200, "OK");
+						getresponse.setHeader("Content-Type", "text/html");
+						getresponse.setBody(
+						"<!DOCTYPE html>"
+						"<html>"
+						"<head>"
+							"<title>Directory listing</title>"
+						"</head>"
+						"<body>"
+							"<h1>Index of this directory</h1>"
+							"<p>Directory is empty.</p>"
+						"</body>"
+						"</html>");
+						return (getresponse);
+					}
+					struct dirent* entry;
+					while ((entry = readdir(fd_dir)) != NULL)
+					{
+						inthefile += entry->d_name;
+						inthefile += "<br>";  // ou conserver \n et mettre tout dans <pre>
+					}
+					closedir(fd_dir);
+					getresponse.setStatus(200, "OK");
+					getresponse.setHeader("Content-Type", "text/html");
+					getresponse.setBody(
+						"<!DOCTYPE html>"
+						"<html>"
+						"<head>"
+							"<title>Directory listing</title>"
+						"</head>"
+						"<body>"
+							"<h1>Index of this directory</h1>"
+							"<p>" + inthefile + "</p>"
+						"</body>"
+						"</html>"
+					);
+					return (getresponse);
+				}
+				else
+				{
+					// 403 forbidden
+					getresponse.setStatus(403, "Forbidden");
+					getresponse.setHeader("Content-Type", "text/html");
+					getresponse.setBody(
+						"<html><head><title>403 Forbidden</title></head>"
+						"<body><h1>403 Forbidden</h1>"
+						"<p>You don't have permission to access this resource.</p>"
+						"</body></html>"
+					);
+					return (getresponse);
 				}
 			}
 		}

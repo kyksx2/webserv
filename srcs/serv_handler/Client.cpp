@@ -177,6 +177,8 @@ void Client::requestCreation()
 	}
 }
 
+// Creer la classe request lors de la premiere iteration, son body lors de la deuxieme
+// ou la classe response (Bad Request) si probleme
 bool Client::completeRequest()
 {
 	size_t pos = this->requestBuffer.find("\r\n\r\n");
@@ -237,6 +239,8 @@ bool Client::completeRequest()
 	}
 }
 
+// attribue en generant si besoin le buffer response a l attribut responseBuffer
+// reinitialise au passage les attributs de verification
 void	Client::generateBufferResponse()
 {
 	this->responseBuffer.clear();
