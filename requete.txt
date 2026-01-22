@@ -1,4 +1,4 @@
-GET /home/yzeghari/gith/Cercle_5/webserv//index.html HTTP/1.1
+GET /index.html HTTP/1.1
 Host: 127.0.0.1:8080
 User-Agent: Tester/1.0
 Accept: */*

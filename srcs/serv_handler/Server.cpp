@@ -59,9 +59,13 @@ void Server::init(int epoll_fd) {
     }
 }
 
-const Location_config*  Server::sendALocation(const std::string& uri) const
+const Location_config*  Server::sendALocation(const std::string& uri)
 {
-    return this->config.findLocation(uri);
+    const Location_config* tmp = this->config.findLocation(uri);
+    if (!tmp) {
+        tmp = new Location_config();
+    }
+    return (tmp);
 }
 
 int Server::getListenFd() const { return this->listen_fd; }

@@ -18,7 +18,7 @@ class Server {
 	std::string			getHost() const;
 
 	void	init(int epoll_fd);
-	const Location_config*	sendALocation(const std::string& uri) const;
+	const Location_config*	sendALocation(const std::string& uri);
 
 	private:
 	Server_Config	config;
