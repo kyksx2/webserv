@@ -209,7 +209,7 @@ void    WebServ::handleNewClient(Server* find_server) {
 		}
 		else {
 			std::cerr << "Error: socket refused connexion on port "
-			<< find_server->getPort() 
+			<< find_server->getConfig().getPort() 
 			<< std::endl; //! mettre le port ici
 			return;
 		}

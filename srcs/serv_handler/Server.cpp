@@ -59,11 +59,12 @@ void Server::init(int epoll_fd) {
     }
 }
 
+//!! AHAH, SEND A LOCATION
 const Location_config*  Server::sendALocation(const std::string& uri)
 {
     const Location_config* tmp = this->config.findLocation(uri);
     if (!tmp) {
-        tmp = new Location_config();
+        return(NULL);
     }
     return (tmp);
 }
@@ -72,9 +73,13 @@ int Server::getListenFd() const { return this->listen_fd; }
 
 sockaddr_in Server::getAddr() const { return this->addr; }
 
-std::string Server::getHost() const { return this->config.getHost(); }
+Server_Config Server::getConfig() const { return this->config; }
 
-int Server::getPort() const {
-    return this->config.getPort();
-}
+// std::string Server::getHost() const { return this->config.getHost(); }
+
+// int Server::getPort() const {
+//     return this->config.getPort();
+// }
+
+// std::string Server::getRoot() const { return(this->config.getRoot()); }
 

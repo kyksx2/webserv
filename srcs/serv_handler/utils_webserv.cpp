@@ -17,7 +17,7 @@ WebServ::WebServ(const std::string& conf): epoll_fd(-1) {
 		Server* new_server = new Server(serv_conf[i]);
 		try {
 			new_server->init(this->epoll_fd);
-			std::cout << new_server->getListenFd() << ": Port: "<< new_server->getPort() <<   " Host: " << new_server->getHost() << std::endl;
+			std::cout << new_server->getListenFd() << ": Port: "<< new_server->getConfig().getPort() <<   " Host: " << new_server->getConfig().getHost() << std::endl;
 			int listen_fd = new_server->getListenFd();
 			this->servers[listen_fd] = new_server;
 		}

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   GetRequest.cpp                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: yzeghari <yzeghari@student.42.fr>          +#+  +:+       +#+        */
+/*   By: kjolly <kjolly@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/25 13:45:13 by yzeghari          #+#    #+#             */
-/*   Updated: 2026/01/22 15:23:52 by yzeghari         ###   ########.fr       */
+/*   Updated: 2026/01/23 10:21:53 by kjolly           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,7 +72,9 @@ HTTPResponse GetRequest::generateResponse()
 	const Location_config* location = this->m_serv.sendALocation(realPath);
 	if (location == NULL)
 	{
+		//! let see if you realy trap
 		//protection a rajouter plus tard
+		realPath = this->m_serv.getConfig().getRoot();
 		std::cout << "Besoin de la partie demande a kylian";
 	}
 	else

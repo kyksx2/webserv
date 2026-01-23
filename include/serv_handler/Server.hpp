@@ -14,8 +14,10 @@ class Server {
 
 	int					getListenFd() const;
 	struct sockaddr_in	getAddr() const;
-	int					getPort() const;
-	std::string			getHost() const;
+	Server_Config		getConfig() const;
+	// int					getPort() const;
+	// std::string			getHost() const;
+	// std::string			getRoot() const;
 
 	void	init(int epoll_fd);
 	const Location_config*	sendALocation(const std::string& uri);
