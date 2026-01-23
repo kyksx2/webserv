@@ -65,6 +65,7 @@ void Global_Config::buildServer(const ConfigNode& node)
         if (child.directive == "root")
             server.setRoot(child.arguments[0]);
         if (child.directive == "index") {
+            server.cleanIndex();
             for (std::vector<std::string>::const_iterator vec_it = child.arguments.begin();
                  vec_it != child.arguments.end(); ++vec_it) {
                 server.addIndex(*vec_it);
@@ -89,10 +90,15 @@ void Global_Config::buildServer(const ConfigNode& node)
 		}
 		if (child.directive == "client_max_body_size")
             server.setClientMaxBodySize(parseBodySize(child.arguments[0]));
+    }
+// Deuxieme init pour Location
+    for (std::vector<ConfigNode>::const_iterator it = node.children.begin(); 
+        it != node.children.end(); ++it)
+    {
+        const ConfigNode& child = *it; 
+
         if (child.directive == "location")
-        {
             server.addLocation(buildLocation(child));
-        }
     }
 }
 
@@ -170,7 +176,7 @@ void    Global_Config::parsing(const std::string& filepath)
     }
     catch (const std::exception& e) {
         std::cerr << e.what() << std::endl;
-        // #throw;
+        throw;
     }
 }
 

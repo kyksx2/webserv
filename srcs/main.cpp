@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: yzeghari <yzeghari@student.42.fr>          +#+  +:+       +#+        */
+/*   By: tnolent <tnolent@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/16 13:05:43 by kjolly            #+#    #+#             */
-/*   Updated: 2026/01/22 15:15:14 by yzeghari         ###   ########.fr       */
+/*   Updated: 2026/01/23 12:03:06 by tnolent          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,9 +30,9 @@ void handle_sig(int sig) {
 //         std::string const file_path(av[1]);
 //         Global_Config config(file_path);
 //         config.print();
-//         // const std::vector<Server_Config> server = config.getConfVect();
-//         // const Location_config *fLoc = server[0].findLocation("/uploadcaca");
-//         // fLoc->print();
+//         const std::vector<Server_Config> server = config.getConfVect();
+//         const Location_config *fLoc = server[0].findLocation("/kiki");
+//         fLoc->print();
 //     }
 //     else
 //     {

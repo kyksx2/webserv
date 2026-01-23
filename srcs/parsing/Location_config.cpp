@@ -1,7 +1,9 @@
 #include "parsing/Location_config.hpp"
 #include "parsing/Server_config.hpp"
 
-Location_config::Location_config() : _autoindex(false), _clientMaxBodySize(0) {
+Location_config::Location_config() :
+    _autoindex(false), _clientMaxBodySize(0)
+{
     addAllowedMethod("GET");
     addAllowedMethod("POST");
 }
@@ -163,8 +165,6 @@ void Location_config::print() const {
     std::cout << "    Location: " << _path << std::endl;
     if (!_root.empty())
         std::cout << "      root: " << _root << std::endl;
-    // else if (!_server->getRoot().empty())
-    //     std::cout << "      root: " << _server->getRoot() << std::endl;
     if (!_index.empty()) {
         std::cout << "      index: ";
         for (size_t i = 0; i < _index.size(); i++) {

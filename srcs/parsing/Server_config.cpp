@@ -2,8 +2,14 @@
 #include "parsing/parsing.hpp"
 #include "parsing/Global_Config.hpp"
 
-Server_Config::Server_Config() : _port(0), _autoindex(false), _clientMaxBodySize(0)  {
-
+Server_Config::Server_Config() :
+    _host("0.0.0.0"),
+    _port(8080),
+    _root("html"),
+    _autoindex(false),
+    _clientMaxBodySize(1048576)
+{
+    _index.push_back("index.html");
 }
 
 Server_Config::~Server_Config(){
@@ -188,4 +194,11 @@ void Server_Config::print() const {
     for (size_t i = 0; i < _locations.size(); i++) {
         _locations[i].print();
     }
+}
+
+
+void Server_Config::cleanIndex()
+{
+    if (!_index.empty())
+        _index.clear();
 }
