@@ -196,9 +196,21 @@ void Server_Config::print() const {
     }
 }
 
-
 void Server_Config::cleanIndex()
 {
     if (!_index.empty())
         _index.clear();
 }
+//! -------------------------------------------------------------------
+const Location_config& Server_Config::generateDefaultLocation() const {
+    this->_defaultLocation->setPath("/");
+    this->_defaultLocation->setRoot(this->getRoot());
+    // this->_defaultLocation->//index;
+    // this->_defaultLocation->//allowedmethods;
+    this->_defaultLocation->setAutoindex(false);
+    this->_defaultLocation->setClientMaxBodySize(this->getClientMaxBodySize());
+    this->_defaultLocation->setUploadStore("");
+    this->_defaultLocation->setRedirect(0, "");
+    this->_defaultLocation->setErrorPages(this->getErrorPages());
+}
+//! -------------------------------------------------------------------

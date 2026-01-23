@@ -75,6 +75,19 @@ void Location_config::setErrorPage(int code, const std::string& path)
     if (code >= 300 && code < 600)
         _errorPages[code] = path;
 }
+//! --------------------------------------------------------------------------
+void Location_config::setErrorPages(const std::map<int, std::string>& pages) {
+    this->_errorPages = pages;
+}
+
+void setIndex(const std::vector<std::string>& index) {
+
+}
+
+void setAllowedMetode(const std::vector<std::string>& metodes) {
+
+}
+//! --------------------------------------------------------------------------
 
 void Location_config::setClientMaxBodySize(size_t size)
 {

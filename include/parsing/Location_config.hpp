@@ -58,6 +58,11 @@ public:
     void setCgi(const std::string& extension, const std::string& path);
     void setRedirect(int code, const std::string& url);
     void setErrorPage(int code, const std::string& path);
+//! ------------------------------------------------------------
+    void setErrorPages(const std::map<int, std::string>& pages);
+    void setIndex(const std::vector<std::string>& index);
+    void setAllowedMetode(const std::vector<std::string>& metodes);
+//! ------------------------------------------------------------
     void setClientMaxBodySize(size_t size);
     
     // Utilitaires
