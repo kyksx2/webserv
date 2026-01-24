@@ -205,12 +205,14 @@ void Server_Config::cleanIndex()
 const Location_config& Server_Config::generateDefaultLocation() const {
     this->_defaultLocation->setPath("/");
     this->_defaultLocation->setRoot(this->getRoot());
-    // this->_defaultLocation->//index;
-    // this->_defaultLocation->//allowedmethods;
+    this->_defaultLocation->setIndex(this->_index);
+    this->_defaultLocation->setAllowedMetode("GET");
     this->_defaultLocation->setAutoindex(false);
     this->_defaultLocation->setClientMaxBodySize(this->getClientMaxBodySize());
     this->_defaultLocation->setUploadStore("");
     this->_defaultLocation->setRedirect(0, "");
     this->_defaultLocation->setErrorPages(this->getErrorPages());
+    std::cout << "----- VERIF DEFAULT LOCATION -----" << std::endl;
+    this->_defaultLocation->print();
 }
 //! -------------------------------------------------------------------

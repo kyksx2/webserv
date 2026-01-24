@@ -49,10 +49,10 @@ public:
     size_t getClientMaxBodySize() const;
 
     // Setters
-    void setPath(const std::string& path);
-    void setRoot(const std::string& root);
     void addIndex(const std::string& index);
     void addAllowedMethod(const std::string& method);
+    void setPath(const std::string& path);
+    void setRoot(const std::string& root);
     void setAutoindex(bool value);
     void setUploadStore(const std::string& path);
     void setCgi(const std::string& extension, const std::string& path);
@@ -60,8 +60,8 @@ public:
     void setErrorPage(int code, const std::string& path);
 //! ------------------------------------------------------------
     void setErrorPages(const std::map<int, std::string>& pages);
-    void setIndex(const std::vector<std::string>& index);
-    void setAllowedMetode(const std::vector<std::string>& metodes);
+    void setIndex(const std::vector<std::string>& new_index);
+    void setAllowedMetode(const std::string& new_metodes);
 //! ------------------------------------------------------------
     void setClientMaxBodySize(size_t size);
     

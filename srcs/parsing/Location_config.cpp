@@ -80,12 +80,13 @@ void Location_config::setErrorPages(const std::map<int, std::string>& pages) {
     this->_errorPages = pages;
 }
 
-void setIndex(const std::vector<std::string>& index) {
-
+void Location_config::setIndex(const std::vector<std::string>& new_index) {
+    this->_index = new_index;
 }
 
-void setAllowedMetode(const std::vector<std::string>& metodes) {
-
+void Location_config::setAllowedMetode(const std::string& new_metodes) {
+    if (!new_metodes.empty())
+        this->_allowedMethods.push_back(new_metodes);
 }
 //! --------------------------------------------------------------------------
 
