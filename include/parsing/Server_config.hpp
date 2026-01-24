@@ -49,10 +49,10 @@ public:
 	size_t	getClientMaxBodySize() const;
 	const std::vector<Location_config>&	getLocations() const;
 //! -------------------------------------------------------
-	const Location_config& getDefaultLocation() const;
+	const Location_config& getDefaultLocation();
 	void generateDefaultLocation();
 //! -------------------------------------------------------
-	
+
 	// Setters
 
 

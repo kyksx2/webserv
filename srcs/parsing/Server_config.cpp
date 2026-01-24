@@ -142,7 +142,7 @@ const Location_config* Server_Config::findLocation(const std::string& uri) const
                 locationFind = &_locations[i];
                 best_size = path.length();
             }
-        } 
+        }
     }
     return (locationFind);
 }
@@ -150,7 +150,7 @@ const Location_config* Server_Config::findLocation(const std::string& uri) const
 void Server_Config::print() const {
     std::cout << "  Server:" << std::endl;
     std::cout << "    listen: " << _host << ":" << _port << std::endl;
-    
+
     if (!_serverNames.empty()) {
         std::cout << "    server_name: ";
         for (size_t i = 0; i < _serverNames.size(); i++) {
@@ -178,8 +178,8 @@ void Server_Config::print() const {
     if (!_cgiHandlers.empty())
     {
         std::cout << "    cgi_handlers: " << std::endl;
-        for (std::map<std::string, std::string>::const_iterator it = _cgiHandlers.begin(); 
-             it != _cgiHandlers.end(); 
+        for (std::map<std::string, std::string>::const_iterator it = _cgiHandlers.begin();
+             it != _cgiHandlers.end();
              ++it)
             std::cout << "      " << it->first << " -> " << it->second << std::endl;
     }
@@ -216,7 +216,9 @@ void Server_Config::generateDefaultLocation() {
     this->_defaultLocation.print();
 }
 
-const Location_config& Server_Config::getDefaultLocation() const {
+const Location_config& Server_Config::getDefaultLocation() {
+	//! y : a voir si c la oú faut faire ça...
+	this->generateDefaultLocation();
     return this->_defaultLocation;
 }
 //! -------------------------------------------------------------------

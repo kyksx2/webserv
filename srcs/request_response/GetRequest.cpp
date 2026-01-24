@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   GetRequest.cpp                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kjolly <kjolly@student.42.fr>              +#+  +:+       +#+        */
+/*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/25 13:45:13 by yzeghari          #+#    #+#             */
-/*   Updated: 2026/01/24 15:15:37 by kjolly           ###   ########.fr       */
+/*   Updated: 2026/01/24 16:08:13 by marvin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,40 +43,21 @@ std::string getMIME_Type(const std::string& target)
 	return "text/html";
 }
 
-//Vector to std::string Conversion
-std::string vstos(const std::vector<std::string>& v, const std::string& separateur)
-{
-	std::string str;
-
-	for (std::vector<std::string>::const_iterator it = v.begin(); it != v.end(); ++it)
-	{
-		if (it != v.begin())
-			str += separateur;
-		str += *it;
-	}
-	return str;
-}
-
 HTTPResponse GetRequest::generateResponse()
 {
-	//tester path../file/ != path../dir/
-	std::string		realPath = this->m_target;
+
 	HTTPResponse	getresponse;
 	getresponse.setVersion(this->m_version);
 	getresponse.setHeader("connection", this->m_headers["connection"]);
 	std::string	inthefile;
+	//tester path../file/ != path../dir/
+	std::string		realPath = this->m_target;
 	struct stat st;
 
 	//! faire le menage une fois tt pret
 	// Verifie si la Methode est autorise sur target
 	const Location_config* location = this->m_serv.sendALocation(realPath);
-	if (location == NULL)
-	{
-		//! let see if you realy trap
-		//protection a rajouter plus tard
-		std::cout << "Besoin de la partie demande a kylian";
-	}
-	else
+	if (location) // theoriquement jms NULL | possibilité de changer pointeur en ref
 	{
 		realPath = location->getRoot() + this->m_target;
 		if (location->isMethodAllowed("GET") == false)
@@ -88,8 +69,9 @@ HTTPResponse GetRequest::generateResponse()
 			return getresponse;
 		}
 	}
-
+	//! affichage
 	std::cout << realPath << std::endl;
+
 	if (this->m_target.find("..") != std::string::npos)
 	{
 		getresponse.setStatus(403, "Forbidden");

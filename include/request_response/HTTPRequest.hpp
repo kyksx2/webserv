@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   HTTPRequest.hpp                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: yzeghari <yzeghari@student.42.fr>          +#+  +:+       +#+        */
+/*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/24 13:37:27 by yzeghari          #+#    #+#             */
-/*   Updated: 2026/01/22 14:48:12 by yzeghari         ###   ########.fr       */
+/*   Updated: 2026/01/24 16:07:50 by marvin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,6 +59,7 @@ class HTTPRequest
 
 std::ostream& operator<<(std::ostream& os, const HTTPRequest& req);
 std::vector<std::string>	split(const std::string &chaine, char delimiteur);
+std::string vstos(const std::vector<std::string>& v, const std::string& separateur);
 bool						safe_atoi(const char *str, int &result);
 
 #endif

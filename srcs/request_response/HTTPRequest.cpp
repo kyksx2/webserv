@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   HTTPRequest.cpp                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: yzeghari <yzeghari@student.42.fr>          +#+  +:+       +#+        */
+/*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/24 13:45:23 by yzeghari          #+#    #+#             */
-/*   Updated: 2026/01/22 14:48:29 by yzeghari         ###   ########.fr       */
+/*   Updated: 2026/01/24 16:08:40 by marvin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -139,6 +139,19 @@ std::vector<std::string>	split(const std::string &chaine, char delimiteur)
 	return (v);
 }
 
+//Vector to std::string Conversion
+std::string vstos(const std::vector<std::string>& v, const std::string& separateur)
+{
+	std::string str;
+
+	for (std::vector<std::string>::const_iterator it = v.begin(); it != v.end(); ++it)
+	{
+		if (it != v.begin())
+			str += separateur;
+		str += *it;
+	}
+	return str;
+}
 bool safe_atoi(const char *str, int &result)
 {
 	int sign = 1;

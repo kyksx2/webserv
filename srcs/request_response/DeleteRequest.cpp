@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   DeleteRequest.cpp                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: yzeghari <yzeghari@student.42.fr>          +#+  +:+       +#+        */
+/*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/28 12:27:58 by yzeghari          #+#    #+#             */
-/*   Updated: 2026/01/21 12:26:24 by yzeghari         ###   ########.fr       */
+/*   Updated: 2026/01/24 15:38:46 by marvin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,18 +26,32 @@ HTTPResponse DeleteRequest::generateResponse()
 	HTTPResponse	delresponse;
 	delresponse.setVersion(this->m_version);
 	delresponse.setHeader("connection", this->m_headers["connection"]);
+	std::string		realPath = this->m_target;
 	struct stat st;
 
 	// Si DELETE n'est pas autorisé dans ta config (location) A rajouter
 	// → 405 Method Not Allowed
+	const Location_config* location = this->m_serv.sendALocation(realPath);
+	if (location) // theoriquement jms NULL | possibilité de changer pointeur en ref
+	{
+		realPath = location->getRoot() + this->m_target;
+		if (location->isMethodAllowed("DELETE") == false)
+		{
+			delresponse.setStatus(405, "Method Not Allowed");
+			location->getAllowedMethods();
+			std::string method_allowed = vstos(location->getAllowedMethods(), ", ");
+			delresponse.setHeader("Allow", method_allowed);
+			return delresponse;
+		}
+	}
 
-	if (!stat(this->m_target.c_str(), &st))
+	if (!stat(realPath.c_str(), &st))
 	{
 		if (S_ISREG(st.st_mode))
 		{
-			if (!access(this->m_target.c_str(), W_OK))
+			if (!access(realPath.c_str(), W_OK))
 			{
-				if (unlink(this->m_target.c_str()) < 0)
+				if (unlink(realPath.c_str()) < 0)
 				{
 					if (errno == EACCES || errno == EPERM)
 					{
