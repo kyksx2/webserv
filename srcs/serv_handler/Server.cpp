@@ -75,7 +75,7 @@ const Location_config*  Server::sendALocation(const std::string& uri)
 {
     const Location_config* tmp = this->config.findLocation(uri);
     if (!tmp) {
-        tmp = this->config.generateDefaultLocation();
+        tmp = &this->config.generateDefaultLocation();
     }
     return (tmp);
 }
