@@ -216,9 +216,5 @@ void Server_Config::generateDefaultLocation() {
     this->_defaultLocation.print();
 }
 
-const Location_config& Server_Config::getDefaultLocation() {
-	//! y : a voir si c la oú faut faire ça...
-	this->generateDefaultLocation();
-    return this->_defaultLocation;
-}
+const Location_config& Server_Config::getDefaultLocation() { return this->_defaultLocation; }
 //! -------------------------------------------------------------------
