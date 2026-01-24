@@ -1,5 +1,5 @@
-GET /index.html HTTP/1.1
-Host: 127.0.0.1:8080
+GET /www/index.html HTTP/1.1
+Host: 127.0.0.1:65535
 User-Agent: Tester/1.0
 Accept: */*
 

@@ -59,23 +59,12 @@ void Server::init(int epoll_fd) {
     }
 }
 
-//* const Location_config&  Server::sendALocation(const std::string& uri)
-//* {
-//     ?ne renvoie plus un pointeur mais une reference
-//*     const Location_config* tmp = this->config.findLocation(uri);
-//*     if (tmp == NULL) {
-//         ? creer une instance location contenant au minimum : root, allow method, autoindex issue des parametres defaut du serveur
-//*         return // (location defaultserver); 
-//*     }
-//*     return (tmp);
-//* }
-
 //!! AHAH, SEND A LOCATION
 const Location_config*  Server::sendALocation(const std::string& uri)
 {
     const Location_config* tmp = this->config.findLocation(uri);
     if (!tmp) {
-        tmp = &this->config.generateDefaultLocation();
+        tmp = &this->config.getDefaultLocation();
     }
     return (tmp);
 }

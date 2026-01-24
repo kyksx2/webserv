@@ -30,7 +30,7 @@ private:
 	size_t _clientMaxBodySize;                     // Taille max globale
 	std::vector<Location_config> _locations;            // Liste des locations
 //! ---------------------------------------------------------------------
-	Location_config* _defaultLocation;         // Location par défaut "/"
+	Location_config _defaultLocation;         // Location par défaut "/"
 //! ---------------------------------------------------------------------
 
 public:
@@ -49,7 +49,8 @@ public:
 	size_t	getClientMaxBodySize() const;
 	const std::vector<Location_config>&	getLocations() const;
 //! -------------------------------------------------------
-	const Location_config& generateDefaultLocation() const;
+	const Location_config& getDefaultLocation() const;
+	void generateDefaultLocation();
 //! -------------------------------------------------------
 	
 	// Setters

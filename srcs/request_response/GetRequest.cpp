@@ -6,7 +6,7 @@
 /*   By: kjolly <kjolly@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/25 13:45:13 by yzeghari          #+#    #+#             */
-/*   Updated: 2026/01/23 10:21:53 by kjolly           ###   ########.fr       */
+/*   Updated: 2026/01/24 15:15:37 by kjolly           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,7 +74,6 @@ HTTPResponse GetRequest::generateResponse()
 	{
 		//! let see if you realy trap
 		//protection a rajouter plus tard
-		realPath = this->m_serv.getConfig().getRoot();
 		std::cout << "Besoin de la partie demande a kylian";
 	}
 	else
