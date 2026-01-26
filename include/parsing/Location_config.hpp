@@ -34,7 +34,8 @@ private:
 
 public:
     Location_config();
-    Location_config(const std::string& path);
+    Location_config(Server_Config &server);
+    Location_config(const std::string& path, Server_Config &server);
     
     // Getters
     const std::string& getPath() const;
@@ -67,6 +68,7 @@ public:
     
     // Utilitaires
     void print() const;
+    void clearMethod();
     bool isMethodAllowed(const std::string& method) const;
     bool isCgiRequest(const std::string& filename) const;
 };

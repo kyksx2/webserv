@@ -16,7 +16,7 @@ Global_Config::Global_Config() {
     server.addIndex("index.html");
     server.setAutoindex(false);
     server.setClientMaxBodySize(1000000);
-    server.addLocation(Location_config());
+    server.addLocation(Location_config(server));
 }
 
 Global_Config::~Global_Config() {
@@ -98,13 +98,13 @@ void Global_Config::buildServer(const ConfigNode& node)
         const ConfigNode& child = *it; 
 
         if (child.directive == "location")
-            server.addLocation(buildLocation(child));
+            server.addLocation(buildLocation(child, server));
     }
 }
 
-Location_config Global_Config::buildLocation(const ConfigNode& node)
+Location_config Global_Config::buildLocation(const ConfigNode& node, Server_Config &server)
 {
-    Location_config location(node.arguments[0]);
+    Location_config location(node.arguments[0], server);
     std::stringstream   ss;
     int code = 0;
 
@@ -123,6 +123,7 @@ Location_config Global_Config::buildLocation(const ConfigNode& node)
         }
         if (child.directive == "allow_methods")
         {
+            location.clearMethod();
             for (size_t i = 0; i < child.arguments.size(); ++i)
                 location.addAllowedMethod(child.arguments[i]);
         }
@@ -176,7 +177,7 @@ void    Global_Config::parsing(const std::string& filepath)
     }
     catch (const std::exception& e) {
         std::cerr << e.what() << std::endl;
-        // throw;
+        throw;
     }
 }
 

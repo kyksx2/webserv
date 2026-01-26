@@ -1,16 +1,31 @@
 #include "parsing/Location_config.hpp"
 #include "parsing/Server_config.hpp"
 
-Location_config::Location_config() :
-    _autoindex(false), _clientMaxBodySize(0)
+Location_config::Location_config() {}
+
+Location_config::Location_config(Server_Config &server)
 {
+    _root = server.getRoot();
+    _index = server.getIndex();
     addAllowedMethod("GET");
     addAllowedMethod("POST");
+    _autoindex = server.isAutoindexEnabled();
+    _cgiHandlers = server.getCgiHandlers();
+    _errorPages = server.getErrorPages();
+    _clientMaxBodySize = server.getClientMaxBodySize();
 }
 
-Location_config::Location_config(const std::string& path)
-    :  _path(path), _autoindex(0), _clientMaxBodySize(0)
-{}
+Location_config::Location_config(const std::string& path, Server_Config &server) : _path(path)
+{
+    _root = server.getRoot();
+    _index = server.getIndex();
+    addAllowedMethod("GET");
+    addAllowedMethod("POST");
+    _autoindex = server.isAutoindexEnabled();
+    _cgiHandlers = server.getCgiHandlers();
+    _errorPages = server.getErrorPages();
+    _clientMaxBodySize = server.getClientMaxBodySize();
+}
 
 /*-----------------------SETTER----------------------------------*/
 
@@ -172,6 +187,12 @@ bool Location_config::isCgiRequest(const std::string& filename) const
     if (_cgiHandlers.count(extension) > 0)  
         return (true);
     return (false);
+}
+
+void Location_config::clearMethod()
+{
+    if (!_allowedMethods.empty())
+        _allowedMethods.clear();
 }
 
 void Location_config::print() const {
