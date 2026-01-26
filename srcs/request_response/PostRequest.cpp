@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   PostRequest.cpp                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
+/*   By: yzeghari <yzeghari@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/25 14:31:54 by yzeghari          #+#    #+#             */
-/*   Updated: 2026/01/24 15:50:22 by marvin           ###   ########.fr       */
+/*   Updated: 2026/01/26 16:48:14 by yzeghari         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -126,3 +126,42 @@ HTTPResponse PostRequest::generateResponse()
 	}
 	return postresponse;
 }
+
+char **PostRequest::generateEnvp()
+{
+	// (stdin = body)
+	std::vector<std::string> env;
+
+	env.push_back("REQUEST_METHOD=POST");
+
+	env.push_back(
+		"CONTENT_LENGTH=" +
+		(this->m_headers.count("content-length")
+			? this->m_headers["content-length"]
+			: "0")
+	);
+
+	env.push_back(
+		"CONTENT_TYPE=" +
+		(this->m_headers.count("content-type")
+			? this->m_headers["content-type"]
+			: "")
+	);
+
+	env.push_back("QUERY_STRING=" + (this->m_query.empty() ? "" : this->m_query));
+	env.push_back("SERVER_PROTOCOL=" + this->m_version);
+
+	std::string scriptPath =
+		this->m_serv.sendALocation(this->m_target)->getRoot()
+		+ this->m_target;
+
+	env.push_back("SCRIPT_NAME=" + scriptPath);
+
+	char **envp = new char*[env.size() + 1];
+	for (size_t i = 0; i < env.size(); i++)
+		envp[i] = strdup(env[i].c_str());
+
+	envp[env.size()] = NULL;
+	return envp;
+}
+

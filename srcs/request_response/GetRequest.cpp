@@ -6,7 +6,7 @@
 /*   By: yzeghari <yzeghari@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/25 13:45:13 by yzeghari          #+#    #+#             */
-/*   Updated: 2026/01/26 11:03:28 by yzeghari         ###   ########.fr       */
+/*   Updated: 2026/01/26 16:21:14 by yzeghari         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,6 +59,7 @@ HTTPResponse GetRequest::generateResponse()
 	const Location_config* location = this->m_serv.sendALocation(realPath);
 	if (location) // theoriquement jms NULL | possibilité de changer pointeur en ref
 	{
+		std::cout << "tkt" << std::endl;
 		realPath = location->getRoot() + this->m_target;
 		if (location->isMethodAllowed("GET") == false)
 		{
@@ -69,7 +70,7 @@ HTTPResponse GetRequest::generateResponse()
 			return getresponse;
 		}
 	}
-
+	std::cout << realPath << std::endl;
 	if (this->m_target.find("..") != std::string::npos)
 	{
 		getresponse.setStatus(403, "Forbidden");
@@ -233,3 +234,27 @@ HTTPResponse GetRequest::generateResponse()
 	return (getresponse);
 }
 
+char **GetRequest::generateEnvp()
+{
+    std::vector<std::string> env;
+
+    env.push_back("REQUEST_METHOD=GET");
+    env.push_back("QUERY_STRING=" + (this->m_query.empty() ? "" : this->m_query)); //!
+    env.push_back("SERVER_PROTOCOL=" + this->m_version);
+
+    std::string scriptPath =
+        this->m_serv.sendALocation(this->m_target)->getRoot()
+        + this->m_target;
+
+    env.push_back("SCRIPT_NAME=" + scriptPath);
+
+    // Allocation finale pour execve
+    char **envp = new char*[env.size() + 1];
+
+    for (size_t i = 0; i < env.size(); i++)
+        envp[i] = strdup(env[i].c_str());
+
+    envp[env.size()] = NULL;
+
+    return envp;
+}

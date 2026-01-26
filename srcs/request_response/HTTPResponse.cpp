@@ -3,14 +3,13 @@
 /*                                                        :::      ::::::::   */
 /*   HTTPResponse.cpp                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kjolly <kjolly@student.42.fr>              +#+  +:+       +#+        */
+/*   By: yzeghari <yzeghari@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/04 12:59:01 by yzeghari          #+#    #+#             */
-/*   Updated: 2026/01/21 16:01:56 by kjolly           ###   ########.fr       */
+/*   Updated: 2026/01/26 16:48:03 by yzeghari         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "request_response/HTTPResponse.hpp"
 #include "request_response/HTTPResponse.hpp"
 
 HTTPResponse::HTTPResponse() : _version("HTTP/1.1"), _status_code(400), _reason_phrase("Bad Request") {} //!! mettre quelque chose par default
@@ -95,7 +94,7 @@ bool HTTPResponse::IsKeepAlive()
 	}
 	return false; // au cas ou ??
 }
-	
+
 std::string HTTPResponse::generate()
 {
 	std::ostringstream	response;

@@ -6,7 +6,7 @@
 /*   By: yzeghari <yzeghari@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/24 13:39:08 by yzeghari          #+#    #+#             */
-/*   Updated: 2025/12/19 15:19:35 by yzeghari         ###   ########.fr       */
+/*   Updated: 2026/01/26 16:31:30 by yzeghari         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,5 +23,6 @@ class PostRequest : public HTTPRequest
 		PostRequest(std::string &buffer, const Server& serv);
 		~PostRequest();
 		HTTPResponse	generateResponse();
+		char			**generateEnvp();
 };
 #endif

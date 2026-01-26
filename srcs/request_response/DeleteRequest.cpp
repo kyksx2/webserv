@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   DeleteRequest.cpp                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
+/*   By: yzeghari <yzeghari@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/28 12:27:58 by yzeghari          #+#    #+#             */
-/*   Updated: 2026/01/24 15:38:46 by marvin           ###   ########.fr       */
+/*   Updated: 2026/01/26 16:47:41 by yzeghari         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -100,4 +100,27 @@ HTTPResponse DeleteRequest::generateResponse()
 		return (delresponse);
 	}
 	return (delresponse);
+}
+
+char **DeleteRequest::generateEnvp()
+{
+	std::vector<std::string> env;
+
+	env.push_back("REQUEST_METHOD=DELETE");
+	env.push_back("SERVER_PROTOCOL=" + this->m_version);
+
+	std::string scriptPath =
+		this->m_serv.sendALocation(this->m_target)->getRoot()
+		+ this->m_target;
+
+	env.push_back("SCRIPT_NAME=" + scriptPath);
+
+	char **envp = new char*[env.size() + 1];
+
+	for (size_t i = 0; i < env.size(); i++)
+		envp[i] = strdup(env[i].c_str());
+
+	envp[env.size()] = NULL;
+
+	return envp;
 }

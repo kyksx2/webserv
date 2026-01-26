@@ -6,7 +6,7 @@
 /*   By: yzeghari <yzeghari@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/24 13:38:21 by yzeghari          #+#    #+#             */
-/*   Updated: 2025/12/18 14:52:01 by yzeghari         ###   ########.fr       */
+/*   Updated: 2026/01/26 16:31:36 by yzeghari         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,7 @@ class DeleteRequest : public HTTPRequest
 		DeleteRequest(std::string &buffer, const Server& serv);
 		~DeleteRequest();
 		HTTPResponse	generateResponse();
+		char			**generateEnvp();
 };
 
 #endif
