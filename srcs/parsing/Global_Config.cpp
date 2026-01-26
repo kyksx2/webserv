@@ -146,7 +146,7 @@ Location_config Global_Config::buildLocation(const ConfigNode& node)
             else if (!isStringDigit(child.arguments[0]))
                 location.setRedirect(0, child.arguments[0]);
             else if (isStringDigit(child.arguments[0]))
-                location.setRedirect(code, NULL);
+                location.setRedirect(code, "");
         }
 		if (child.directive == "error_page"){
                 ss << child.arguments[0];
@@ -176,7 +176,7 @@ void    Global_Config::parsing(const std::string& filepath)
     }
     catch (const std::exception& e) {
         std::cerr << e.what() << std::endl;
-        throw;
+        // throw;
     }
 }
 

@@ -174,7 +174,6 @@ bool Location_config::isCgiRequest(const std::string& filename) const
     return (false);
 }
 
-
 void Location_config::print() const {
     std::cout << "    Location: " << _path << std::endl;
     if (!_root.empty())
