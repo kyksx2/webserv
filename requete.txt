@@ -1,13 +1,13 @@
-GET /www/index.html HTTP/1.1
+GET /index.html HTTP/1.1
 Host: 127.0.0.1:65535
 User-Agent: Tester/1.0
 Accept: */*
 
-DELETE test.txt HTTP/1.1
+DELETE /test.txt HTTP/1.1
 Host: 127.0.0.1:8080
 User-Agent: TelnetKiller
 
-POST requete.txt HTTP/1.1
+POST /test.txt HTTP/1.1
 Host: 127.0.0.1:8080
 Content-Type: text/plain
 Content-Length: 5

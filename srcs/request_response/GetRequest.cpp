@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   GetRequest.cpp                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
+/*   By: yzeghari <yzeghari@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/25 13:45:13 by yzeghari          #+#    #+#             */
-/*   Updated: 2026/01/24 16:08:13 by marvin           ###   ########.fr       */
+/*   Updated: 2026/01/26 11:03:28 by yzeghari         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,8 +69,6 @@ HTTPResponse GetRequest::generateResponse()
 			return getresponse;
 		}
 	}
-	//! affichage
-	std::cout << realPath << std::endl;
 
 	if (this->m_target.find("..") != std::string::npos)
 	{

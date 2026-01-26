@@ -207,7 +207,7 @@ void Server_Config::generateDefaultLocation() {
     this->_defaultLocation.setRoot(this->getRoot());
     this->_defaultLocation.setIndex(this->_index);
     this->_defaultLocation.setAllowedMetode("GET");
-    this->_defaultLocation.setAutoindex(false);
+    this->_defaultLocation.setAutoindex(this->_autoindex);
     this->_defaultLocation.setClientMaxBodySize(this->getClientMaxBodySize());
     this->_defaultLocation.setUploadStore("");
     this->_defaultLocation.setRedirect(0, "");
