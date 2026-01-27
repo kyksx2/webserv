@@ -6,7 +6,7 @@
 /*   By: yzeghari <yzeghari@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/25 13:45:13 by yzeghari          #+#    #+#             */
-/*   Updated: 2026/01/27 13:15:12 by yzeghari         ###   ########.fr       */
+/*   Updated: 2026/01/27 17:01:44 by yzeghari         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -241,22 +241,75 @@ char **GetRequest::generateEnvp()
 {
 	std::vector<std::string> env;
 
+	// ===== Méthode / protocole =====
 	env.push_back("REQUEST_METHOD=GET");
-	env.push_back("QUERY_STRING=" + (this->m_query.empty() ? "" : this->m_query)); //!
 	env.push_back("SERVER_PROTOCOL=" + this->m_version);
+	env.push_back("GATEWAY_INTERFACE=CGI/1.1");
+	env.push_back("SERVER_SOFTWARE=webserv/1.0");
 
-	std::string scriptPath =
-		this->m_serv.sendALocation(this->m_target)->getRoot()
-		+ this->m_target;
+	// ===== Query string =====
+	env.push_back("QUERY_STRING=" + this->m_query);
 
-	env.push_back("SCRIPT_NAME=" + scriptPath);
+	// ===== SCRIPT_NAME (URI, pas filesystem) =====
+	std::string script_uri = this->m_target;
+	size_t pos = script_uri.find(".cgi");
+	if (pos != std::string::npos)
+		script_uri = script_uri.substr(0, pos + 4);
 
-	// Allocation finale pour execve
+	env.push_back("SCRIPT_NAME=" + script_uri);
+
+	// ===== Server config =====
+	const Server_Config sv_c = m_serv.getConfig();
+
+	// ===== SERVER_NAME & SERVER_PORT =====
+	std::string host = this->GetHeaders_value("host");
+	std::string server_name;
+
+	if (!host.empty())
+	{
+		size_t p = host.find(':');
+		server_name = (p != std::string::npos) ? host.substr(0, p) : host;
+	}
+	else
+	{
+		server_name = sv_c.getServerNames().empty()
+			? "localhost"
+			: sv_c.getServerNames()[0];
+	}
+
+	env.push_back("SERVER_NAME=" + server_name);
+
+	std::stringstream ss;
+	ss << sv_c.getPort();
+	std::string port = ss.str();
+
+	env.push_back("SERVER_PORT=" + port);
+	
+	env.push_back("HTTP_HOST=" + host);
+
+	// ===== PATH_INFO =====
+	std::string path_info;
+	if (pos != std::string::npos && pos + 4 < this->m_target.size())
+		path_info = this->m_target.substr(pos + 4);
+
+	env.push_back("PATH_INFO=" + path_info);
+
+	// ===== PATH_TRANSLATED =====
+	if (!path_info.empty())
+	{
+		std::string translated =
+			this->m_serv.sendALocation(script_uri)->getRoot() + path_info;
+		env.push_back("PATH_TRANSLATED=" + translated);
+	}
+	else
+	{
+		env.push_back("PATH_TRANSLATED=");
+	}
+
+	// ===== Allocation finale =====
 	char **envp = new char*[env.size() + 1];
-
 	for (size_t i = 0; i < env.size(); i++)
 		envp[i] = strdup(env[i].c_str());
-
 	envp[env.size()] = NULL;
 
 	return envp;
