@@ -22,7 +22,7 @@ class Server {
 	void	init(int epoll_fd);
 	const Location_config*	sendALocation(const std::string& uri);
 
-	private:
+ private:
 	Server_Config	config;
 	int		listen_fd;
 	bool	isAlive;

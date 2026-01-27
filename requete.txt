@@ -7,7 +7,7 @@ DELETE /test.txt HTTP/1.1
 Host: 127.0.0.1:8080
 User-Agent: TelnetKiller
 
-POST /test.txt HTTP/1.1
+POST /impossible.txt HTTP/1.1
 Host: 127.0.0.1:8080
 Content-Type: text/plain
 Content-Length: 5
