@@ -6,7 +6,7 @@
 /*   By: yzeghari <yzeghari@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/28 12:27:58 by yzeghari          #+#    #+#             */
-/*   Updated: 2026/01/26 16:47:41 by yzeghari         ###   ########.fr       */
+/*   Updated: 2026/01/27 13:19:21 by yzeghari         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,6 +29,12 @@ HTTPResponse DeleteRequest::generateResponse()
 	std::string		realPath = this->m_target;
 	struct stat st;
 
+	//! faire le menage une fois tt pret
+	std::cout << "envp = \n" << std::endl;
+	for (int i = 0; this->generateEnvp()[i] != NULL; i++)
+	{
+		std::cout << this->generateEnvp()[i] << std::endl;
+	}
 	// Si DELETE n'est pas autorisé dans ta config (location) A rajouter
 	// → 405 Method Not Allowed
 	const Location_config* location = this->m_serv.sendALocation(realPath);

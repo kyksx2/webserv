@@ -212,8 +212,8 @@ void Server_Config::generateDefaultLocation() {
     this->_defaultLocation.setUploadStore("");
     this->_defaultLocation.setRedirect(0, "");
     this->_defaultLocation.setErrorPages(this->getErrorPages());
-    std::cout << "----- VERIF DEFAULT LOCATION -----" << std::endl;
-    this->_defaultLocation.print();
+    // std::cout << "----- VERIF DEFAULT LOCATION -----" << std::endl;
+    // this->_defaultLocation.print();
 }
 
 const Location_config& Server_Config::getDefaultLocation() { return this->_defaultLocation; }

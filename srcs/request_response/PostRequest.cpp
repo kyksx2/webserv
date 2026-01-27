@@ -6,7 +6,7 @@
 /*   By: yzeghari <yzeghari@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/25 14:31:54 by yzeghari          #+#    #+#             */
-/*   Updated: 2026/01/26 16:48:14 by yzeghari         ###   ########.fr       */
+/*   Updated: 2026/01/27 13:19:33 by yzeghari         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,6 +49,12 @@ HTTPResponse PostRequest::generateResponse()
 	std::string	file;
 	split_path(this->m_target, dir, file);
 
+	//! faire le menage une fois tt pret
+	std::cout << "envp = \n" << std::endl;
+	for (int i = 0; this->generateEnvp()[i] != NULL; i++)
+	{
+		std::cout << this->generateEnvp()[i] << std::endl;
+	}
 	const Location_config* location = this->m_serv.sendALocation(realPath);
 	if (location)
 	{
