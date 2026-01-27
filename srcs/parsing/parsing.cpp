@@ -152,9 +152,10 @@ const ConfigNode Parsing::getTree(void)
 
 /*-------------------------HANDLE ERROR-----------------------------------*/
 
-bool Parsing::validateNode(const ConfigNode& node)
+//voir les doublons dans les blocks imbrique et Valider récursivement les enfants 
+void Parsing::validateNode(const ConfigNode& node)
 {
-    //voir les doublons
+    caseByCase_directive(node);
     if (node.directive == "server")
     {
         for (std::vector<ConfigNode>::const_iterator it = node.children.begin(); 
@@ -167,6 +168,8 @@ bool Parsing::validateNode(const ConfigNode& node)
     }
     if (node.directive == "location")
     {
+        if (node.arguments[0][0] != '/')
+            throw std::runtime_error("Error : block location doit obligatoirement avoir un path commencant par \'/\'");
         for (std::vector<ConfigNode>::const_iterator it = node.children.begin(); 
             it != node.children.end(); ++it)
         {
@@ -175,16 +178,12 @@ bool Parsing::validateNode(const ConfigNode& node)
                 throw std::runtime_error("Error : block location a l'interieur d'un block location");
         }
     }
-    caseByCase_directive(node);
-    // Valider récursivement les enfants
     for (std::vector<ConfigNode>::const_iterator it = node.children.begin(); 
         it != node.children.end(); ++it)
     {
         const ConfigNode& child = *it; 
-        if (!validateNode(child))
-            return false;
+        validateNode(child);
     }
-    return true;
 }
 
 void Parsing::caseByCase_directive(const ConfigNode& node)
@@ -196,6 +195,18 @@ void Parsing::caseByCase_directive(const ConfigNode& node)
         errorPageCase(node);
     if (node.directive == "cgi_handler")
         cgiCase(node);
+    if (node.directive == "allow_methods")
+        methodCase(node);
+}
+
+void    Parsing::methodCase(const ConfigNode& node)
+{
+    for (size_t i = 0; i < node.arguments.size(); ++i)
+    {
+        if (node.arguments[i] != "GET" &&
+            node.arguments[i] != "POST" && node.arguments[i] != "DELETE")
+            throw std::runtime_error("Error: La methode n'est pas accepte dans le serveur");
+    }
 }
 
 void    Parsing::cgiCase(const ConfigNode& node)
@@ -247,14 +258,14 @@ void    Parsing::numberArgCase(const ConfigNode& node)
         node.directive == "location")
     {
         if (node.arguments.size() != 1){
-            error_msg << "Error : directive '" << node.directive << "' should have only one argument";
+            error_msg << "Error : directive '" << node.directive << "' doit seulement avoir un argument";
             throw std::runtime_error(error_msg.str());
         }
     }
     if (node.directive == "error_page" && node.arguments.size() < 2)
-        throw std::runtime_error("Error : directive 'error_page' should have at least two arguments");
+        throw std::runtime_error("Error : directive 'error_page' doit avoir au moins 2 arguments");
     if (node.directive == "cgi_handler" && node.arguments.size() != 2)
-        throw std::runtime_error("Error : directive 'cgi_handler' should have two arguments");
+        throw std::runtime_error("Error : directive 'cgi_handler' doit avoir 2 argument");
 }
 
 void    Parsing::errorPageCase(const ConfigNode& node)

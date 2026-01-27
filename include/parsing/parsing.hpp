@@ -39,9 +39,10 @@ class Parsing {
 
         void                errorPageCase(const ConfigNode& node);
         void                numberArgCase(const ConfigNode& node);
+        void                methodCase(const ConfigNode& node);
         void                cgiCase(const ConfigNode& node);
         void                listenCase(const ConfigNode& node);
-        bool                validateNode(const ConfigNode& node);
+        void                validateNode(const ConfigNode& node);
         std::string         cleanContent(const std::string& fileContent);
         std::string         readFile(const std::string& filename);
         enum TokenType      determineType(const std::string& word);
