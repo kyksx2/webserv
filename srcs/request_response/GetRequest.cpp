@@ -3,14 +3,15 @@
 /*                                                        :::      ::::::::   */
 /*   GetRequest.cpp                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: yzeghari <yzeghari@student.42.fr>          +#+  +:+       +#+        */
+/*   By: kjolly <kjolly@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/25 13:45:13 by yzeghari          #+#    #+#             */
-/*   Updated: 2026/01/27 17:01:44 by yzeghari         ###   ########.fr       */
+/*   Updated: 2026/01/28 18:24:53 by kjolly           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "request_response/GetRequest.hpp"
+#include "CGI/CgiHandler.hpp"
 
 GetRequest::GetRequest(std::string &buffer, const Server& serv)
 : HTTPRequest(buffer, serv)
@@ -45,7 +46,6 @@ std::string getMIME_Type(const std::string& target)
 
 HTTPResponse GetRequest::generateResponse()
 {
-
 	HTTPResponse	getresponse;
 	getresponse.setVersion(this->m_version);
 	getresponse.setHeader("connection", this->m_headers["connection"]);
@@ -311,6 +311,5 @@ char **GetRequest::generateEnvp()
 	for (size_t i = 0; i < env.size(); i++)
 		envp[i] = strdup(env[i].c_str());
 	envp[env.size()] = NULL;
-
 	return envp;
 }

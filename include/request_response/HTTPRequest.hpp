@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   HTTPRequest.hpp                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: yzeghari <yzeghari@student.42.fr>          +#+  +:+       +#+        */
+/*   By: kjolly <kjolly@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/24 13:37:27 by yzeghari          #+#    #+#             */
-/*   Updated: 2026/01/28 11:01:35 by yzeghari         ###   ########.fr       */
+/*   Updated: 2026/01/28 18:24:57 by kjolly           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,7 @@
 
 #include "HTTPResponse.hpp"
 #include "serv_handler/Server.hpp"
+// #include "CGI/CgiHandler.hpp"
 
 //! Liste des chose a faire : Max body size, .Env, utilisation du Query si needed, chunked
 

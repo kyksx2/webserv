@@ -1,25 +1,22 @@
-// #ifndef CGIHANDLER_H
-// #define CGIHANDLER_H
-// #include "Webserv.hpp"
+#ifndef CGIHANDLER_H
+#define CGIHANDLER_H
+#include "../serv_handler/Webserv.hpp"
 
-// class CgiHandler {
-//  public:
-//     CgiHandler();
-//     CgiHandler(const CgiHandler& src);
-//     ~CgiHandler();
+class CgiHandler {
+public:
+	CgiHandler(char **env, std::string body);
+	CgiHandler(const CgiHandler& src);
+	~CgiHandler();
 
-//     CgiHandler& operator=(const CgiHandler& src);
+	CgiHandler& operator=(const CgiHandler& src);
 
-//     void initEnv();
-//     void executeCgi();
-//     char** envStringToChar();
+	void executeCgi();
+private:
+	std::string _binPath;
+	std::string _scriptPath;
+	std::string _response_cgi;
+	std::string _body;
+	char** _env;
+};
 
-//  private:
-//    //  httprequest request; il faut un moyen d'acceder au body de la requette
-//     std::map<std::string, std::string> _env;
-//     std::string binPath;
-//     std::string scriptPath;
-//     std::string response_cgi;
-// };
-
-// #endif
+#endif

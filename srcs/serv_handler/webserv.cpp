@@ -15,8 +15,8 @@ void    WebServ::run() {
 		for (int i = 0; i < n_event; i++) {
 			int event_fd = ev[i].data.fd;
 			u_int32_t events = ev[i].events;
-//? find return un iterateur qui correspond a la valeur chercher dans la map
-//? end signifie que l'iteratteur est hors champ, il n'a pas ete trouver
+			//? find return un iterateur qui correspond a la valeur chercher dans la map
+			//? end signifie que l'iteratteur est hors champ, il n'a pas ete trouver
 			std::map<int, Server*>::iterator it_server = this->servers.find(event_fd);
 			if (it_server != this->servers.end()) {
 					//? on a trouver un server existant donc accepter une nvl connexion
@@ -48,136 +48,71 @@ void    WebServ::run() {
 	}
 }
 
-void    WebServ::readClientData(int event_fd) { //!!!!!! verifier avec yasser
+void    WebServ::readClientData(int event_fd) {
 	Client* client = this->clients[event_fd];
 	char buffer[BUFFER_SIZE];
 	int receive_bits;
-	//? ---------------------------- test --------------------------------
-	// 	receive_bits = recv(event_fd, buffer, BUFFER_SIZE - 1, 0);
-	
-	// 	if (receive_bits > 0) {
-// 		buffer[receive_bits] = '\0'; // Pour l'afficher comme une string
-// 		std::cout << "Reçu du client " << event_fd << ": " << buffer << std::endl;
-// 		std::string raw_response = "Salut ! J'ai bien reçu ton message.\n";
-
-// 		client->setResponseBuffer(raw_response); 
-
-// 		struct epoll_event change_ev;
-// 		change_ev.data.fd = event_fd;
-// 		change_ev.events = EPOLLOUT;
-// 		epoll_ctl(this->epoll_fd, EPOLL_CTL_MOD, event_fd, &change_ev);
-// 	}
-// 	else if (receive_bits == 0) {
-	// 		closeClient(event_fd);
-	// 	}
-	// 	else {
-		// 		if (errno == EAGAIN || errno == EWOULDBLOCK)
-		// 			return;
-		// 	}
-		// }
-		//? ------------------------------ fin test ----------------------------
-    while((receive_bits = recv(event_fd, buffer, BUFFER_SIZE, 0)) > 0) {
+	while((receive_bits = recv(event_fd, buffer, BUFFER_SIZE, 0)) > 0) {
 		client->appendRequest(buffer, receive_bits);
-        if (client->completeRequest()) { //! il faut remplir le buffer, le parser et generer la reponse
-            client->generateBufferResponse(); //? generer la reponse
-            // std::cout << client->getResponseBuffer() << std::endl;
-            struct epoll_event change_ev;
-            change_ev.data.fd = event_fd;
-            change_ev.events = EPOLLOUT;
-            if (epoll_ctl(this->epoll_fd, EPOLL_CTL_MOD, event_fd, &change_ev) == -1) { //? le client est pret a recevoir la reponse
-                std::cerr << "Error: epoll_ctl failed on client "
-                << client->getClientFd() << std::endl;
-                closeClient(event_fd);
-                return;
-            }
-            break;
-        }
-    }
-    if (receive_bits <= 0) {
+		if (client->completeRequest()) { //! il faut remplir le buffer, le parser et generer la reponse
+			client->generateBufferResponse(); //? generer la reponse
+			struct epoll_event change_ev;
+			change_ev.data.fd = event_fd;
+			change_ev.events = EPOLLOUT;
+			if (epoll_ctl(this->epoll_fd, EPOLL_CTL_MOD, event_fd, &change_ev) == -1) { //? le client est pret a recevoir la reponse
+				std::cerr << "Error: epoll_ctl failed on client "
+				<< client->getClientFd() << std::endl;
+				closeClient(event_fd);
+				return;
+			}
+			break;
+		}
+	}
+	if (receive_bits <= 0) {
 		if (errno == EAGAIN || errno == EWOULDBLOCK)
 		return;
-        else {
+		else {
 			closeClient(event_fd);
-        }
-    }
+		}
+	}
 }
 
 void    WebServ::sendClientData(int event_fd) {
-    Client* client = this->clients[event_fd];
-    const std::string& message_send = client->getResponseBuffer();
-    size_t sent_bytes = client->getDataSent(); //? on recupere ce qu'on a deja envoyer
-    size_t total_size = message_send.size();
-    const char* messagebuffer = message_send.c_str() + sent_bytes; //? sent_bytes nous permet de savoir ou mettre le pointeur de debut
-    size_t remaining_bites = total_size - sent_bytes; //? ce qu'il reste a envoyer
+	Client* client = this->clients[event_fd];
+	const std::string& message_send = client->getResponseBuffer();
+	size_t sent_bytes = client->getDataSent(); //? on recupere ce qu'on a deja envoyer
+	size_t total_size = message_send.size();
+	const char* messagebuffer = message_send.c_str() + sent_bytes; //? sent_bytes nous permet de savoir ou mettre le pointeur de debut
+	size_t remaining_bites = total_size - sent_bytes; //? ce qu'il reste a envoyer
 	
-    ssize_t sent = 0; 
-    sent = send(event_fd, messagebuffer, remaining_bites, 0);
-    if (sent < 0) {
+	ssize_t sent = 0; 
+	sent = send(event_fd, messagebuffer, remaining_bites, 0);
+	if (sent < 0) {
 		std::cerr << "Error: sending failed on client " << client->getClientFd() << std::endl;
-        return;
-    }
-    client->setDataSent(sent);
-    if (client->getDataSent() >= total_size) {
-        if (client->isKeepAlive()) {
+		return;
+	}
+	client->setDataSent(sent);
+	if (client->getDataSent() >= total_size) {
+		if (client->isKeepAlive()) {
 			struct epoll_event change_ev;
-            change_ev.data.fd = event_fd;
-            change_ev.events = EPOLLIN;
-            if (epoll_ctl(this->epoll_fd, EPOLL_CTL_MOD, event_fd, &change_ev) == -1) { //? modif en EPOLLIN
-                std::cerr << "Error: epoll_ctl failed on client "
-                << client->getClientFd() << std::endl;
-                closeClient(event_fd);
-                return;
-            }
-            client->clearState(); //? remet les conteurs a 0
-        }
-        else
+			change_ev.data.fd = event_fd;
+			change_ev.events = EPOLLIN;
+			if (epoll_ctl(this->epoll_fd, EPOLL_CTL_MOD, event_fd, &change_ev) == -1) { //? modif en EPOLLIN
+				std::cerr << "Error: epoll_ctl failed on client "
+				<< client->getClientFd() << std::endl;
+				closeClient(event_fd);
+				return;
+			}
+			client->clearState(); //? remet les conteurs a 0
+		}
+		else
 			closeClient(event_fd);
-    }
+	}
 }
 
-//? ------------------------------------ test ----------------------------------
-// void    WebServ::sendClientData(int event_fd) {
-	// 	Client* client = this->clients[event_fd];
-	
-	// 	const std::string& message_send = client->getResponseBuffer();
-	
-	// 	size_t sent_bytes = client->getDataSent();
-// 	size_t total_size = message_send.size();
-// 	const char* messagebuffer = message_send.c_str() + sent_bytes;
-// 	size_t remaining_bytes = total_size - sent_bytes;
-
-// 	ssize_t sent = send(event_fd, messagebuffer, remaining_bytes, 0);
-
-// 	if (sent < 0) {
-	// 		if (errno == EAGAIN || errno == EWOULDBLOCK)
-	// 			return;
-	
-	// 		std::cerr << "Error: sending failed on client " << event_fd << std::endl;
-	// 		closeClient(event_fd);
-	// 		return;
-	// 	}
-	
-	// 	client->setDataSent(sent_bytes + sent);
-// 	if (client->getDataSent() >= total_size) {
-// 		struct epoll_event change_ev;
-// 		change_ev.data.fd = event_fd;
-// 		change_ev.events = EPOLLIN; // <--- On veut lire la prochaine phrase
-
-// 		if (epoll_ctl(this->epoll_fd, EPOLL_CTL_MOD, event_fd, &change_ev) == -1) {
-	// 			std::cerr << "Error: epoll_ctl failed" << std::endl;
-	// 			closeClient(event_fd);
-	// 			return;
-	// 		}
-	// 		client->clearState(); 
-	
-	// 		std::cout << "Message envoyé, retour en écoute (EPOLLIN)" << std::endl;
-	// 	}
-	// }
-	//? ----------------------------------- fin test -------------------------------
-	
-	void    WebServ::closeClient(int event_fd) {
-		if (epoll_ctl(this->epoll_fd, EPOLL_CTL_DEL, event_fd, NULL) == -1) {
-			std::cerr << "Error: epoll_ctl failed for delete client " <<
+void    WebServ::closeClient(int event_fd) {
+	if (epoll_ctl(this->epoll_fd, EPOLL_CTL_DEL, event_fd, NULL) == -1) {
+		std::cerr << "Error: epoll_ctl failed for delete client " <<
 		event_fd << std::endl;
 	}
 	if (close(event_fd) == -1) {
@@ -210,11 +145,12 @@ void    WebServ::handleNewClient(Server* find_server) {
 		else {
 			std::cerr << "Error: socket refused connexion on port "
 			<< find_server->getConfig().getPort() 
-			<< std::endl; //! mettre le port ici
+			<< std::endl;
 			return;
 		}
 	}
 	else {
+
 		fcntl(client_fd, F_SETFL, O_NONBLOCK); //? passage en non bloquant
 		struct epoll_event client_ev;
 		client_ev.data.fd = client_fd;
