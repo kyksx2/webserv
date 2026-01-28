@@ -37,17 +37,18 @@ class Parsing {
     public:
         Parsing(const std::string& filepath);
 
-        bool                errorPageCase(const ConfigNode& node);
-        bool                numberArgCase(const ConfigNode& node);
-        bool                cgiCase(const ConfigNode& node);
-        bool                listenCase(const ConfigNode& node);
-        bool                validateNode(const ConfigNode& node);
+        void                errorPageCase(const ConfigNode& node);
+        void                numberArgCase(const ConfigNode& node);
+        void                methodCase(const ConfigNode& node);
+        void                cgiCase(const ConfigNode& node);
+        void                listenCase(const ConfigNode& node);
+        void                validateNode(const ConfigNode& node);
         std::string         cleanContent(const std::string& fileContent);
         std::string         readFile(const std::string& filename);
         enum TokenType      determineType(const std::string& word);
         std::vector<Token>  tokeniseContent(const std::string& fileContent);
         ConfigNode          parseBlock(const std::vector<Token>& tokens, size_t& i);
-        bool                caseByCase_directive(const ConfigNode& node);
+        void                caseByCase_directive(const ConfigNode& node);
         bool                isValidIp(const std::string ipAdress);
         bool                validOctet(const std::string octet);
 

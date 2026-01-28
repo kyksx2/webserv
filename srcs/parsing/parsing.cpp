@@ -152,9 +152,10 @@ const ConfigNode Parsing::getTree(void)
 
 /*-------------------------HANDLE ERROR-----------------------------------*/
 
-bool Parsing::validateNode(const ConfigNode& node)
+//voir les doublons dans les blocks imbrique et Valider récursivement les enfants 
+void Parsing::validateNode(const ConfigNode& node)
 {
-    //voir les doublons
+    caseByCase_directive(node);
     if (node.directive == "server")
     {
         for (std::vector<ConfigNode>::const_iterator it = node.children.begin(); 
@@ -167,6 +168,8 @@ bool Parsing::validateNode(const ConfigNode& node)
     }
     if (node.directive == "location")
     {
+        if (node.arguments[0][0] != '/')
+            throw std::runtime_error("Error : block location doit obligatoirement avoir un path commencant par \'/\'");
         for (std::vector<ConfigNode>::const_iterator it = node.children.begin(); 
             it != node.children.end(); ++it)
         {
@@ -175,53 +178,53 @@ bool Parsing::validateNode(const ConfigNode& node)
                 throw std::runtime_error("Error : block location a l'interieur d'un block location");
         }
     }
-    if (!caseByCase_directive(node))
-        return (false);
-    // Valider récursivement les enfants
     for (std::vector<ConfigNode>::const_iterator it = node.children.begin(); 
         it != node.children.end(); ++it)
     {
         const ConfigNode& child = *it; 
-        if (!validateNode(child))
-            return false;
+        validateNode(child);
     }
-    return true;
 }
 
-bool Parsing::caseByCase_directive(const ConfigNode& node)
+void Parsing::caseByCase_directive(const ConfigNode& node)
 {
-    if (!numberArgCase(node))
-        return (false);
-    if (!listenCase(node))
-        return (false);
-    if (!errorPageCase(node))
-        return (false);
-    if (!cgiCase(node))
-        return (false);
-    return true;
-}
-
-bool    Parsing::cgiCase(const ConfigNode& node)
-{
+    numberArgCase(node);
+    if (node.directive == "listen")
+        listenCase(node);
+    if (node.directive == "error_page")
+        errorPageCase(node);
     if (node.directive == "cgi_handler")
+        cgiCase(node);
+    if (node.directive == "allow_methods")
+        methodCase(node);
+}
+
+void    Parsing::methodCase(const ConfigNode& node)
+{
+    for (size_t i = 0; i < node.arguments.size(); ++i)
     {
+        if (node.arguments[i] != "GET" &&
+            node.arguments[i] != "POST" && node.arguments[i] != "DELETE")
+            throw std::runtime_error("Error: La methode n'est pas accepte dans le serveur");
+    }
+}
+
+void    Parsing::cgiCase(const ConfigNode& node)
+{
         if (!(node.arguments[0][0] == '.'))
             throw std::runtime_error("Error: L'extension du CGI ne commence pas par un point");
         if (access(node.arguments[1].c_str(), X_OK) != 0)
             throw std::runtime_error("Error: Le path du CGI n'est pas disponible");
         if (access(node.arguments[1].c_str(), R_OK | X_OK) != 0) 
             throw std::runtime_error("Error: Le path du CGI n'est pas executable");
-    }
-    return (true);
 }
 
-bool    Parsing::listenCase(const ConfigNode& node)
+void    Parsing::listenCase(const ConfigNode& node)
 {
     int code;
     std::string portStr;
     std::vector<std::string> parts;
 
-    if (node.directive == "listen")
     {
         parts = modifyArgListen(node);
         if (parts.size() == 2)
@@ -243,10 +246,9 @@ bool    Parsing::listenCase(const ConfigNode& node)
             throw std::runtime_error("Error : port invalide");
         }
     }
-    return (true);
 }
 
-bool    Parsing::numberArgCase(const ConfigNode& node)
+void    Parsing::numberArgCase(const ConfigNode& node)
 {
     std::stringstream error_msg;
 
@@ -256,20 +258,18 @@ bool    Parsing::numberArgCase(const ConfigNode& node)
         node.directive == "location")
     {
         if (node.arguments.size() != 1){
-            error_msg << "Error : directive '" << node.directive << "' should have only one argument";
+            error_msg << "Error : directive '" << node.directive << "' doit seulement avoir un argument";
             throw std::runtime_error(error_msg.str());
         }
     }
     if (node.directive == "error_page" && node.arguments.size() < 2)
-        throw std::runtime_error("Error : directive 'error_page' should have at least two arguments");
+        throw std::runtime_error("Error : directive 'error_page' doit avoir au moins 2 arguments");
     if (node.directive == "cgi_handler" && node.arguments.size() != 2)
-        throw std::runtime_error("Error : directive 'cgi_handler' should have two arguments");
-    return (true);
+        throw std::runtime_error("Error : directive 'cgi_handler' doit avoir 2 argument");
 }
 
-bool    Parsing::errorPageCase(const ConfigNode& node)
+void    Parsing::errorPageCase(const ConfigNode& node)
 {
-    if (node.directive == "error_page")
     {
         int code = 0;
         if (node.arguments.size() != 2)
@@ -281,5 +281,4 @@ bool    Parsing::errorPageCase(const ConfigNode& node)
         if (code < 300 || code >= 600)
             throw std::runtime_error("Error : La directive error_page doit avoir un code erreur valid (entre 300 et 599)");
     }
-	return (true);
 }

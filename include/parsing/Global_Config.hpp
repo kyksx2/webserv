@@ -22,7 +22,7 @@ public:
     const std::vector<Server_Config>& getConfVect() const;
     
     // Utilitaires
-    Location_config buildLocation(const ConfigNode& node);
+    Location_config buildLocation(const ConfigNode& node, Server_Config &server);
     void buildServer(const ConfigNode& node);
     void print() const;
 };

@@ -5,6 +5,7 @@ Server::Server() {}
 
 Server::Server(const Server_Config& conf) : config(conf), listen_fd(-1), isAlive(true) {
     memset(&this->addr, 0, sizeof(addr));
+    this->config.generateDefaultLocation();
 }
 
 Server& Server::operator=(const Server& src) {
@@ -64,7 +65,6 @@ const Location_config*  Server::sendALocation(const std::string& uri)
 {
     const Location_config* tmp = this->config.findLocation(uri);
     if (!tmp) {
-        this->config.generateDefaultLocation();
         tmp = &this->config.getDefaultLocation();
     }
     return (tmp);

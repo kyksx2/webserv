@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   GetRequest.hpp                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
+/*   By: yzeghari <yzeghari@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/25 13:46:05 by yzeghari          #+#    #+#             */
-/*   Updated: 2026/01/24 16:07:40 by marvin           ###   ########.fr       */
+/*   Updated: 2026/01/26 16:59:10 by yzeghari         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,7 @@ class GetRequest : public HTTPRequest
 		GetRequest(std::string &buffer, const Server& serv);
 		~GetRequest();
 		HTTPResponse	generateResponse();
+		char			**generateEnvp();
 };
 
 std::string getMIME_Type(const std::string& target);
