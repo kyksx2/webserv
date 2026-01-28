@@ -7,7 +7,8 @@ Server_Config::Server_Config() :
     _port(8080),
     _root("html"),
     _autoindex(false),
-    _clientMaxBodySize(1048576)
+    _clientMaxBodySize(1048576),
+    _flagDefLocation(false)
 {
     _index.push_back("index.html");
 }
@@ -73,6 +74,11 @@ void Server_Config::addLocation(const Location_config& location)
     _locations.push_back(location);
 }
 
+void Server_Config::setFlagLocation(bool flag)
+{
+    _flagDefLocation = flag;
+}
+
 /*-------------------------- Getters ----------------------------------------------------*/
 
 const std::string& Server_Config::getHost() const
@@ -123,6 +129,11 @@ size_t Server_Config::getClientMaxBodySize() const
 const std::vector<Location_config>& Server_Config::getLocations() const
 {
     return (_locations);
+}
+
+bool Server_Config::getFlagLocation() const
+{
+    return (_flagDefLocation);
 }
 
 /*-----------------------UTILS-----------------------------*/

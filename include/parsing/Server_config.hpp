@@ -29,6 +29,7 @@ private:
 	std::map<int, std::string> _errorPages;      // Ex: {404 -> "/errors/404.html"}
 	size_t _clientMaxBodySize;                     // Taille max globale
 	std::vector<Location_config> _locations;            // Liste des locations
+	bool _flagDefLocation;							// Savoir si Location "/" existe
 //! ---------------------------------------------------------------------
 	Location_config _defaultLocation;         // Location par défaut "/"
 //! ---------------------------------------------------------------------
@@ -48,14 +49,13 @@ public:
 	const std::map<int, std::string>&	getErrorPages() const;
 	size_t	getClientMaxBodySize() const;
 	const std::vector<Location_config>&	getLocations() const;
+	bool	getFlagLocation() const;
 //! -------------------------------------------------------
 	const Location_config& getDefaultLocation();
 	void generateDefaultLocation();
 //! -------------------------------------------------------
 
 	// Setters
-
-
 	void	setHost(const std::string& host);
 	void	setPort(int port);
 	void	addServerName(const std::string& name);
@@ -66,6 +66,7 @@ public:
 	void	setErrorPage(int code, const std::string& path);
 	void	setClientMaxBodySize(size_t size);
 	void	addLocation(const Location_config& location);
+	void	setFlagLocation(bool flag);
 
 	// Utilitaires
 	void	print() const;
