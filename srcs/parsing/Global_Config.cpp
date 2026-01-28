@@ -15,7 +15,7 @@ Global_Config::Global_Config() {
     server.setRoot("html");
     server.addIndex("index.html");
     server.setAutoindex(false);
-    server.setClientMaxBodySize(1000000);
+    server.setClientMaxBodySize(1048576);
     server.addLocation(Location_config(server));
 }
 
@@ -99,7 +99,11 @@ void Global_Config::buildServer(const ConfigNode& node)
 
         if (child.directive == "location")
             server.addLocation(buildLocation(child, server));
+        if (child.arguments[0] == "/")
+            server.setFlagLocation(true);
     }
+    if (!server.getFlagLocation())
+        server.addLocation(Location_config(server));
 }
 
 Location_config Global_Config::buildLocation(const ConfigNode& node, Server_Config &server)
