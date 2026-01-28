@@ -224,7 +224,6 @@ bool Client::completeRequest()
 
 	if (body.size() < this->contentLength)
 		return false; // attendre plus de données
-
 	try
 	{
 		this->request->SetBody(body);

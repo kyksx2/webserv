@@ -6,7 +6,7 @@
 /*   By: yzeghari <yzeghari@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/24 13:37:27 by yzeghari          #+#    #+#             */
-/*   Updated: 2026/01/26 16:59:17 by yzeghari         ###   ########.fr       */
+/*   Updated: 2026/01/28 11:01:35 by yzeghari         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,7 @@
 #include "HTTPResponse.hpp"
 #include "serv_handler/Server.hpp"
 
-//! Liste des chose a faire : Max body size, .Env, utilisation du Query si needed
+//! Liste des chose a faire : Max body size, .Env, utilisation du Query si needed, chunked
 
 class HTTPRequest
 {

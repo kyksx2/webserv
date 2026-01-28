@@ -6,7 +6,7 @@
 /*   By: yzeghari <yzeghari@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/24 13:45:23 by yzeghari          #+#    #+#             */
-/*   Updated: 2026/01/26 16:47:58 by yzeghari         ###   ########.fr       */
+/*   Updated: 2026/01/28 12:49:38 by yzeghari         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -128,16 +128,12 @@ HTTPRequest::~HTTPRequest()
 
 void HTTPRequest::SetBody(std::string &buffer)
 {
-	// Pas de body attendu
-	if (!m_headers.count("content-length"))
-		return;
-
 	int contentLength = 0;
 	if (!safe_atoi(m_headers["content-length"].c_str(), contentLength) || contentLength < 0)
 		throw HTTPRequestException(m_version + ",400,Bad Request");
 
-	if (buffer.size() < static_cast<size_t>(contentLength))
-		return; // body incomplet → PAS une erreur
+	if (contentLength > (int) this->m_serv.getConfig().getClientMaxBodySize())
+		throw HTTPRequestException(m_version + ",413,Payload Too Large");
 
 	m_body = buffer.substr(0, contentLength);
 }
