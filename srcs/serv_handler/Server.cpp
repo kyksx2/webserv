@@ -27,6 +27,10 @@ void Server::init(int epoll_fd) {
         this->isAlive = false;
         return;
     }
+    int opt = 1;
+    if (setsockopt(this->listen_fd, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt)) < 0) {
+        std::cerr << "Error: setsockopt" << std::endl;
+    }
     fcntl(this->listen_fd, F_SETFL, O_NONBLOCK);
     this->addr.sin_addr.s_addr = inet_addr(this->config.getHost().c_str());
     this->addr.sin_family = AF_INET;
