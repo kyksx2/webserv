@@ -2,6 +2,8 @@
 #define CGIHANDLER_H
 #include "../serv_handler/Webserv.hpp"
 
+//? classe temporaire a supprimer
+
 class CgiHandler {
 public:
 	CgiHandler(char **env, std::string body);

@@ -244,7 +244,14 @@ void	Client::generateBufferResponse()
 {
 	this->responseBuffer.clear();
 
-	if (this->hasresponse)
+	//? if isCGI
+	//? ici on creer la classe CGI et on execute
+	//? sinon on fait le reste ci dessous
+	if (isCgi()) {
+		// generer une requete et executer la CGI
+		//! penser a remettre tout a 0
+	}
+	else if (this->hasresponse)
 	{
 		this->responseBuffer = this->response.generate();
 	}

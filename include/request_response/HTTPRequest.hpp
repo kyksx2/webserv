@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   HTTPRequest.hpp                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kjolly <kjolly@student.42.fr>              +#+  +:+       +#+        */
+/*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/24 13:37:27 by yzeghari          #+#    #+#             */
-/*   Updated: 2026/01/28 18:24:57 by kjolly           ###   ########.fr       */
+/*   Updated: 2026/01/29 16:36:43 by marvin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,6 +45,7 @@ class HTTPRequest
 		std::string		GetHeaders_value(std::string key);
 
 		virtual	HTTPResponse	generateResponse() = 0;
+		virtual	void			generateCGI() = 0; //? a faire
 		virtual	char			**generateEnvp() = 0;
 
 		class	HTTPRequestException : public std::exception
