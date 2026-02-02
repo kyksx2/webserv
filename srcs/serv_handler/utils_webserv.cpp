@@ -5,9 +5,9 @@ WebServ::WebServ(const std::string& conf): epoll_fd(-1) {
 	std::vector<Server_Config> serv_conf;
 	try
 	{
-		if (!conf.empty())
-			Global_Config config(conf);
 		Global_Config config;
+		if (!conf.empty())
+			config = Global_Config(conf);
 
 		serv_conf = config.getConfVect();
 	}

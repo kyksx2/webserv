@@ -204,91 +204,20 @@
             color: #666;
         }
 
-        /* Section pages d'erreur */
-        .error-section {
-            background: white;
-            border-radius: 15px;
-            padding: 30px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-            margin-top: 30px;
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
         }
 
-        .error-section h2 {
-            color: #667eea;
-            margin-bottom: 20px;
-            text-align: center;
-        }
-
-        .error-buttons {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 15px;
-            margin-top: 20px;
-        }
-
-        .error-btn {
-            padding: 20px;
-            border: 3px solid;
-            border-radius: 12px;
-            background: white;
-            cursor: pointer;
-            transition: all 0.3s;
-            text-align: center;
-            text-decoration: none;
-            display: block;
-            font-weight: bold;
-            font-size: 1.1rem;
-        }
-
-        .error-btn:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 8px 20px rgba(0,0,0,0.15);
-        }
-
-        .error-404 {
-            color: #ff6b6b;
-            border-color: #ff6b6b;
-        }
-
-        .error-404:hover {
-            background: #ff6b6b;
-            color: white;
-        }
-
-        .error-403 {
-            color: #f093fb;
-            border-color: #f093fb;
-        }
-
-        .error-403:hover {
-            background: #f093fb;
-            color: white;
-        }
-
-        .error-500 {
-            color: #ff8c42;
-            border-color: #ff8c42;
-        }
-
-        .error-500:hover {
-            background: #ff8c42;
-            color: white;
-        }
-
-        .error-405 {
-            color: #667eea;
-            border-color: #667eea;
-        }
-
-        .error-405:hover {
-            background: #667eea;
-            color: white;
-        }
-
-        .error-icon {
-            font-size: 2rem;
-            display: block;
-            margin-bottom: 10px;
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #667eea;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-left: 10px;
         }
     </style>
 </head>
@@ -351,32 +280,6 @@
         <div class="response-area">
             <h2>📋 Réponses du serveur</h2>
             <div id="response">En attente de requête...</div>
-        </div>
-
-        <!-- SECTION PAGES D'ERREUR -->
-        <div class="error-section">
-            <h2>🚨 Tester les pages d'erreur</h2>
-            <p style="text-align: center; color: #666; margin-bottom: 20px;">
-                Cliquez sur un bouton pour accéder aux pages d'erreur personnalisées
-            </p>
-            <div class="error-buttons">
-                <a href="/page-inexistante.html" class="error-btn error-404">
-                    <span class="error-icon">🔍</span>
-                    404 Not Found
-                </a>
-                <a href="/403.html" class="error-btn error-403">
-                    <span class="error-icon">🔒</span>
-                    403 Forbidden
-                </a>
-                <a href="/500.html" class="error-btn error-500">
-                    <span class="error-icon">💥</span>
-                    500 Server Error
-                </a>
-                <button onclick="testMethodNotAllowed()" class="error-btn error-405">
-                    <span class="error-icon">⛔</span>
-                    405 Method Not Allowed
-                </button>
-            </div>
         </div>
     </div>
 
@@ -507,34 +410,12 @@
             }
         }
 
-        // Test 405 Method Not Allowed
-        async function testMethodNotAllowed() {
-            log(`🔄 Test 405: Envoi PUT (méthode non autorisée)...`, 'info');
-            
-            try {
-                const response = await fetch('/', {
-                    method: 'PUT',
-                    body: 'test'
-                });
-                
-                const data = await response.text();
-                
-                log(`📍 Status: ${response.status} ${response.statusText}`, response.ok ? 'success' : 'error');
-                
-                if (response.status === 405) {
-                    log(`✅ Erreur 405 correctement gérée !`, 'success');
-                }
-            } catch (error) {
-                log(`❌ Erreur: ${error.message}`, 'error');
-            }
-        }
-
         // Tests automatiques au chargement
         window.addEventListener('load', function() {
             log('🎉 Page chargée avec succès !', 'success');
             log('ℹ️  Serveur web Webserv opérationnel', 'info');
-            log('💡 Astuce : Utilisez les boutons en bas pour tester les pages d\'erreur', 'info');
         });
     </script>
 </body>
 </html>
+
