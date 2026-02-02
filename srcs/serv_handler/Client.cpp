@@ -254,7 +254,7 @@ void	Client::generateBufferResponse()
 		if (isCGI(this->request))
 		{
 			// isCGI appelle des methode adapte
-			std::cout << "isCgi() ->check" << std::endl;
+			std::cout << "Cgi method ->check" << std::endl;
 			this->responseBuffer = this->request->generateCGIResponse();
 		}
 		else

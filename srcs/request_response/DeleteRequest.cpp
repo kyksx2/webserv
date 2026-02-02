@@ -6,7 +6,7 @@
 /*   By: yzeghari <yzeghari@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/28 12:27:58 by yzeghari          #+#    #+#             */
-/*   Updated: 2026/02/02 13:16:35 by yzeghari         ###   ########.fr       */
+/*   Updated: 2026/02/02 16:29:35 by yzeghari         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -165,9 +165,4 @@ char **DeleteRequest::generateEnvp()
 	envp[env.size()] = NULL;
 
 	return envp;
-}
-
-std::string DeleteRequest::generateCGIResponse()
-{
-	return ("ta tete en lisant ce message : https://tenor.com/view/comment-les-filles-te-voient-singe-pas-d%27argent-sanrioomi-pauvre-gif-2057986238221436760");
 }

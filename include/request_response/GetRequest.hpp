@@ -6,7 +6,7 @@
 /*   By: yzeghari <yzeghari@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/25 13:46:05 by yzeghari          #+#    #+#             */
-/*   Updated: 2026/02/02 12:56:56 by yzeghari         ###   ########.fr       */
+/*   Updated: 2026/02/02 16:30:39 by yzeghari         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,6 @@ class GetRequest : public HTTPRequest
 		~GetRequest();
 		HTTPResponse	generateResponse();
 		char			**generateEnvp();
-		std::string			generateCGIResponse();
 };
 
 std::string getMIME_Type(const std::string& target);
