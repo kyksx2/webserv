@@ -1,24 +1,24 @@
-#ifndef CGIHANDLER_H
-#define CGIHANDLER_H
-#include "../serv_handler/Webserv.hpp"
+// #ifndef CGIHANDLER_H
+// #define CGIHANDLER_H
+// #include "../serv_handler/Webserv.hpp"
 
-//? classe temporaire a supprimer
+// //? classe temporaire a supprimer
 
-class CgiHandler {
-public:
-	CgiHandler(char **env, std::string body);
-	CgiHandler(const CgiHandler& src);
-	~CgiHandler();
+// class CgiHandler {
+// public:
+// 	CgiHandler(char **env, std::string body);
+// 	CgiHandler(const CgiHandler& src);
+// 	~CgiHandler();
 
-	CgiHandler& operator=(const CgiHandler& src);
+// 	CgiHandler& operator=(const CgiHandler& src);
 
-	void executeCgi();
-private:
-	std::string _binPath;
-	std::string _scriptPath;
-	std::string _response_cgi;
-	std::string _body;
-	char** _env;
-};
+// 	void executeCgi();
+// private:
+// 	std::string _binPath;
+// 	std::string _scriptPath;
+// 	std::string _response_cgi;
+// 	std::string _body;
+// 	char** _env;
+// };
 
-#endif
+// #endif
