@@ -1,4 +1,4 @@
-GET /index.html?yasser=happy HTTP/1.1
+GET /cgi-bin/test.py HTTP/1.1
 Host: 127.0.0.1:65535
 User-Agent: Tester/1.0
 Accept: */*
