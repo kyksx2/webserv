@@ -23,7 +23,7 @@ class Client {
 	void	restartTimer();
 	bool	isKeepAlive();
 	bool	hasResponse() const;
-	
+
 	time_t	getStart() const;
 	int		getClientFd() const;
 	Server*	getServer() const;
@@ -34,7 +34,9 @@ class Client {
 	void	setDataSent(size_t n);
 	void	setResponseBuffer(std::string& response);
 	void	setRequest(std::string &buffer);
-	
+
+	bool	isCGI(const HTTPRequest* req);
+
 	void	printHeader();
 	void	printBufferResponse();
 

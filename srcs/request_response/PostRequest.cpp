@@ -6,7 +6,7 @@
 /*   By: yzeghari <yzeghari@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/25 14:31:54 by yzeghari          #+#    #+#             */
-/*   Updated: 2026/01/27 17:01:55 by yzeghari         ###   ########.fr       */
+/*   Updated: 2026/02/02 13:14:30 by yzeghari         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,29 +43,20 @@ HTTPResponse PostRequest::generateResponse()
 	HTTPResponse	postresponse;
 	postresponse.setVersion(this->m_version);
 	postresponse.setHeader("connection", this->m_headers["connection"]);
-	std::string		realPath = this->m_target;
+	std::string		realPath = this->GetRealPath();
 	struct stat st;
 	std::string	dir;
 	std::string	file;
 	split_path(this->m_target, dir, file);
 
-	//! faire le menage une fois tt pret
-	std::cout << "envp = \n" << std::endl;
-	for (int i = 0; this->generateEnvp()[i] != NULL; i++)
+	// Verifie si la Methode est autorise sur target
+	if (this->m_location->isMethodAllowed("POST") == false)
 	{
-		std::cout << this->generateEnvp()[i] << std::endl;
-	}
-	const Location_config* location = this->m_serv.sendALocation(realPath);
-	if (location)
-	{
-		realPath = location->getRoot() + this->m_target;
-		if (location->isMethodAllowed("POST") == false)
-		{
-			postresponse.setStatus(405, "Method Not Allowed");
-			std::string method_allowed = vstos(location->getAllowedMethods(), ", ");
-			postresponse.setHeader("Allow", method_allowed);
-			return postresponse;
-		}
+		// → 405 Method Not Allowed
+		postresponse.setStatus(405, "Method Not Allowed");
+		std::string method_allowed = vstos(this->m_location->getAllowedMethods(), ", ");
+		postresponse.setHeader("Allow", method_allowed);
+		return postresponse;
 	}
 
 	if (stat(realPath.c_str(), &st) == 0)
@@ -222,3 +213,80 @@ char **PostRequest::generateEnvp()
 	return envp;
 }
 
+std::string PostRequest::generateCGIResponse()
+{
+	return ("pas encore fait : https://tenor.com/view/zeubi-meme-dormir-papi-gif-18488165");
+}
+
+// std::string PostRequest::generateCGIResponse()
+// {
+// 	//! debug
+// 	std::cout << " generateCGIResponse() ->check" << std::endl;
+// 	char **envp = this->generateEnvp();
+// 	std::cout << "env { \n" << std::endl;
+// 	for (int i = 0; envp[i] != NULL; i++)
+// 	{
+// 		std::cout << envp[i] << std::endl;
+// 	}
+// 	std::cout << "\n } \n" << std::endl;
+
+// 	int pipe_to_cgi[2];
+//     int pipe_from_cgi[2];
+//     pid_t pid = 0;
+//     if (pipe(pipe_to_cgi) == -1 || pipe(pipe_from_cgi) == -1) {
+//         //? return une erreur
+//     }
+//     pid = fork();
+//     if  (pid == -1) {
+//         close(pipe_to_cgi[0]);
+//         close(pipe_to_cgi[1]);
+//         close(pipe_from_cgi[0]);
+//         close(pipe_from_cgi[1]);
+//         //? return une erreur
+//     }
+//     else if (pid == 0) { //! child -> oubie qu'il est un serveur et execute le script
+//         //? ecrit dans [1](write) et lis dans [0](read)
+//         //! double tableau pour execve + recuperation de l'env
+//         //! ecrire dans file_from_cgi[1]
+//         //? dup stdin dans l'ecriture de pipe_from_cgi[1];
+
+//         //! gerer les signaux en les remettant comme ils etaient definis de base
+//         dup2(pipe_to_cgi[0], STDIN_FILENO); //? en cas de POST on a des donnees a recup
+//         dup2(pipe_from_cgi[1], STDOUT_FILENO); //? ecrit ici pour que le parent puisse read
+//         close(pipe_to_cgi[0]);
+//         close(pipe_to_cgi[1]);
+//         close(pipe_from_cgi[0]);
+//         close(pipe_from_cgi[1]);
+//         char *args[3];
+//         args[0] = (char*)this->binPath.c_str();
+//         args[1] = (char*)this->scriptPath.c_str();
+//         args[2] = NULL;
+
+//         if (execve(args[0], args, env) == -1) {
+//             //? return une erreur, le script ne sait pas executer + free
+//             perror("execve error");
+//             // exit(1);
+//         }
+//     }
+//     //! parent ici -> erit dans la pipe_to_cgi[1]
+//     //!            -> lis dans pipe_from_cgi[0]
+//     close(pipe_to_cgi[0]);
+//     close(pipe_from_cgi[1]);
+//     std::string body = request.getBody();
+//     if (!body.empty())
+//         write(pipe_to_cgi[1], body.c_str(), body.size());
+//     close(pipe_to_cgi[1]);
+//     char buffer[4096];
+//     ssize_t bits_read;
+//     std::string _cgi;
+//     while ((bits_read = read(pipe_from_cgi[0], buffer, sizeof(buffer))) > 0) {
+//         _cgi.append(buffer, bits_read);
+//     }
+//     if (bits_read == -1) {
+//         perror("read");
+//         //? continuer le reste ou faire un throw
+//     }
+//     close(pipe_from_cgi[0]);
+//     waitpid(pid, NULL, 0);
+//     this->response_cgi = _cgi;
+// }

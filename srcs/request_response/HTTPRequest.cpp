@@ -6,7 +6,7 @@
 /*   By: yzeghari <yzeghari@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/24 13:45:23 by yzeghari          #+#    #+#             */
-/*   Updated: 2026/01/28 12:49:38 by yzeghari         ###   ########.fr       */
+/*   Updated: 2026/02/02 13:07:59 by yzeghari         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -107,6 +107,14 @@ HTTPRequest::HTTPRequest(std::string &buffer, const Server& serv)
 	// Host obligatoire en HTTP/1.1
 	if (!m_headers.count("host") && m_version == "HTTP/1.1")
 		throw HTTPRequest::HTTPRequestException(m_version + ",400,Bad Request");
+
+	// Location
+	this->m_location = this->m_serv.sendALocation(this->m_target);
+	if (this->m_location == NULL)
+	{
+		// theoriquement impossible | ce message est la pour debug au cas ou qd meme
+		std::cerr << "location == NULL peut causer un segfault" << std::endl;
+	}
 }
 
 HTTPRequest &HTTPRequest::operator=(const HTTPRequest &src)
@@ -114,6 +122,7 @@ HTTPRequest &HTTPRequest::operator=(const HTTPRequest &src)
 	if (this == &src)
 		return (*this);
 	this->m_serv = src.m_serv;
+	this->m_location = src.m_location;
 	this->m_target = src.m_target;
 	this->m_query = src.m_query;
 	this->m_version = src.m_version;
@@ -138,10 +147,31 @@ void HTTPRequest::SetBody(std::string &buffer)
 	m_body = buffer.substr(0, contentLength);
 }
 
+const Location_config *HTTPRequest::Getlocation() const
+{
+	return this->m_location;
+}
+
 std::string HTTPRequest::GetTarget() const
 {
 	return (this->m_target);
 }
+
+std::string HTTPRequest::GetRealPath() const
+{
+	std::string	realPath = this->m_location->getRoot() + this->m_target;
+	return (realPath);
+}
+
+std::string HTTPRequest::GetExtension() const
+{
+    std::size_t pos = m_target.find_last_of('.');
+    if (pos == std::string::npos || pos == m_target.length() - 1)
+        return "";
+
+    return m_target.substr(pos);
+}
+
 
 std::string HTTPRequest::GetQuery() const
 {
@@ -189,7 +219,24 @@ HTTPRequest::HTTPRequestException::~HTTPRequestException() throw()
 {
 }
 
-std::ostream& operator<<(std::ostream& os, const HTTPRequest& req)
+const char *GetValue(const char *key, const char **env)
+{
+	int i = 0;
+	size_t key_len = strlen(key);
+
+	while (env && env[i])
+	{
+		if (strncmp(key, env[i], key_len) == 0
+			&& env[i][key_len] == '=')
+		{
+			return (env[i] + key_len + 1);
+		}
+		i++;
+	}
+	return NULL;
+}
+
+std::ostream &operator<<(std::ostream &os, const HTTPRequest &req)
 {
 	os << "===== HTTPRequest =====" << std::endl;
 

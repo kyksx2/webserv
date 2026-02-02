@@ -6,7 +6,7 @@
 /*   By: yzeghari <yzeghari@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/28 12:27:58 by yzeghari          #+#    #+#             */
-/*   Updated: 2026/01/27 17:01:14 by yzeghari         ###   ########.fr       */
+/*   Updated: 2026/02/02 13:16:35 by yzeghari         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,31 +26,19 @@ HTTPResponse DeleteRequest::generateResponse()
 	HTTPResponse	delresponse;
 	delresponse.setVersion(this->m_version);
 	delresponse.setHeader("connection", this->m_headers["connection"]);
-	std::string		realPath = this->m_target;
+	std::string		realPath = this->GetRealPath();
 	struct stat st;
 
-	//! faire le menage une fois tt pret
-	std::cout << "envp = \n" << std::endl;
-	for (int i = 0; this->generateEnvp()[i] != NULL; i++)
+	// Verifie si la Methode est autorise sur target
+	if (this->m_location->isMethodAllowed("DELETE") == false)
 	{
-		std::cout << this->generateEnvp()[i] << std::endl;
+		// → 405 Method Not Allowed
+		delresponse.setStatus(405, "Method Not Allowed");
+		this->m_location->getAllowedMethods();
+		std::string method_allowed = vstos(this->m_location->getAllowedMethods(), ", ");
+		delresponse.setHeader("Allow", method_allowed);
+		return delresponse;
 	}
-	// Si DELETE n'est pas autorisé dans ta config (location) A rajouter
-	// → 405 Method Not Allowed
-	const Location_config* location = this->m_serv.sendALocation(realPath);
-	if (location) // theoriquement jms NULL | possibilité de changer pointeur en ref
-	{
-		realPath = location->getRoot() + this->m_target;
-		if (location->isMethodAllowed("DELETE") == false)
-		{
-			delresponse.setStatus(405, "Method Not Allowed");
-			location->getAllowedMethods();
-			std::string method_allowed = vstos(location->getAllowedMethods(), ", ");
-			delresponse.setHeader("Allow", method_allowed);
-			return delresponse;
-		}
-	}
-
 	if (!stat(realPath.c_str(), &st))
 	{
 		if (S_ISREG(st.st_mode))
@@ -179,4 +167,7 @@ char **DeleteRequest::generateEnvp()
 	return envp;
 }
 
-
+std::string DeleteRequest::generateCGIResponse()
+{
+	return ("ta tete en lisant ce message : https://tenor.com/view/comment-les-filles-te-voient-singe-pas-d%27argent-sanrioomi-pauvre-gif-2057986238221436760");
+}

@@ -91,7 +91,8 @@ void	Client::setRequest(std::string& buffer) {
 	this->requestBuffer = buffer;
 }
 
-void Client::printHeader() {
+void Client::printHeader()
+{
 	std::cout << "---- HEADER -----" << std::endl;
 	std::cout << this->requestBuffer.substr(0, this->headerSize - 4) << std::endl;
 	std:: cout << " ---------------- " << std::endl;
@@ -244,22 +245,28 @@ void	Client::generateBufferResponse()
 {
 	this->responseBuffer.clear();
 
-	//? if isCGI
-	//? ici on creer la classe CGI et on execute
-	//? sinon on fait le reste ci dessous
-	// if (isCgi()) {
-	// 	// generer une requete et executer la CGI
-	// 	//! penser a remettre tout a 0
-	// }
 	if (this->hasresponse)
 	{
 		this->responseBuffer = this->response.generate();
 	}
 	else if (this->request)
 	{
-		this->response = this->request->generateResponse();
-		this->responseBuffer = this->response.generate();
+
+		if (isCGI(this->request))
+		{
+			// isCGI appelle des methode adapte
+
+		}
+		else
+		{
+			//! debug
+			std::cout << "normal method ->check" << std::endl;
+			this->response = this->request->generateResponse();
+			this->responseBuffer = this->response.generate();
+		}
+
 	}
+	//! penser a remettre tout a 0
 	this->headerParse = false;
 	this->headerSize = 0;
 	this->contentLength = 0;
@@ -273,8 +280,26 @@ void	Client::generateBufferResponse()
 
 }
 
-
 void Client::printBufferResponse()
 {
 	std::cout << this->responseBuffer;
+}
+
+bool Client::isCGI(const HTTPRequest *req)
+{
+	const Location_config *loc = req->Getlocation();
+	std::string path = req->GetTarget();
+	std::string ext = req->GetExtension();
+
+	//! debug
+	std::cout << "isCgi() ->check" << std::endl;
+
+	if (!loc->isCgiRequest(req->GetRealPath()))
+		return false;
+
+	std::map<std::string, std::string> cgiHandlers = loc->getCgiHandlers();
+	if (cgiHandlers.count(ext))
+		return true;
+
+	return false;
 }
