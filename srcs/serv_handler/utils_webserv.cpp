@@ -5,7 +5,10 @@ WebServ::WebServ(const std::string& conf): epoll_fd(-1) {
 	std::vector<Server_Config> serv_conf;
 	try
 	{
-		Global_Config config(conf);
+		if (!conf.empty())
+			Global_Config config(conf);
+		Global_Config config;
+
 		serv_conf = config.getConfVect();
 	}
 	catch(const std::exception& e)

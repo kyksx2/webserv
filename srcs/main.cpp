@@ -6,7 +6,7 @@
 /*   By: tnolent <tnolent@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/16 13:05:43 by kjolly            #+#    #+#             */
-/*   Updated: 2026/01/27 14:27:54 by tnolent          ###   ########.fr       */
+/*   Updated: 2026/02/02 11:20:29 by tnolent          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,8 +49,6 @@ int main(int ac, char **av) {
         std::string conf;
         if (ac == 2)
             conf = av[1];
-        else
-            conf = "../config/default.conf";
         signal(SIGINT, handle_sig);
         signal(SIGQUIT, handle_sig);
         signal(SIGPIPE, SIG_IGN);

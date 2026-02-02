@@ -12,7 +12,7 @@ Global_Config::Global_Config() {
     server.setHost("0.0.0.0");
     server.setPort(8080);
     server.addServerName("");
-    server.setRoot("html");
+    server.setRoot("./www");
     server.addIndex("index.html");
     server.setAutoindex(false);
     server.setClientMaxBodySize(1048576);

@@ -51,6 +51,8 @@ std::vector<std::string> modifyArgListen(const ConfigNode& node)
         return node.arguments;
     std::string host = arg.substr(0, pos);
     std::string port = arg.substr(pos + 1);
+    if (host == "localhost")
+        host = "127.0.0.1";
     if (host.empty() || port.empty())
         throw std::runtime_error("Error : format listen invalide (host:port)");
 
