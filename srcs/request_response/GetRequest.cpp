@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   GetRequest.cpp                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: yzeghari <yzeghari@student.42.fr>          +#+  +:+       +#+        */
+/*   By: kjolly <kjolly@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/25 13:45:13 by yzeghari          #+#    #+#             */
-/*   Updated: 2026/02/02 13:12:17 by yzeghari         ###   ########.fr       */
+/*   Updated: 2026/02/02 16:18:56 by kjolly           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -344,15 +344,20 @@ std::string	GetRequest::generateCGIResponse()
         close(pipe_to_cgi[1]);
         close(pipe_from_cgi[0]);
         close(pipe_from_cgi[1]);
-        char *args[3];
-        args[0] = (char *) GetValue((const char *)"PATH_TRANSLATED", (const char **) env);
-        args[1] = (char *) GetValue((const char *)"SCRIPT_NAME", (const char **) env);
-        args[2] = NULL;
+		
+		const std::map<std::string, std::string> cgi_h = this->m_location->getCgiHandlers();
+		std::map<std::string, std::string>::const_iterator it = cgi_h.find(this->GetExtension());
+		std::string _bin = (it != cgi_h.end()) ? it->second : "";
 
+		std::string _script = this->GetRealPath();
+        char *args[3];
+        args[0] = (char *) _bin.c_str()/*(char *) GetValue((const char *)"PATH_TRANSLATED", (const char **) env)*/;
+        args[1] = (char *) _script.c_str()/*(char *) this->GetRealPath().c_str()*/;
+        args[2] = NULL;
         if (execve(args[0], args, env) == -1) {
             //? return une erreur, le script ne sait pas executer + free
             perror("execve error");
-            // exit(1);
+            exit(1);
         }
     }
     //! parent ici -> erit dans la pipe_to_cgi[1]

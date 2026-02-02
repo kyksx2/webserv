@@ -251,11 +251,11 @@ void	Client::generateBufferResponse()
 	}
 	else if (this->request)
 	{
-
 		if (isCGI(this->request))
 		{
 			// isCGI appelle des methode adapte
-
+			std::cout << "isCgi() ->check" << std::endl;
+			this->responseBuffer = this->request->generateCGIResponse();
 		}
 		else
 		{
@@ -290,9 +290,6 @@ bool Client::isCGI(const HTTPRequest *req)
 	const Location_config *loc = req->Getlocation();
 	std::string path = req->GetTarget();
 	std::string ext = req->GetExtension();
-
-	//! debug
-	std::cout << "isCgi() ->check" << std::endl;
 
 	if (!loc->isCgiRequest(req->GetRealPath()))
 		return false;
