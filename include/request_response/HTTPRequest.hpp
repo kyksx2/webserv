@@ -6,7 +6,7 @@
 /*   By: yzeghari <yzeghari@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/24 13:37:27 by yzeghari          #+#    #+#             */
-/*   Updated: 2026/02/02 13:07:35 by yzeghari         ###   ########.fr       */
+/*   Updated: 2026/02/02 16:28:13 by yzeghari         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,7 +51,7 @@ class HTTPRequest
 
 		virtual	HTTPResponse	generateResponse() = 0;
 		virtual	char			**generateEnvp() = 0;
-		virtual	std::string			generateCGIResponse() = 0;
+		virtual	std::string			generateCGIResponse();
 
 		class	HTTPRequestException : public std::exception
 		{

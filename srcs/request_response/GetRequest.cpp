@@ -6,7 +6,7 @@
 /*   By: yzeghari <yzeghari@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/25 13:45:13 by yzeghari          #+#    #+#             */
-/*   Updated: 2026/02/02 13:12:17 by yzeghari         ###   ########.fr       */
+/*   Updated: 2026/02/02 16:29:04 by yzeghari         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -301,75 +301,4 @@ char **GetRequest::generateEnvp()
 		envp[i] = strdup(env[i].c_str());
 	envp[env.size()] = NULL;
 	return envp;
-}
-
-std::string	GetRequest::generateCGIResponse()
-{
-	//! debug
-	std::cout << " generateCGIResponse() ->check" << std::endl;
-	char **env = this->generateEnvp();
-	std::cout << "env { \n" << std::endl;
-	for (int i = 0; env[i] != NULL; i++)
-	{
-		std::cout << env[i] << std::endl;
-	}
-	std::cout << "\n } \n" << std::endl;
-
-	std::string	cgi_response;
-	int pipe_to_cgi[2];
-    int pipe_from_cgi[2];
-    pid_t pid = 0;
-
-    if (pipe(pipe_to_cgi) == -1 || pipe(pipe_from_cgi) == -1) {
-        //? return une erreur
-    }
-    pid = fork();
-    if  (pid == -1) {
-        close(pipe_to_cgi[0]);
-        close(pipe_to_cgi[1]);
-        close(pipe_from_cgi[0]);
-        close(pipe_from_cgi[1]);
-        //? return une erreur
-    }
-    else if (pid == 0) { //! child -> oubie qu'il est un serveur et execute le script
-        //? ecrit dans [1](write) et lis dans [0](read)
-        //! double tableau pour execve + recuperation de l'env
-        //! ecrire dans file_from_cgi[1]
-        //? dup stdin dans l'ecriture de pipe_from_cgi[1];
-
-        //! gerer les signaux en les remettant comme ils etaient definis de base
-        dup2(pipe_to_cgi[0], STDIN_FILENO); //? en cas de POST on a des donnees a recup
-        dup2(pipe_from_cgi[1], STDOUT_FILENO); //? ecrit ici pour que le parent puisse read
-        close(pipe_to_cgi[0]);
-        close(pipe_to_cgi[1]);
-        close(pipe_from_cgi[0]);
-        close(pipe_from_cgi[1]);
-        char *args[3];
-        args[0] = (char *) GetValue((const char *)"PATH_TRANSLATED", (const char **) env);
-        args[1] = (char *) GetValue((const char *)"SCRIPT_NAME", (const char **) env);
-        args[2] = NULL;
-
-        if (execve(args[0], args, env) == -1) {
-            //? return une erreur, le script ne sait pas executer + free
-            perror("execve error");
-            // exit(1);
-        }
-    }
-    //! parent ici -> erit dans la pipe_to_cgi[1]
-    //!            -> lis dans pipe_from_cgi[0]
-    close(pipe_to_cgi[0]);
-    close(pipe_from_cgi[1]);
-    close(pipe_to_cgi[1]);
-    char buffer[4096];
-    ssize_t bits_read;
-    while ((bits_read = read(pipe_from_cgi[0], buffer, sizeof(buffer))) > 0) {
-        cgi_response.append(buffer, bits_read);
-    }
-    if (bits_read == -1) {
-        perror("read");
-        //? continuer le reste ou faire un throw
-    }
-    close(pipe_from_cgi[0]);
-    waitpid(pid, NULL, 0);
-    return (cgi_response);
 }
