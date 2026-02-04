@@ -1,11 +1,13 @@
 GET /cgi-bin/test.py HTTP/1.1
-Host: 127.0.0.1:65535
+Host: 127.0.0.1:8080
 User-Agent: Tester/1.0
 Accept: */*
+## curl : curl "http://localhost:8080/index.html" 
 
 DELETE /test.txt HTTP/1.1
 Host: 127.0.0.1:8080
 User-Agent: TelnetKiller
+## curl : curl -v -X DELETE http://127.0.0.1:8080/test.txt -A "TelnetKiller"
 
 POST /test.txt HTTP/1.1
 Host: 127.0.0.1:8080
@@ -13,3 +15,4 @@ Content-Type: text/plain
 Content-Length: 5
 
 salut
+## curl : curl -v -X POST http://127.0.0.1:8080/test.txt -H "Content-Type: text/plain" -d "salut"

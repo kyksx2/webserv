@@ -9,7 +9,7 @@ void    WebServ::run() {
 			continue;
 			else {
 				std::cerr << "Error: fatal on epoll_wait." << std::endl;
-				exit(1);
+				break;
 			}
 		}
 		for (int i = 0; i < n_event; i++) {
@@ -152,6 +152,8 @@ void    WebServ::handleNewClient(Server* find_server) {
 	else {
 
 		fcntl(client_fd, F_SETFL, O_NONBLOCK); //? passage en non bloquant
+		// Après socket() ou accept()
+		fcntl(client_fd, F_SETFD, FD_CLOEXEC);
 		struct epoll_event client_ev;
 		client_ev.data.fd = client_fd;
 		client_ev.events = EPOLLIN; //? pret a envoyer quelque chose
@@ -180,64 +182,5 @@ void    WebServ::handleNewClient(Server* find_server) {
 	
 	// //         if (it->second) // Petite sécurité pour vérifier que le pointeur n'est pas null
 	// //             it->second->config.print();
-	// //     }
-	// // }
-	// // WebServ::WebServ(std::string& conf): epoll_fd(-1) {
-	// //     epollInit();
-	// //     std::vector<ServConf> server_config;
-	// //     confParser config(conf);
-	// //     try
-	// //     {
-	// //         server_config = config.parse();
-	// //     }
-	// //     catch(const std::exception& e)
-	// //     {
-	// //         std::cerr << "Error: " << e.what() << '\n';
-	// //         throw initException();
-	// //     }
-	
-	// //     for (size_t i = 0; server_config.size(); i++) {
-	// //         Server* new_server = new Server(server_config[i]);
-	// //         try {
-	// //             new_server->init(this->epoll_fd);
-	// //             int listen_fd = new_server->getListenFd();
-	// //             this->servers[listen_fd] = new_server;
-	// //         }
-	// //         catch (initException& e) {
-	// //             std::cerr << "Error: " << e.what() << std::endl;
-	// //             if (new_server)
-	// //                 delete new_server;
-	// //             throw initException();
-	// //         }
-	// //     }
-	// // }
-	
-	// // WebServ::WebServ(const std::string& conf): epoll_fd(-1) {
-	// //     epollInit();
-	// //     std::vector<Server_Config> serv_conf;
-	// //     try
-	// //     {
-	// //         Config config(conf);
-	// //         serv_conf = config.getConfVect();
-	// //     }
-	// //     catch(const std::exception& e)
-	// //     {
-	// //         std::cerr << e.what() << '\n';
-	// //         throw initException();
-	// //     }
-	// //     for (size_t i = 0; i < serv_conf.size(); i++) {
-	// //         Server* new_server = new Server(serv_conf[i]);
-	// //         try {
-	// //             new_server->init(this->epoll_fd);
-	// //             std::cout << new_server->getListenFd() << ": Port: "<< new_server->config.getPort() <<   " Host: " << new_server->config.getHost() << std::endl;
-	// //             int listen_fd = new_server->getListenFd();
-	// //             this->servers[listen_fd] = new_server;
-	// //         }
-	// //         catch (initException& e) {
-	// //             std::cerr << e.what() << std::endl;
-	// //             if (new_server)
-	// //                 delete new_server;
-	// //             throw initException();
-	// //         }
 	// //     }
 	// // }

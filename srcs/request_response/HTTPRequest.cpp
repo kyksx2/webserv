@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   HTTPRequest.cpp                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: yzeghari <yzeghari@student.42.fr>          +#+  +:+       +#+        */
+/*   By: kjolly <kjolly@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/24 13:45:23 by yzeghari          #+#    #+#             */
-/*   Updated: 2026/02/02 16:29:52 by yzeghari         ###   ########.fr       */
+/*   Updated: 2026/02/04 12:08:32 by kjolly           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -208,14 +208,14 @@ std::string HTTPRequest::GetHeaders_value(std::string key)
 std::string HTTPRequest::generateCGIResponse()
 {
 	//! debug
-	std::cout << " generateCGIResponse() ->check" << std::endl;
+	// std::cout << " generateCGIResponse() ->check" << std::endl;
 	char **env = this->generateEnvp();
-	std::cout << "env { \n" << std::endl;
-	for (int i = 0; env[i] != NULL; i++)
-	{
-		std::cout << env[i] << std::endl;
-	}
-	std::cout << "\n } \n" << std::endl;
+	// std::cout << "env { \n" << std::endl;
+	// for (int i = 0; env[i] != NULL; i++)
+	// {
+	// 	std::cout << env[i] << std::endl;
+	// }
+	// std::cout << "\n } \n" << std::endl;
 
 	std::string	cgi_response;
 	int pipe_to_cgi[2];
@@ -223,7 +223,7 @@ std::string HTTPRequest::generateCGIResponse()
     pid_t pid = 0;
 
     if (pipe(pipe_to_cgi) == -1 || pipe(pipe_from_cgi) == -1) {
-        //? return une erreur
+        //? return une erreur 500
     }
     pid = fork();
     if  (pid == -1) {
@@ -231,7 +231,7 @@ std::string HTTPRequest::generateCGIResponse()
         close(pipe_to_cgi[1]);
         close(pipe_from_cgi[0]);
         close(pipe_from_cgi[1]);
-        //? return une erreur
+        //? return une erreur 500
     }
     else if (pid == 0) { //! child -> oubie qu'il est un serveur et execute le script
         //? ecrit dans [1](write) et lis dans [0](read)
@@ -258,7 +258,7 @@ std::string HTTPRequest::generateCGIResponse()
         args[1] = (char *) _script.c_str()/*(char *) this->GetRealPath().c_str()*/;
         args[2] = NULL;
         if (execve(args[0], args, env) == -1) {
-            //? return une erreur, le script ne sait pas executer + free
+            //? return une erreur 500, le script ne sait pas executer + free
             perror("execve error");
             exit(1);
         }
@@ -275,7 +275,7 @@ std::string HTTPRequest::generateCGIResponse()
     }
     if (bits_read == -1) {
         perror("read");
-        //? continuer le reste ou faire un throw
+        //? return erreur 500
     }
     close(pipe_from_cgi[0]);
     waitpid(pid, NULL, 0);

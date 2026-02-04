@@ -16,7 +16,7 @@ static HTTPRequest    *post_creation(std::string buffer, const Server &serv)
 }
 
 Client::Client(int fd, Server* find_server) : client_fd(fd), dad_serv(find_server), data_sent(0), headerParse(false), headerSize(0),contentLength(0),
-    isChunked(false), hasresponse(false), requestBuffer(""), responseBuffer("") {
+    isChunked(false), hasresponse(false), requestBuffer(""), responseBuffer(""), request(), response() {
         start = time(NULL);
 }
 
@@ -254,13 +254,13 @@ void	Client::generateBufferResponse()
 		if (isCGI(this->request))
 		{
 			// isCGI appelle des methode adapte
-			std::cout << "Cgi method ->check" << std::endl;
+			// std::cout << "Cgi method ->check" << std::endl;
 			this->responseBuffer = this->request->generateCGIResponse();
 		}
 		else
 		{
 			//! debug
-			std::cout << "normal method ->check" << std::endl;
+			// std::cout << "normal method ->check" << std::endl;
 			this->response = this->request->generateResponse();
 			this->responseBuffer = this->response.generate();
 		}

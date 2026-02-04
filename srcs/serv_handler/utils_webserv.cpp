@@ -49,18 +49,22 @@ WebServ::~WebServ() {
 	}
 	}
 	this->clients.clear();
+	if (this->epoll_fd)
+		close(this->epoll_fd);
 }
 
 void    WebServ::epollInit() {
 	this->epoll_fd = epoll_create1(0);
 	if (this->epoll_fd == -1)
-		return; //! gerer epoll create error
+		return; //! renvoyer erreur 501
+		// Après socket() ou accept()
+	fcntl(this->epoll_fd, F_SETFD, FD_CLOEXEC);
 }
 
 void	WebServ::checkTimeout() {
 	for (std::map<int, Client*>::iterator it = clients.begin(); it != clients.end();) {
 		if (time(NULL) - it->second->getStart() > 60) {
-			std::cout << "Timeout: kick out" << std::endl;
+			// std::cout << "Timeout: kick out" << std::endl;
 			int fd_to_kill = it->first;
 			it++;
 			closeClient(fd_to_kill);
