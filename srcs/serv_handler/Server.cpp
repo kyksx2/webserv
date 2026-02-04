@@ -32,6 +32,7 @@ void Server::init(int epoll_fd) {
         std::cerr << "Error: setsockopt" << std::endl;
     }
     fcntl(this->listen_fd, F_SETFL, O_NONBLOCK);
+    fcntl(this->listen_fd, F_SETFD, FD_CLOEXEC);
     this->addr.sin_addr.s_addr = inet_addr(this->config.getHost().c_str());
     this->addr.sin_family = AF_INET;
     this->addr.sin_port = htons(this->config.getPort());

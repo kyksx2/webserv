@@ -14,7 +14,10 @@ WebServ::WebServ(const std::string& conf): epoll_fd(-1) {
 	catch(const std::exception& e)
 	{
 		std::cerr << e.what() << '\n';
-		throw initException();
+		if (this->epoll_fd)
+			close(this->epoll_fd);
+		return;
+		// throw initException();
 	}
 	for (size_t i = 0; i < serv_conf.size(); i++) {
 		Server* new_server = new Server(serv_conf[i]);
@@ -28,7 +31,10 @@ WebServ::WebServ(const std::string& conf): epoll_fd(-1) {
 			std::cerr << e.what() << std::endl;
 			if (new_server)
 				delete new_server;
-			throw initException();
+			if (this->epoll_fd)
+				close(this->epoll_fd);
+			return;
+			// throw initException();
 		}
 	}
 }
@@ -58,7 +64,7 @@ void    WebServ::epollInit() {
 	if (this->epoll_fd == -1)
 		return; //! renvoyer erreur 501
 		// Après socket() ou accept()
-	fcntl(this->epoll_fd, F_SETFD, FD_CLOEXEC);
+	fcntl(this->epoll_fd, F_SETFD, FD_CLOEXEC); //?
 }
 
 void	WebServ::checkTimeout() {

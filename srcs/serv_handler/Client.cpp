@@ -84,8 +84,6 @@ void    Client::setResponseBuffer(std::string& response) {
 // \r\n                                                <-- 3. Séparateur
 // nom=bob&age=22                                      <-- 4. Body
 
-//! ici
-// Client::Client() : headerParse(false), headerSize(0), contentLength(0), isChunked(false), hasresponse(false), request(NULL) {}
 
 void	Client::setRequest(std::string& buffer) {
 	this->requestBuffer = buffer;

@@ -150,10 +150,9 @@ void    WebServ::handleNewClient(Server* find_server) {
 		}
 	}
 	else {
-
 		fcntl(client_fd, F_SETFL, O_NONBLOCK); //? passage en non bloquant
 		// Après socket() ou accept()
-		fcntl(client_fd, F_SETFD, FD_CLOEXEC);
+		fcntl(client_fd, F_SETFD, FD_CLOEXEC); //?
 		struct epoll_event client_ev;
 		client_ev.data.fd = client_fd;
 		client_ev.events = EPOLLIN; //? pret a envoyer quelque chose

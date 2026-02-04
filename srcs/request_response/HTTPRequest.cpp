@@ -6,7 +6,7 @@
 /*   By: kjolly <kjolly@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/24 13:45:23 by yzeghari          #+#    #+#             */
-/*   Updated: 2026/02/04 12:08:32 by kjolly           ###   ########.fr       */
+/*   Updated: 2026/02/04 15:04:25 by kjolly           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -207,16 +207,7 @@ std::string HTTPRequest::GetHeaders_value(std::string key)
 
 std::string HTTPRequest::generateCGIResponse()
 {
-	//! debug
-	// std::cout << " generateCGIResponse() ->check" << std::endl;
 	char **env = this->generateEnvp();
-	// std::cout << "env { \n" << std::endl;
-	// for (int i = 0; env[i] != NULL; i++)
-	// {
-	// 	std::cout << env[i] << std::endl;
-	// }
-	// std::cout << "\n } \n" << std::endl;
-
 	std::string	cgi_response;
 	int pipe_to_cgi[2];
     int pipe_from_cgi[2];
@@ -238,6 +229,9 @@ std::string HTTPRequest::generateCGIResponse()
         //! double tableau pour execve + recuperation de l'env
         //! ecrire dans file_from_cgi[1]
         //? dup stdin dans l'ecriture de pipe_from_cgi[1];
+		signal(SIGINT, SIG_DFL);
+        signal(SIGQUIT, SIG_DFL);
+        signal(SIGPIPE, SIG_DFL);
 
         //! gerer les signaux en les remettant comme ils etaient definis de base
         dup2(pipe_to_cgi[0], STDIN_FILENO); //? en cas de POST on a des donnees a recup
@@ -254,10 +248,12 @@ std::string HTTPRequest::generateCGIResponse()
 		std::string _script = this->GetRealPath();
 
         char *args[3];
-        args[0] = (char *) _bin.c_str()/*(char *) GetValue((const char *)"PATH_TRANSLATED", (const char **) env)*/;
-        args[1] = (char *) _script.c_str()/*(char *) this->GetRealPath().c_str()*/;
+        args[0] = (char *) _bin.c_str();
+        args[1] = (char *) _script.c_str();
         args[2] = NULL;
         if (execve(args[0], args, env) == -1) {
+			for (int i = 3; i < 1024; i++)
+        		close(i);
             //? return une erreur 500, le script ne sait pas executer + free
             perror("execve error");
             exit(1);
