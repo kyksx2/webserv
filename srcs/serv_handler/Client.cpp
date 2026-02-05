@@ -16,7 +16,7 @@ static HTTPRequest    *post_creation(std::string buffer, const Server &serv)
 }
 
 Client::Client(int fd, Server* find_server) : client_fd(fd), dad_serv(find_server), data_sent(0), headerParse(false), headerSize(0),contentLength(0),
-    isChunked(false), hasresponse(false), requestBuffer(""), responseBuffer(""), request(), response() {
+    isChunked(false), hasresponse(false), requestBuffer(""), responseBuffer(""), request(), response(), active_cgi(false), cgi_fd(-1), cgi_pid(0) {
         start = time(NULL);
 }
 
@@ -39,6 +39,9 @@ Client&  Client::operator=(const Client& src) {
 		this->response = src.response;
 		this->responseBuffer = src.responseBuffer;
 		this->start = src.start;
+		this->active_cgi = src.active_cgi;
+		this->cgi_fd = src.cgi_fd;
+		this->cgi_pid = src.cgi_pid;
     }
     return (*this);
 }
@@ -48,16 +51,42 @@ Client::~Client() {
 		delete request;
 }
 
-bool Client::isKeepAlive() { return this->response.IsKeepAlive(); }
-
 size_t  Client::getDataSent() const { return this->data_sent; }
 
 int Client::getClientFd() const { return this->client_fd; }
 
 std::string Client::getRequestBuffer() const { return this->requestBuffer; }
 
+std::string Client::getResponseBuffer() const { return this->responseBuffer; }
+
+time_t Client::getStart() const { return (this->start); }
+
+pid_t	Client::getCgiPid() const { return this->cgi_pid; }
+
+int	Client::getCgiFd() const { return this->cgi_fd; }
+
+bool	Client::getActiveCgi() const { return this->active_cgi; }
+
 void    Client::setDataSent(size_t n) { this->data_sent = n; }
 
+void    Client::setResponseBuffer(std::string& response) { this->responseBuffer = response; }
+
+// POST /dossier/page.html?query=123 HTTP/1.1\r\n      <-- 1. Request Line
+// Host: localhost:8080\r\n                            <-- 2. Headers
+// User-Agent: curl/7.68.0\r\n
+// Content-Length: 15\r\n
+// \r\n                                                <-- 3. Séparateur
+// nom=bob&age=22                                      <-- 4. Body
+
+void	Client::setRequest(std::string& buffer) { this->requestBuffer = buffer; }
+
+void	Client::setCgiStatus(bool status) { this->active_cgi = status; }
+
+void	Client::setCgiFd(int fd) { this->cgi_fd = fd; }
+
+void	Client::setCgiPid(pid_t pid) { this->cgi_pid = pid; }
+
+bool Client::isKeepAlive() { return this->response.IsKeepAlive(); }
 
 void    Client::appendRequest(const char* request, int size) {
     if (!request || size <= 0)
@@ -71,24 +100,6 @@ void    Client::clearState() {
     this->requestBuffer.clear();
 }
 
-std::string Client::getResponseBuffer() const { return this->responseBuffer; }
-
-void    Client::setResponseBuffer(std::string& response) {
-    this->responseBuffer = response;
-}
-
-// POST /dossier/page.html?query=123 HTTP/1.1\r\n      <-- 1. Request Line
-// Host: localhost:8080\r\n                            <-- 2. Headers
-// User-Agent: curl/7.68.0\r\n
-// Content-Length: 15\r\n
-// \r\n                                                <-- 3. Séparateur
-// nom=bob&age=22                                      <-- 4. Body
-
-
-void	Client::setRequest(std::string& buffer) {
-	this->requestBuffer = buffer;
-}
-
 void Client::printHeader()
 {
 	std::cout << "---- HEADER -----" << std::endl;
@@ -99,7 +110,6 @@ void Client::printHeader()
 
 void Client::restartTimer() { this->start = time(NULL); } //?????????????????????????????????? changement
 
-time_t Client::getStart() const { return (this->start); } //???????????????????????????????? changement
 
 // POST /dossier/page.html?query=123 HTTP/1.1\r\n      <-- 1. Request Line
 // Host: localhost:8080\r\n                            <-- 2. Headers
@@ -107,18 +117,6 @@ time_t Client::getStart() const { return (this->start); } //????????????????????
 // Content-Length: 15\r\n
 // \r\n                                                <-- 3. Séparateur
 // nom=bob&age=22                                      <-- 4. Body
-
-// void Client::printResponse() const
-// {
-// 	if (!this->hasresponse)
-// 	{
-// 		std::cout << "________________" << std::endl;
-// 		std::cout << "Nothing to Print" << std::endl;
-// 		std::cout << "________________" << std::endl;
-// 		return ;
-// 	}
-// 	std::cout << this->response;
-// }
 
 //	Utilise le polymorphisme pour creer la bonne classe
 void Client::requestCreation()
@@ -239,7 +237,7 @@ bool Client::completeRequest()
 
 // attribue en generant si besoin le buffer response a l attribut responseBuffer
 // reinitialise au passage les attributs de verification
-void	Client::generateBufferResponse()
+void	Client::generateBufferResponse(int epoll_fd, std::map<int, Client*> client_map, Client* client)
 {
 	this->responseBuffer.clear();
 
@@ -253,7 +251,7 @@ void	Client::generateBufferResponse()
 		{
 			// isCGI appelle des methode adapte
 			// std::cout << "Cgi method ->check" << std::endl;
-			this->responseBuffer = this->request->generateCGIResponse();
+			this->request->startCgi(epoll_fd, client_map, client);
 		}
 		else
 		{
