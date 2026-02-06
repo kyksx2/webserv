@@ -206,7 +206,7 @@ std::string HTTPRequest::GetHeaders_value(std::string key)
 	return val;
 }
 
-void HTTPRequest::startCgi(int epoll_fd, std::map<int, Client*> client_map, Client* client)
+void HTTPRequest::startCgi(int epoll_fd, std::map<int, Client*>& client_map, Client* client)
 {
 	char **env = this->generateEnvp();
 	int pipe_to_cgi[2];

@@ -57,6 +57,8 @@ int Client::getClientFd() const { return this->client_fd; }
 
 std::string Client::getRequestBuffer() const { return this->requestBuffer; }
 
+std::string Client::getCgiBuffer() const { return this->cgiBuffer; }
+
 std::string Client::getResponseBuffer() const { return this->responseBuffer; }
 
 time_t Client::getStart() const { return (this->start); }
@@ -92,6 +94,12 @@ void    Client::appendRequest(const char* request, int size) {
     if (!request || size <= 0)
         return;
     this->requestBuffer.append(request, size);
+}
+
+void    Client::appendRequestCgi(const char* buffer, int n_size) {
+    if (!buffer || n_size <= 0)
+        return;
+    this->cgiBuffer.append(buffer, n_size);
 }
 
 void    Client::clearState() {
@@ -237,7 +245,7 @@ bool Client::completeRequest()
 
 // attribue en generant si besoin le buffer response a l attribut responseBuffer
 // reinitialise au passage les attributs de verification
-void	Client::generateBufferResponse(int epoll_fd, std::map<int, Client*> client_map, Client* client)
+void	Client::generateBufferResponse(int epoll_fd, std::map<int, Client*>& client_map, Client* client)
 {
 	this->responseBuffer.clear();
 

@@ -36,6 +36,8 @@ void    WebServ::run() {
 					if (events & EPOLLIN) { //? verifie si le bit represente EPOLLIN
 						current_client->restartTimer();
 						readClientData(event_fd);
+						if (this->clients.find(event_fd) == this->clients.end())
+							continue;
 					}
 					if (events & EPOLLOUT) { //? idem
 						current_client->restartTimer();
@@ -55,7 +57,7 @@ void    WebServ::readClientData(int event_fd) {
 		char	buffer[4096];
 		ssize_t	n = read(event_fd, buffer, sizeof(buffer)); //? event_fd == pipe_from_cgi[0] -> le script
 		if (n > 0)
-			client->appendRequest(buffer, sizeof(buffer));
+			client->appendRequestCgi(buffer, n);
 		else if (n == -1) {
 			if (errno == EAGAIN || errno == EWOULDBLOCK) {
 				return;
@@ -63,12 +65,14 @@ void    WebServ::readClientData(int event_fd) {
 			perror("read cgi pipe");
 		}
 		if (n == 0 || (n == -1 && errno != EAGAIN)) {
-			if(epoll_ctl(this->epoll_fd, EPOLL_CTL_DEL, event_fd, NULL) == -1)
+			std::cout << "condition la" << std::endl;
+			if(epoll_ctl(this->epoll_fd, EPOLL_CTL_DEL, event_fd, NULL) == -1) {
 				perror("error epoll_ctl for cgi");
+			}
 			this->clients.erase(event_fd);
 			close(event_fd);
 			waitpid(client->getCgiPid(), NULL, 0);
-			std::cout << "buffer: " << client->getRequestBuffer() << std::endl;
+			std::cout << "buffer: " << client->getCgiBuffer() << std::endl;
 			//??????? generer une response buffer a envoyer
 			struct epoll_event change_ev_cgi;
 			change_ev_cgi.data.fd = client->getClientFd();
@@ -77,6 +81,7 @@ void    WebServ::readClientData(int event_fd) {
 				closeClient(client->getClientFd());
 			}
 		}
+		std::cout << "buffer: " << client->getCgiBuffer() << std::endl;
 		return;
 	}
 	char buffer[BUFFER_SIZE];
@@ -85,6 +90,8 @@ void    WebServ::readClientData(int event_fd) {
 		client->appendRequest(buffer, receive_bits);
 		if (client->completeRequest()) { //! il faut remplir le buffer, le parser et generer la reponse
 			client->generateBufferResponse(this->epoll_fd, this->clients, client); //? generer la reponse
+			if (client->getActiveCgi())
+				break;
 			struct epoll_event change_ev;
 			change_ev.data.fd = event_fd;
 			change_ev.events = EPOLLOUT;
@@ -107,7 +114,6 @@ void    WebServ::readClientData(int event_fd) {
 }
 
 void    WebServ::sendClientData(int event_fd) {
-	std::cout << "la" << std::endl;
 	Client* client = this->clients[event_fd];
 	const std::string& message_send = client->getResponseBuffer();
 	size_t sent_bytes = client->getDataSent(); //? on recupere ce qu'on a deja envoyer
@@ -139,7 +145,7 @@ void    WebServ::sendClientData(int event_fd) {
 	}
 }
 
-void    WebServ::closeClient(int event_fd) {\
+void    WebServ::closeClient(int event_fd) {
 	std::map<int, Client*>::iterator it = this->clients.find(event_fd);
 	if (it == this->clients.end()) {
 		std::cerr << "Error: Client " << event_fd
@@ -147,23 +153,40 @@ void    WebServ::closeClient(int event_fd) {\
 		return;
 	}
 	Client* close_client = it->second;
-	if (close_client->getActiveCgi()) {
-		epoll_ctl(this->epoll_fd, EPOLL_CTL_DEL, close_client->getCgiFd(), NULL);
-		close(close_client->getCgiFd());
-		kill(close_client->getCgiPid(), SIGKILL);
-		waitpid(close_client->getCgiPid(), NULL, 0);
-		this->clients.erase(close_client->getCgiFd());
+	int client_fd = close_client->getClientFd();
+	bool is_cgi = close_client->getActiveCgi();
+	int cgi_fd = -1;
+	pid_t cgi_pid = -1;
+
+	if (is_cgi) {
+		cgi_fd = close_client->getCgiFd();
+		cgi_pid = close_client->getCgiPid();
 	}
-	if (epoll_ctl(this->epoll_fd, EPOLL_CTL_DEL, event_fd, NULL) == -1) {
+
+	if (is_cgi && this->clients.count(cgi_fd)) {
+		this->clients.erase(cgi_fd);
+	}
+
+	if (this->clients.count(client_fd)) {
+		this->clients.erase(client_fd);
+	}
+
+	if (is_cgi) {
+		epoll_ctl(this->epoll_fd, EPOLL_CTL_DEL, cgi_fd, NULL);
+		close(cgi_fd);
+		kill(cgi_pid, SIGKILL);
+		waitpid(cgi_pid, NULL, 0);
+	}
+
+	if (epoll_ctl(this->epoll_fd, EPOLL_CTL_DEL, client_fd, NULL) == -1) {
 		std::cerr << "Error: epoll_ctl failed for delete client " <<
-		event_fd << std::endl;
+		client_fd << std::endl;
 	}
-	if (close(event_fd) == -1) {
-		std::cerr << "Error: failed to close client " << event_fd
+	if (close(client_fd) == -1) {
+		std::cerr << "Error: failed to close client " << client_fd
 		<< std::endl;
 	}
 	delete close_client;
-	this->clients.erase(it);
 }
 
 void    WebServ::handleNewClient(Server* find_server) {

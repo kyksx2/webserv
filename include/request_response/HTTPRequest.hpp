@@ -53,7 +53,7 @@ class HTTPRequest
 
 		virtual	HTTPResponse	generateResponse() = 0;
 		virtual	char			**generateEnvp() = 0;
-		virtual	void			startCgi(int epoll_fd, std::map<int, Client*> client_map, Client* client);
+		virtual	void			startCgi(int epoll_fd, std::map<int, Client*>& client_map, Client* client);
 
 		class	HTTPRequestException : public std::exception
 		{

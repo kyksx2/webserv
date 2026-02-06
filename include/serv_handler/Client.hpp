@@ -17,7 +17,7 @@ class Client {
 	void	appendRequest(const char* request, int size);
 	bool	completeRequest();
 	void	requestCreation();
-	void	generateBufferResponse(int epoll_fd, std::map<int, Client*> client_map, Client* client);
+	void	generateBufferResponse(int epoll_fd, std::map<int, Client*>& client_map, Client* client);
 	void	clearState();
 	void	restartTimer();
 	bool	isKeepAlive();
@@ -26,6 +26,7 @@ class Client {
 	void	printHeader();
 	void	printBufferResponse();
 	//???????????????????????????
+	void	appendRequestCgi(const char* buffer, int n_size);
 	void	launchCgi();
 	void	finishCgi();
 	//???????????????????????????
@@ -40,6 +41,8 @@ class Client {
 	bool	getActiveCgi() const;
 	pid_t	getCgiPid() const;
 	int		getCgiFd() const;
+	std::string	getCgiBuffer() const;
+
 	//????????????????????
 
 	void	setDataSent(size_t n);
@@ -69,6 +72,7 @@ private:
 	bool	active_cgi;
 	int		cgi_fd;
 	pid_t	cgi_pid;
+	std::string	cgiBuffer;
 	//????????????????????
 
 };
