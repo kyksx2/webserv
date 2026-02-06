@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   HTTPRequest.cpp                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kjolly <kjolly@student.42.fr>              +#+  +:+       +#+        */
+/*   By: yzeghari <yzeghari@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/24 13:45:23 by yzeghari          #+#    #+#             */
-/*   Updated: 2026/02/05 16:29:22 by kjolly           ###   ########.fr       */
+/*   Updated: 2026/02/06 11:35:12 by yzeghari         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -275,7 +275,8 @@ void HTTPRequest::startCgi(int epoll_fd, std::map<int, Client*> client_map, Clie
 	event.data.fd = pipe_from_cgi[0];
 	event.events = EPOLLIN;
 	epoll_ctl(epoll_fd, EPOLL_CTL_ADD, pipe_from_cgi[0], &event);
-	client_map[pipe_from_cgi[0]] = client; 
+	client_map[pipe_from_cgi[0]] = client;
+
 }
 
 HTTPRequest::HTTPRequestException::HTTPRequestException(std::string err) throw()

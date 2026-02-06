@@ -39,7 +39,7 @@ void    WebServ::run() {
 					}
 					if (events & EPOLLOUT) { //? idem
 						current_client->restartTimer();
-						sendClientData(event_fd); 
+						sendClientData(event_fd);
 					}
 				}
 			}
@@ -51,8 +51,9 @@ void    WebServ::run() {
 void    WebServ::readClientData(int event_fd) {
 	Client* client = this->clients[event_fd];
 	if (client->getActiveCgi() && event_fd == client->getCgiFd()) {
+		std::cout << "la" << std::endl;
 		char	buffer[4096];
-		ssize_t	n = read(event_fd, buffer, sizeof(buffer));
+		ssize_t	n = read(event_fd, buffer, sizeof(buffer)); //? event_fd == pipe_from_cgi[0] -> le script
 		if (n > 0)
 			client->appendRequest(buffer, sizeof(buffer));
 		else if (n == -1) {
@@ -67,6 +68,7 @@ void    WebServ::readClientData(int event_fd) {
 			this->clients.erase(event_fd);
 			close(event_fd);
 			waitpid(client->getCgiPid(), NULL, 0);
+			std::cout << "buffer: " << client->getRequestBuffer() << std::endl;
 			//??????? generer une response buffer a envoyer
 			struct epoll_event change_ev_cgi;
 			change_ev_cgi.data.fd = client->getClientFd();
@@ -97,7 +99,7 @@ void    WebServ::readClientData(int event_fd) {
 	}
 	if (receive_bits <= 0) {
 		if (errno == EAGAIN || errno == EWOULDBLOCK)
-		return;
+			return;
 		else {
 			closeClient(event_fd);
 		}
@@ -105,13 +107,14 @@ void    WebServ::readClientData(int event_fd) {
 }
 
 void    WebServ::sendClientData(int event_fd) {
+	std::cout << "la" << std::endl;
 	Client* client = this->clients[event_fd];
 	const std::string& message_send = client->getResponseBuffer();
 	size_t sent_bytes = client->getDataSent(); //? on recupere ce qu'on a deja envoyer
 	size_t total_size = message_send.size();
 	const char* messagebuffer = message_send.c_str() + sent_bytes; //? sent_bytes nous permet de savoir ou mettre le pointeur de debut
 	size_t remaining_bites = total_size - sent_bytes; //? ce qu'il reste a envoyer
-	ssize_t sent = 0; 
+	ssize_t sent = 0;
 	sent = send(event_fd, messagebuffer, remaining_bites, 0);
 	if (sent < 0) {
 		std::cerr << "Error: sending failed on client " << client->getClientFd() << std::endl;
@@ -136,7 +139,7 @@ void    WebServ::sendClientData(int event_fd) {
 	}
 }
 
-void    WebServ::closeClient(int event_fd) {
+void    WebServ::closeClient(int event_fd) {\
 	std::map<int, Client*>::iterator it = this->clients.find(event_fd);
 	if (it == this->clients.end()) {
 		std::cerr << "Error: Client " << event_fd
@@ -166,7 +169,7 @@ void    WebServ::closeClient(int event_fd) {
 void    WebServ::handleNewClient(Server* find_server) {
 	struct sockaddr_in client_addr;
 	int sockLen = sizeof(client_addr);
-	
+
 	int client_fd = accept(find_server->getListenFd(), (sockaddr*)&client_addr, (socklen_t*)&sockLen);
 	if (client_fd < 0) {
 		if (errno == EAGAIN || errno == EWOULDBLOCK) {
@@ -174,7 +177,7 @@ void    WebServ::handleNewClient(Server* find_server) {
 		}
 		else {
 			std::cerr << "Error: socket refused connexion on port "
-			<< find_server->getConfig().getPort() 
+			<< find_server->getConfig().getPort()
 			<< std::endl;
 			return;
 		}
@@ -202,13 +205,13 @@ void    WebServ::handleNewClient(Server* find_server) {
 
 // // void WebServ::printEverythings() {
 	// //     std::map<int, Server*>::iterator it;
-	
+
 	//     for (it = this->servers.begin(); it != this->servers.end(); ++it) {
-		
+
 	//         // it->first  : CLÉ (le int, le Listen FD)
 	//         // it->second : VALEUR (le Server*)
 	//         std::cout << "Server sur le FD : " << it->first << std::endl;
-	
+
 	// //         if (it->second) // Petite sécurité pour vérifier que le pointeur n'est pas null
 	// //             it->second->config.print();
 	// //     }

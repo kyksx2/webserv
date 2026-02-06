@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   HTTPRequest.hpp                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kjolly <kjolly@student.42.fr>              +#+  +:+       +#+        */
+/*   By: yzeghari <yzeghari@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/24 13:37:27 by yzeghari          #+#    #+#             */
-/*   Updated: 2026/02/05 15:15:44 by kjolly           ###   ########.fr       */
+/*   Updated: 2026/02/06 11:06:15 by yzeghari         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,9 +14,11 @@
 # define  HTTPREQUEST_HPP
 
 #include "HTTPResponse.hpp"
+// #include "serv_handler/Client.hpp"
 #include "serv_handler/Server.hpp"
 #include <sys/wait.h>
 
+class Client;
 //! Liste des chose a faire : Max body size, .Env, utilisation du Query si needed, chunked
 
 class HTTPRequest
