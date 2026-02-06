@@ -260,6 +260,14 @@ void	Client::generateBufferResponse(int epoll_fd, std::map<int, Client*>& client
 			// isCGI appelle des methode adapte
 			// std::cout << "Cgi method ->check" << std::endl;
 			this->request->startCgi(epoll_fd, client_map, client);
+
+			//! Sert a teste le parsing
+			// std::string buf = "Content-Type: text/plain\n\n\nCoucou depuis le script Python !\nMéthode reçue : GET";
+			// this->response = HTTPResponse(this->request->GetVersion(), buf);
+
+			this->response = HTTPResponse(this->request->GetVersion(), client->getCgiBuffer()); //! faire fonctionner getCgiBuffer()
+			this->responseBuffer = this->response.generate();
+			std::cout << "⬇️ResponseBuffer ⬇️\n" <<  this->responseBuffer << "____________________" << std::endl;
 		}
 		else
 		{

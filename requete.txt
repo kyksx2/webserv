@@ -2,7 +2,7 @@ GET /cgi-bin/test.py HTTP/1.1
 Host: 127.0.0.1:8080
 User-Agent: Tester/1.0
 Accept: */*
-## curl : curl "http://localhost:8080/index.html" 
+## curl : curl "http://localhost:8080/index.html"
 
 DELETE /test.txt HTTP/1.1
 Host: 127.0.0.1:8080

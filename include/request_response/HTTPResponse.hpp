@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   HTTPResponse.hpp                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kjolly <kjolly@student.42.fr>              +#+  +:+       +#+        */
+/*   By: yzeghari <yzeghari@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/04 12:52:24 by yzeghari          #+#    #+#             */
-/*   Updated: 2026/01/21 15:42:14 by kjolly           ###   ########.fr       */
+/*   Updated: 2026/02/06 13:59:38 by yzeghari         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,6 +57,7 @@ class HTTPResponse
 
  public:
 	HTTPResponse();
+	HTTPResponse(std::string version, std::string buffer);
 	HTTPResponse(std::string version, int status_code, std::string reason_phrase);
 	HTTPResponse& operator=(const HTTPResponse& src);
 	~HTTPResponse();
@@ -77,5 +78,6 @@ class HTTPResponse
 	//! pense a rajouter les headers obligatoire tel que lenght ou connection ds generate
 };
 
+std::vector<std::string>	split(const std::string &chaine, char delimiteur);
 std::ostream& operator<<(std::ostream& os, const HTTPResponse& res);
 #endif

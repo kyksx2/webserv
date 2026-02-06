@@ -6,13 +6,84 @@
 /*   By: yzeghari <yzeghari@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/04 12:59:01 by yzeghari          #+#    #+#             */
-/*   Updated: 2026/01/27 13:07:26 by yzeghari         ###   ########.fr       */
+/*   Updated: 2026/02/06 14:45:59 by yzeghari         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "request_response/HTTPResponse.hpp"
 
 HTTPResponse::HTTPResponse() : _version("HTTP/1.1"), _status_code(400), _reason_phrase("Bad Request") {} //!! mettre quelque chose par default
+
+HTTPResponse::HTTPResponse(std::string version, std::string buffer)
+{
+	this->_version = version;
+
+	std::cout << "======BUFFER RECU======\n" << buffer << "======================="<< std::endl;
+	// Status | par defaut 200 OK
+	this->_status_code = 200;
+	this->_reason_phrase = "OK";
+	// Headers
+	std::stringstream	ss(buffer);
+	std::string	line;
+	while (std::getline(ss, line))
+	{
+		if (!line.empty() && line[line.length() - 1] == '\r')
+			line.erase(line.length() - 1);
+
+		if (line.empty())
+			break;
+
+		// séparateur clé/valeur
+		size_t pos = line.find(':');
+		if (pos == std::string::npos)
+			continue;
+
+		std::string key = line.substr(0, pos);
+
+		// Status specifie
+		if (key == "Status")
+		{
+			std::vector<std::string> statusline = split(line, ' ');
+
+			this->_status_code = std::atoi(statusline[1].c_str());
+
+			size_t first_space = line.find(' ');
+			size_t second_space = line.find(' ', first_space + 1);
+			if (second_space != std::string::npos)
+				_reason_phrase = line.substr(second_space + 1);
+
+			continue;
+		}
+
+		std::transform(key.begin(), key.end(), key.begin(), ::tolower);
+		std::string value = line.substr(pos + 1);
+
+		// trim espaces au début de la valeur
+		while (!value.empty() && value[0] == ' ')
+			value.erase(0, 1);
+
+		// headers multiples
+		if (_headers.count(key))
+			_headers[key] += ", " + value;
+		else
+			_headers[key] = value;
+	}
+
+	// Content-Length sera cree plus tard dans generate() | a supprimer si existe deja
+	_headers.erase("content-length");
+
+	size_t pos_body = buffer.find("\r\n\r\n");
+	size_t sep_len = 4;
+
+	if (pos_body == std::string::npos)
+	{
+		pos_body = buffer.find("\n\n");
+		sep_len = 2;
+	}
+
+	if (pos_body != std::string::npos)
+		_body = buffer.substr(pos_body + sep_len);
+}
 
 HTTPResponse::HTTPResponse(std::string version, int status_code, std::string reason_phrase)
 {
@@ -122,6 +193,19 @@ std::string HTTPResponse::generate()
 	response << "\r\n";
 	response << this->_body << std::endl;
 	return response.str();
+}
+
+std::vector<std::string>	split(const std::string &chaine, char delimiteur)
+{
+	std::vector<std::string>	v;
+	std::stringstream ss(chaine);
+	std::string	sous_chaine;
+
+	while(std::getline(ss, sous_chaine, delimiteur))
+	{
+		v.push_back(sous_chaine);
+	}
+	return (v);
 }
 
 std::ostream& operator<<(std::ostream& os, const HTTPResponse& res)

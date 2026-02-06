@@ -53,7 +53,6 @@ void    WebServ::run() {
 void    WebServ::readClientData(int event_fd) {
 	Client* client = this->clients[event_fd];
 	if (client->getActiveCgi() && event_fd == client->getCgiFd()) {
-		std::cout << "la" << std::endl;
 		char	buffer[4096];
 		ssize_t	n = read(event_fd, buffer, sizeof(buffer)); //? event_fd == pipe_from_cgi[0] -> le script
 		if (n > 0)
@@ -72,7 +71,6 @@ void    WebServ::readClientData(int event_fd) {
 			this->clients.erase(event_fd);
 			close(event_fd);
 			waitpid(client->getCgiPid(), NULL, 0);
-			std::cout << "buffer: " << client->getCgiBuffer() << std::endl;
 			//??????? generer une response buffer a envoyer
 			struct epoll_event change_ev_cgi;
 			change_ev_cgi.data.fd = client->getClientFd();

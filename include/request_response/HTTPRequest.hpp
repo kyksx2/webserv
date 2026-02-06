@@ -6,7 +6,7 @@
 /*   By: yzeghari <yzeghari@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/24 13:37:27 by yzeghari          #+#    #+#             */
-/*   Updated: 2026/02/06 11:06:15 by yzeghari         ###   ########.fr       */
+/*   Updated: 2026/02/06 12:56:02 by yzeghari         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,7 +68,6 @@ class HTTPRequest
 
 const char *GetValue(const char *key, const char **env);
 std::ostream& operator<<(std::ostream& os, const HTTPRequest& req);
-std::vector<std::string>	split(const std::string &chaine, char delimiteur);
 std::string vstos(const std::vector<std::string>& v, const std::string& separateur);
 bool						safe_atoi(const char *str, int &result);
 

@@ -6,7 +6,7 @@
 /*   By: yzeghari <yzeghari@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/24 13:45:23 by yzeghari          #+#    #+#             */
-/*   Updated: 2026/02/06 11:35:12 by yzeghari         ###   ########.fr       */
+/*   Updated: 2026/02/06 13:03:48 by yzeghari         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,6 +53,7 @@ HTTPRequest::HTTPRequest(std::string &buffer, const Server& serv)
 	if (target.empty() || target[0] != '/')
 		throw HTTPRequest::HTTPRequestException(m_version + ",400,Bad Request");
 
+	// Headers
 	while (std::getline(ss, line))
 	{
 		if (!line.empty() && line[line.length() - 1] == '\r')
@@ -335,18 +336,7 @@ std::ostream &operator<<(std::ostream &os, const HTTPRequest &req)
 }
 
 
-std::vector<std::string>	split(const std::string &chaine, char delimiteur)
-{
-	std::vector<std::string>	v;
-	std::stringstream ss(chaine);
-	std::string	sous_chaine;
 
-	while(std::getline(ss, sous_chaine, delimiteur))
-	{
-		v.push_back(sous_chaine);
-	}
-	return (v);
-}
 
 //Vector to std::string Conversion
 std::string vstos(const std::vector<std::string>& v, const std::string& separateur)
