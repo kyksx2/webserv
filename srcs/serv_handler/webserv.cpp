@@ -56,6 +56,7 @@ void    WebServ::readClientData(int event_fd) {
 		char	buffer[4096];
 		ssize_t	n = read(event_fd, buffer, sizeof(buffer)); //? event_fd == pipe_from_cgi[0] -> le script
 		if (n > 0) {
+			std::cout << "la" << std::endl;
 			client->appendRequestCgi(buffer, n);
 		}
 		else if (n == -1) {
@@ -70,7 +71,7 @@ void    WebServ::readClientData(int event_fd) {
 			}
 			this->clients.erase(event_fd);
 			close(event_fd);
-			waitpid(client->getCgiPid(), NULL, 0);			
+			waitpid(client->getCgiPid(), NULL, 0);
 			client->completeCgi();
 			struct epoll_event change_ev_cgi;
 			change_ev_cgi.data.fd = client->getClientFd();
@@ -81,7 +82,6 @@ void    WebServ::readClientData(int event_fd) {
 		}
 		return;
 	}
-
 	// Si un CGI est en cours d'exécution pour ce client, on ignore les inputs sur le socket client
 	// pour éviter de lancer une nouvelle requête ou de corrompre l'état
 	if (client->getActiveCgi()) {
@@ -161,27 +161,22 @@ void    WebServ::closeClient(int event_fd) {
 	bool is_cgi = close_client->getActiveCgi();
 	int cgi_fd = -1;
 	pid_t cgi_pid = -1;
-
 	if (is_cgi) {
 		cgi_fd = close_client->getCgiFd();
 		cgi_pid = close_client->getCgiPid();
 	}
-
 	if (is_cgi && this->clients.count(cgi_fd)) {
 		this->clients.erase(cgi_fd);
 	}
-
 	if (this->clients.count(client_fd)) {
 		this->clients.erase(client_fd);
 	}
-
 	if (is_cgi) {
 		epoll_ctl(this->epoll_fd, EPOLL_CTL_DEL, cgi_fd, NULL);
 		close(cgi_fd);
 		kill(cgi_pid, SIGKILL);
 		waitpid(cgi_pid, NULL, 0);
 	}
-
 	if (epoll_ctl(this->epoll_fd, EPOLL_CTL_DEL, client_fd, NULL) == -1) {
 		std::cerr << "Error: epoll_ctl failed for delete client " <<
 		client_fd << std::endl;

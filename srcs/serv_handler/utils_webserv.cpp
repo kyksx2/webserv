@@ -69,8 +69,23 @@ void    WebServ::epollInit() {
 
 void	WebServ::checkTimeout() {
 	for (std::map<int, Client*>::iterator it = clients.begin(); it != clients.end();) {
+		if (it->second->getActiveCgi()) {
+			if (time(NULL) - it->second->getstartCgi() > 5) {
+				kill(it->second->getCgiPid(), SIGKILL);
+				waitpid(it->second->getCgiPid(), NULL, 0);
+				int cgi_fd = it->second->getCgiFd();
+				epoll_ctl(this->epoll_fd, EPOLL_CTL_DEL, cgi_fd, NULL);
+				close(cgi_fd);
+				this->clients.erase(cgi_fd);
+				it->second->setCgiStatus(false);
+				//? erreur 504
+				struct epoll_event ev;
+				ev.events = EPOLLOUT;
+				ev.data.fd = it->second->getClientFd();
+				epoll_ctl(this->epoll_fd, EPOLL_CTL_MOD, it->second->getClientFd(), &ev);
+			}
+		}
 		if (time(NULL) - it->second->getStart() > 60) {
-			// std::cout << "Timeout: kick out" << std::endl;
 			int fd_to_kill = it->first;
 			it++;
 			closeClient(fd_to_kill);

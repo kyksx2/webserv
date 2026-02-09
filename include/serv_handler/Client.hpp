@@ -28,6 +28,7 @@ class Client {
 	void	completeCgi();
 	
 	time_t		getStart() const;
+	time_t		getstartCgi() const;
 	int			getClientFd() const;
 	std::string	getRequestBuffer() const;
 	std::string	getResponseBuffer() const;
@@ -43,11 +44,13 @@ class Client {
 	void	setCgiStatus(bool status);
 	void	setCgiFd(int fd);
 	void	setCgiPid(pid_t pid);
+	void	setStartCgi(time_t t);
 
 private:
 	int				client_fd;
 	Server*			dad_serv;
 	time_t			start;
+	time_t			start_cgi;
 	size_t			data_sent;
 	bool			headerParse;
 	size_t			headerSize;

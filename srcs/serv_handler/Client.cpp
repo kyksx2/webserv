@@ -15,7 +15,7 @@ static HTTPRequest    *post_creation(std::string buffer, const Server &serv)
     return (new PostRequest(buffer, serv));
 }
 
-Client::Client(int fd, Server* find_server) : client_fd(fd), dad_serv(find_server), data_sent(0), headerParse(false), headerSize(0),contentLength(0),
+Client::Client(int fd, Server* find_server) : client_fd(fd), dad_serv(find_server), start_cgi(0), data_sent(0), headerParse(false), headerSize(0),contentLength(0),
     isChunked(false), hasresponse(false), requestBuffer(""), responseBuffer(""), request(), response(), active_cgi(false), cgi_fd(-1), cgi_pid(0) {
         start = time(NULL);
 }
@@ -29,6 +29,7 @@ Client&  Client::operator=(const Client& src) {
         this->client_fd = src.client_fd;
 		this->contentLength = src.contentLength;
 		this->dad_serv = src.dad_serv;
+		this->start_cgi = src.start_cgi;
 		this->data_sent = src.data_sent;
 		this->headerParse = src.headerParse;
 		this->headerSize = src.headerSize;
@@ -63,6 +64,8 @@ std::string Client::getResponseBuffer() const { return this->responseBuffer; }
 
 time_t Client::getStart() const { return (this->start); }
 
+time_t Client::getstartCgi() const { return (this->start_cgi); }
+
 pid_t	Client::getCgiPid() const { return this->cgi_pid; }
 
 int	Client::getCgiFd() const { return this->cgi_fd; }
@@ -87,6 +90,9 @@ void	Client::setCgiStatus(bool status) { this->active_cgi = status; }
 void	Client::setCgiFd(int fd) { this->cgi_fd = fd; }
 
 void	Client::setCgiPid(pid_t pid) { this->cgi_pid = pid; }
+
+void	Client::setStartCgi(time_t t) { this->start_cgi = t; }
+
 
 bool Client::isKeepAlive() { return this->response.IsKeepAlive(); }
 

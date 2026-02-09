@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   HTTPRequest.cpp                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: yzeghari <yzeghari@student.42.fr>          +#+  +:+       +#+        */
+/*   By: kjolly <kjolly@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/24 13:45:23 by yzeghari          #+#    #+#             */
-/*   Updated: 2026/02/09 14:54:48 by yzeghari         ###   ########.fr       */
+/*   Updated: 2026/02/09 16:00:01 by kjolly           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -209,6 +209,7 @@ std::string HTTPRequest::GetHeaders_value(std::string key)
 
 void HTTPRequest::startCgi(int epoll_fd, std::map<int, Client*>& client_map, Client* client)
 {
+	client->setStartCgi(time(NULL));
 	char **env = this->generateEnvp();
 	int pipe_to_cgi[2];
 	int pipe_from_cgi[2];
