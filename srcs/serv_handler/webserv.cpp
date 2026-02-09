@@ -29,19 +29,19 @@ void    WebServ::run() {
 				std::map<int, Client*>::iterator it_client = this->clients.find(event_fd);
 				if (it_client != this->clients.end()) {
 					Client* current_client = it_client->second;
-					if (events & (EPOLLERR | EPOLLHUP | EPOLLRDHUP)) {
-						closeClient(event_fd);
-						continue;
-					}
-					if (events & EPOLLIN) { //? verifie si le bit represente EPOLLIN
+					if (events & (EPOLLIN | EPOLLHUP)) { //? verifie si le bit represente EPOLLIN
 						current_client->restartTimer();
 						readClientData(event_fd);
 						if (this->clients.find(event_fd) == this->clients.end())
-							continue;
+						continue;
 					}
 					if (events & EPOLLOUT) { //? idem
 						current_client->restartTimer();
 						sendClientData(event_fd);
+					}
+					if (events & (EPOLLERR | EPOLLHUP | EPOLLRDHUP)) {
+						closeClient(event_fd);
+						continue;
 					}
 				}
 			}
@@ -55,8 +55,9 @@ void    WebServ::readClientData(int event_fd) {
 	if (client->getActiveCgi() && event_fd == client->getCgiFd()) {
 		char	buffer[4096];
 		ssize_t	n = read(event_fd, buffer, sizeof(buffer)); //? event_fd == pipe_from_cgi[0] -> le script
-		if (n > 0)
+		if (n > 0) {
 			client->appendRequestCgi(buffer, n);
+		}
 		else if (n == -1) {
 			if (errno == EAGAIN || errno == EWOULDBLOCK) {
 				return;
@@ -64,14 +65,13 @@ void    WebServ::readClientData(int event_fd) {
 			perror("read cgi pipe");
 		}
 		if (n == 0 || (n == -1 && errno != EAGAIN)) {
-			std::cout << "condition la" << std::endl;
 			if(epoll_ctl(this->epoll_fd, EPOLL_CTL_DEL, event_fd, NULL) == -1) {
 				perror("error epoll_ctl for cgi");
 			}
 			this->clients.erase(event_fd);
 			close(event_fd);
-			waitpid(client->getCgiPid(), NULL, 0);
-			//??????? generer une response buffer a envoyer
+			waitpid(client->getCgiPid(), NULL, 0);			
+			client->completeCgi();
 			struct epoll_event change_ev_cgi;
 			change_ev_cgi.data.fd = client->getClientFd();
 			change_ev_cgi.events = EPOLLOUT;
@@ -79,9 +79,15 @@ void    WebServ::readClientData(int event_fd) {
 				closeClient(client->getClientFd());
 			}
 		}
-		std::cout << "buffer: " << client->getCgiBuffer() << std::endl;
 		return;
 	}
+
+	// Si un CGI est en cours d'exécution pour ce client, on ignore les inputs sur le socket client
+	// pour éviter de lancer une nouvelle requête ou de corrompre l'état
+	if (client->getActiveCgi()) {
+		return;
+	}
+
 	char buffer[BUFFER_SIZE];
 	int receive_bits;
 	while((receive_bits = recv(event_fd, buffer, BUFFER_SIZE, 0)) > 0) {

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   PostRequest.hpp                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: yzeghari <yzeghari@student.42.fr>          +#+  +:+       +#+        */
+/*   By: kjolly <kjolly@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/24 13:39:08 by yzeghari          #+#    #+#             */
-/*   Updated: 2026/02/02 12:57:00 by yzeghari         ###   ########.fr       */
+/*   Updated: 2026/02/09 12:09:58 by kjolly           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,6 +24,6 @@ class PostRequest : public HTTPRequest
 		~PostRequest();
 		HTTPResponse	generateResponse();
 		char			**generateEnvp();
-		std::string			generateCGIResponse();
+		std::string		generateCGIResponse();
 };
 #endif

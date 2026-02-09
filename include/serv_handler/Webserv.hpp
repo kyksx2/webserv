@@ -33,13 +33,13 @@ class WebServ {
 	WebServ(const std::string& conf);
 	~WebServ();
 
-	void run();
-	void epollInit();
-	void handleNewClient(Server* find_server);
-	void readClientData(int event_fd);
-	void sendClientData(int event_fd);
-	void closeClient(int event_fd);
-	void checkTimeout();
+	void	run();
+	void	epollInit();
+	void	handleNewClient(Server* find_server);
+	void	readClientData(int event_fd);
+	void	sendClientData(int event_fd);
+	void	closeClient(int event_fd);
+	void	checkTimeout();
 
 	// void printEverythings();
 
@@ -48,9 +48,9 @@ class WebServ {
 			const char* what() const throw();
 	};
  private:
-	std::map<int, Server*> servers;
-	std::map<int, Client*> clients;
-	int epoll_fd;
+	std::map<int, Server*>	servers;
+	std::map<int, Client*>	clients;
+	int						epoll_fd;
 };
 
 #endif

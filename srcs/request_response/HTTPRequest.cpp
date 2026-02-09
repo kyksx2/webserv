@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   HTTPRequest.cpp                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: yzeghari <yzeghari@student.42.fr>          +#+  +:+       +#+        */
+/*   By: kjolly <kjolly@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/24 13:45:23 by yzeghari          #+#    #+#             */
-/*   Updated: 2026/02/06 13:03:48 by yzeghari         ###   ########.fr       */
+/*   Updated: 2026/02/09 11:52:38 by kjolly           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -251,9 +251,9 @@ void HTTPRequest::startCgi(int epoll_fd, std::map<int, Client*>& client_map, Cli
 		args[0] = (char *) _bin.c_str();
 		args[1] = (char *) _script.c_str();
 		args[2] = NULL;
+		for (int i = 3; i < 1024; i++)
+			close(i);
 		if (execve(args[0], args, env) == -1) {
-			for (int i = 3; i < 1024; i++)
-				close(i);
 			//? return une erreur 500, le script ne sait pas executer + free
 			perror("execve error");
 			exit(1);
@@ -277,7 +277,6 @@ void HTTPRequest::startCgi(int epoll_fd, std::map<int, Client*>& client_map, Cli
 	event.events = EPOLLIN;
 	epoll_ctl(epoll_fd, EPOLL_CTL_ADD, pipe_from_cgi[0], &event);
 	client_map[pipe_from_cgi[0]] = client;
-
 }
 
 HTTPRequest::HTTPRequestException::HTTPRequestException(std::string err) throw()

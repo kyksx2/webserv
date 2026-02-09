@@ -19,19 +19,19 @@ class Location_config;
 
 class Server_Config {
 private:
-	std::string _host;                           // Ex: "127.0.0.1", "0.0.0.0"
-	int _port;                                   // Ex: 8080
-	std::vector<std::string> _serverNames;       // Ex: ["localhost", "site.com"]
-	std::string _root;                               // Ex: "/var/www/html"
-	std::vector<std::string> _index;                 // Ex: ["index.html", "index.htm"]
-	bool _autoindex;                                 // Listing de répertoire
-	std::map<std::string, std::string> _cgiHandlers; // Ex: ".php", ".py" -> "/usr/bin/php-cgi"
-	std::map<int, std::string> _errorPages;      // Ex: {404 -> "/errors/404.html"}
-	size_t _clientMaxBodySize;                     // Taille max globale
-	std::vector<Location_config> _locations;            // Liste des locations
-	bool _flagDefLocation;							// Savoir si Location "/" existe
+	std::string							_host;				// Ex: "127.0.0.1", "0.0.0.0"
+	int									_port;				// Ex: 8080
+	std::vector<std::string>			_serverNames;		// Ex: ["localhost", "site.com"]
+	std::string							_root;				// Ex: "/var/www/html"
+	std::vector<std::string>			_index;				// Ex: ["index.html", "index.htm"]
+	bool								_autoindex;			// Listing de répertoire
+	std::map<std::string, std::string>	_cgiHandlers;		// Ex: ".php", ".py" -> "/usr/bin/php-cgi"
+	std::map<int, std::string>			_errorPages;		// Ex: {404 -> "/errors/404.html"}
+	size_t								_clientMaxBodySize;	// Taille max globale
+	std::vector<Location_config>		_locations;			// Liste des locations
+	bool								_flagDefLocation;	// Savoir si Location "/" existe
 //! ---------------------------------------------------------------------
-	Location_config _defaultLocation;         // Location par défaut "/"
+	Location_config _defaultLocation;	// Location par défaut "/"
 //! ---------------------------------------------------------------------
 
 public:
@@ -39,22 +39,19 @@ public:
 	~Server_Config();
 
 	// Getters
-	const std::string&	getHost() const;
-	int	getPort() const;
-	const std::vector<std::string>&	getServerNames() const;
-	const std::string&	getRoot() const;
-	const std::vector<std::string>&	getIndex() const;
-	bool	isAutoindexEnabled() const;
+	const std::string&							getHost() const;
+	int											getPort() const;
+	const std::vector<std::string>&				getServerNames() const;
+	const std::string&							getRoot() const;
+	const std::vector<std::string>&				getIndex() const;
+	bool										isAutoindexEnabled() const;
 	const std::map<std::string, std::string>&	getCgiHandlers() const;
-	const std::map<int, std::string>&	getErrorPages() const;
-	size_t	getClientMaxBodySize() const;
-	const std::vector<Location_config>&	getLocations() const;
-	bool	getFlagLocation() const;
-//! -------------------------------------------------------
-	const Location_config& getDefaultLocation();
-	void generateDefaultLocation();
-//! -------------------------------------------------------
-
+	const std::map<int, std::string>&			getErrorPages() const;
+	size_t										getClientMaxBodySize() const;
+	const std::vector<Location_config>&			getLocations() const;
+	bool										getFlagLocation() const;
+	const Location_config&						getDefaultLocation();
+	
 	// Setters
 	void	setHost(const std::string& host);
 	void	setPort(int port);
@@ -67,13 +64,12 @@ public:
 	void	setClientMaxBodySize(size_t size);
 	void	addLocation(const Location_config& location);
 	void	setFlagLocation(bool flag);
-
+	
 	// Utilitaires
-	void	print() const;
-	const	Location_config* findLocation(const std::string& uri) const;
-    void cleanIndex();
-	// std::string getErrorPage(int code) const;
-	// bool matchesServerName(const std::string& host) const;
+	void						generateDefaultLocation();
+	void						print() const;
+	const	Location_config*	findLocation(const std::string& uri) const;
+	void						cleanIndex();
 };
 
 #endif

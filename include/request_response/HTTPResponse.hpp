@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   HTTPResponse.hpp                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: yzeghari <yzeghari@student.42.fr>          +#+  +:+       +#+        */
+/*   By: kjolly <kjolly@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/04 12:52:24 by yzeghari          #+#    #+#             */
-/*   Updated: 2026/02/06 13:59:38 by yzeghari         ###   ########.fr       */
+/*   Updated: 2026/02/09 12:10:55 by kjolly           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,11 +49,11 @@ enum HTTPStatusCode {
 class HTTPResponse
 {
  private:
-	std::string	_version;
-	int	_status_code;
-	std::string	_reason_phrase;
+	std::string							_version;
+	int									_status_code;
+	std::string							_reason_phrase;
 	std::map<std::string, std::string>	_headers;
-	std::string	_body;
+	std::string							_body;
 
  public:
 	HTTPResponse();
@@ -67,17 +67,18 @@ class HTTPResponse
 	void	setHeader(std::string key, std::string value);
 	void	setBody(std::string	body);
 
-	std::string			GetVersion() const;
-	int					GetStatusCode() const;
-	std::string			GetReason() const;
+	std::string							GetVersion() const;
+	int									GetStatusCode() const;
+	std::string							GetReason() const;
 	std::map<std::string, std::string>	GetHeaders() const;
-	std::string			GetBody() const;
-	bool 				IsKeepAlive();
-
-	std::string		generate();
+	std::string							GetBody() const;
+	
+	bool		IsKeepAlive();
+	std::string	generate();
 	//! pense a rajouter les headers obligatoire tel que lenght ou connection ds generate
 };
 
 std::vector<std::string>	split(const std::string &chaine, char delimiteur);
-std::ostream& operator<<(std::ostream& os, const HTTPResponse& res);
+std::ostream&				operator<<(std::ostream& os, const HTTPResponse& res);
+
 #endif

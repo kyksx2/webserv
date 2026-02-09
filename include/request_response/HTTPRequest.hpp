@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   HTTPRequest.hpp                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: yzeghari <yzeghari@student.42.fr>          +#+  +:+       +#+        */
+/*   By: kjolly <kjolly@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/24 13:37:27 by yzeghari          #+#    #+#             */
-/*   Updated: 2026/02/06 12:56:02 by yzeghari         ###   ########.fr       */
+/*   Updated: 2026/02/09 12:11:30 by kjolly           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,12 +44,11 @@ class HTTPRequest
 		std::string							GetTarget() const;
 		std::string							GetRealPath() const;
 		std::string							GetExtension() const;
-
 		std::string							GetQuery() const;
 		std::string							GetVersion() const;
 		std::string							GetBody() const;
 		std::map<std::string, std::string>	GetHeaders() const;
-		std::string		GetHeaders_value(std::string key);
+		std::string							GetHeaders_value(std::string key);
 
 		virtual	HTTPResponse	generateResponse() = 0;
 		virtual	char			**generateEnvp() = 0;
@@ -66,9 +65,9 @@ class HTTPRequest
 		};
 };
 
-const char *GetValue(const char *key, const char **env);
-std::ostream& operator<<(std::ostream& os, const HTTPRequest& req);
-std::string vstos(const std::vector<std::string>& v, const std::string& separateur);
-bool						safe_atoi(const char *str, int &result);
+const char		*GetValue(const char *key, const char **env);
+std::ostream&	operator<<(std::ostream& os, const HTTPRequest& req);
+std::string		vstos(const std::vector<std::string>& v, const std::string& separateur);
+bool			safe_atoi(const char *str, int &result);
 
 #endif

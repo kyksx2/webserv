@@ -265,9 +265,9 @@ void	Client::generateBufferResponse(int epoll_fd, std::map<int, Client*>& client
 			// std::string buf = "Content-Type: text/plain\n\n\nCoucou depuis le script Python !\nMéthode reçue : GET";
 			// this->response = HTTPResponse(this->request->GetVersion(), buf);
 
-			this->response = HTTPResponse(this->request->GetVersion(), client->getCgiBuffer()); //! faire fonctionner getCgiBuffer()
-			this->responseBuffer = this->response.generate();
-			std::cout << "⬇️ResponseBuffer ⬇️\n" <<  this->responseBuffer << "____________________" << std::endl;
+			// this->response = HTTPResponse(this->request->GetVersion(), client->getCgiBuffer()); //! faire fonctionner getCgiBuffer()
+			// this->responseBuffer = this->response.generate();
+			// std::cout << "⬇️ResponseBuffer ⬇️\n" <<  this->responseBuffer << "____________________" << std::endl;
 		}
 		else
 		{
@@ -311,4 +311,76 @@ bool Client::isCGI(const HTTPRequest *req)
 		return true;
 
 	return false;
+}
+
+void Client::completeCgi() {
+	this->data_sent = 0;
+	
+	std::string response = "HTTP/1.1 200 OK\r\n";
+	std::string body;
+	std::string headers;
+	
+	size_t headerEnd = this->cgiBuffer.find("\r\n\r\n");
+	if (headerEnd == std::string::npos) {
+		headerEnd = this->cgiBuffer.find("\n\n");
+	}
+
+	if (headerEnd != std::string::npos) {
+		// Determine separator length
+		size_t sepLen = (this->cgiBuffer[headerEnd] == '\r') ? 4 : 2;
+		
+		headers = this->cgiBuffer.substr(0, headerEnd);
+		body = this->cgiBuffer.substr(headerEnd + sepLen);
+
+		// Check for Status header
+		size_t statusPos = headers.find("Status:");
+		if (statusPos != std::string::npos) {
+			size_t eol = headers.find("\n", statusPos);
+			if (eol != std::string::npos) {
+				std::string status = headers.substr(statusPos + 7, eol - (statusPos + 7));
+				// Trim whitespace
+				size_t first = status.find_first_not_of(" \t\r");
+				size_t last = status.find_last_not_of(" \t\r");
+				if (first != std::string::npos) {
+					response = "HTTP/1.1 " + status.substr(first, last - first + 1) + "\r\n";
+				}
+			}
+		}
+	} else {
+		// No headers found, treat entire buffer as body
+		body = this->cgiBuffer;
+		headers = "Content-Type: text/plain"; // Default content type
+	}
+
+	this->responseBuffer = response;
+	this->responseBuffer += headers + "\r\n";
+	
+	// Add Content-Length if not present (case-insensitive check is better, but simple check for now)
+	// Lowercase headers for checking
+	std::string headersLower = headers;
+	std::transform(headersLower.begin(), headersLower.end(), headersLower.begin(), ::tolower);
+	
+	if (headersLower.find("content-length:") == std::string::npos) {
+		std::stringstream ss;
+		ss << body.size();
+		this->responseBuffer += "Content-Length: " + ss.str() + "\r\n";
+	}
+
+	this->responseBuffer += "\r\n";
+	this->responseBuffer += body;
+
+	// Reset state
+	this->cgiBuffer.clear();
+	this->active_cgi = false;
+	
+	if (this->request) {
+		delete this->request;
+		this->request = NULL;
+	}
+	this->headerParse = false;
+	this->headerSize = 0;
+	this->contentLength = 0;
+	this->isChunked = false;
+	this->hasresponse = false;
+	this->requestBuffer.clear();
 }
