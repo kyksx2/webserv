@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   HTTPRequest.cpp                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kjolly <kjolly@student.42.fr>              +#+  +:+       +#+        */
+/*   By: yzeghari <yzeghari@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/24 13:45:23 by yzeghari          #+#    #+#             */
-/*   Updated: 2026/02/09 11:52:38 by kjolly           ###   ########.fr       */
+/*   Updated: 2026/02/09 14:54:48 by yzeghari         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -254,10 +254,21 @@ void HTTPRequest::startCgi(int epoll_fd, std::map<int, Client*>& client_map, Cli
 		for (int i = 3; i < 1024; i++)
 			close(i);
 		if (execve(args[0], args, env) == -1) {
-			//? return une erreur 500, le script ne sait pas executer + free
+			if (env) {
+				for(int i = 0; env[i]; i++) {
+					free(env[i]);
+				}
+				delete[] env;
+			}			//? return une erreur 500, le script ne sait pas executer + free
 			perror("execve error");
 			exit(1);
 		}
+	}
+	if (env) {
+		for(int i = 0; env[i]; i++) {
+			free(env[i]);
+		}
+		delete[] env;
 	}
 	//! parent ici -> erit dans la pipe_to_cgi[1]
 	//!            -> lis dans pipe_from_cgi[0]
