@@ -39,25 +39,53 @@ WebServ::WebServ(const std::string& conf): epoll_fd(-1) {
 	}
 }
 
+#include <set> // N'oublie pas d'inclure <set> dans ton header ou ici
+
 WebServ::~WebServ() {
-	std::map<int, Server*>::iterator it;
-	for(it = this->servers.begin(); it != this->servers.end(); it++) {
-		if (it->first) {
-			close(it->first);
-			delete it->second;
-		}
-	}
-	this->servers.clear();
-	for(std::map<int, Client*>::iterator ite = this->clients.begin(); ite != this->clients.end(); ite++) {
-	if (ite->second != NULL) {
-		close(ite->first);
-		delete ite->second;
-	}
-	}
-	this->clients.clear();
-	if (this->epoll_fd)
-		close(this->epoll_fd);
+    std::map<int, Server*>::iterator it;
+    for(it = this->servers.begin(); it != this->servers.end(); it++) {
+        if (it->first) {
+            close(it->first);
+            delete it->second;
+        }
+    }
+    this->servers.clear();
+
+
+    std::set<Client*> deleted_ptrs; // Historique des pointeurs supprimés
+    for(std::map<int, Client*>::iterator ite = this->clients.begin(); ite != this->clients.end(); ite++) {
+        if (ite->second != NULL) {
+            close(ite->first);
+            if (deleted_ptrs.find(ite->second) == deleted_ptrs.end()) {
+                delete ite->second;
+                deleted_ptrs.insert(ite->second);
+            }
+        }
+    }
+    this->clients.clear();
+    if (this->epoll_fd)
+        close(this->epoll_fd);
 }
+
+// WebServ::~WebServ() {
+// 	std::map<int, Server*>::iterator it;
+// 	for(it = this->servers.begin(); it != this->servers.end(); it++) {
+// 		if (it->first) {
+// 			close(it->first);
+// 			delete it->second;
+// 		}
+// 	}
+// 	this->servers.clear();
+// 	for(std::map<int, Client*>::iterator ite = this->clients.begin(); ite != this->clients.end(); ite++) {
+// 	if (ite->second != NULL) {
+// 		close(ite->first);
+// 		delete ite->second;
+// 	}
+// 	}
+// 	this->clients.clear();
+// 	if (this->epoll_fd)
+// 		close(this->epoll_fd);
+// }
 
 void    WebServ::epollInit() {
 	this->epoll_fd = epoll_create1(0);
@@ -70,7 +98,7 @@ void    WebServ::epollInit() {
 void	WebServ::checkTimeout() {
 	for (std::map<int, Client*>::iterator it = clients.begin(); it != clients.end();) {
 		if (it->second->getActiveCgi()) {
-			if (time(NULL) - it->second->getstartCgi() > 5) {
+			if (time(NULL) - it->second->getstartCgi() > 30) {
 				kill(it->second->getCgiPid(), SIGKILL);
 				waitpid(it->second->getCgiPid(), NULL, 0);
 				int cgi_fd = it->second->getCgiFd();

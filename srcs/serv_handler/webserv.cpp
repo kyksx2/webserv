@@ -6,7 +6,7 @@ void    WebServ::run() {
 		int n_event = epoll_wait(this->epoll_fd, ev, EVENTS_MAX, 1000);
 		if (n_event == -1) {
 			if (errno == EINTR)
-			continue;
+				continue;
 			else {
 				std::cerr << "Error: fatal on epoll_wait." << std::endl;
 				break;
@@ -56,7 +56,6 @@ void    WebServ::readClientData(int event_fd) {
 		char	buffer[4096];
 		ssize_t	n = read(event_fd, buffer, sizeof(buffer)); //? event_fd == pipe_from_cgi[0] -> le script
 		if (n > 0) {
-			std::cout << "la" << std::endl;
 			client->appendRequestCgi(buffer, n);
 		}
 		else if (n == -1) {
@@ -71,7 +70,15 @@ void    WebServ::readClientData(int event_fd) {
 			}
 			this->clients.erase(event_fd);
 			close(event_fd);
+			int status = 0;
 			waitpid(client->getCgiPid(), NULL, 0);
+			if (WIFEXITED(status)) {
+				int exit_code = WEXITSTATUS(status);
+				if (exit_code != 0) {
+					std::cout << "error on CGI" << std::endl;
+					//? generer erreur 500
+				}
+			}
 			client->completeCgi();
 			struct epoll_event change_ev_cgi;
 			change_ev_cgi.data.fd = client->getClientFd();
@@ -87,7 +94,6 @@ void    WebServ::readClientData(int event_fd) {
 	if (client->getActiveCgi()) {
 		return;
 	}
-
 	char buffer[BUFFER_SIZE];
 	int receive_bits;
 	while((receive_bits = recv(event_fd, buffer, BUFFER_SIZE, 0)) > 0) {

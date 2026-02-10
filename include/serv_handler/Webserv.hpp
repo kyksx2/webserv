@@ -13,6 +13,7 @@
 #include <fcntl.h>
 #include <map>
 #include <cerrno>
+#include <set>
 
 #include "Server.hpp"
 #include "Client.hpp"
