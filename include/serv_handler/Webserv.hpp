@@ -21,7 +21,7 @@
 #include "parsing/Server_config.hpp"
 
 #define EVENTS_MAX 1024
-#define BUFFER_SIZE 1024
+#define BUFFER_SIZE 4096
 #define RETURN_SIZE 1024
 
 extern volatile sig_atomic_t signal_running;
