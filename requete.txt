@@ -16,3 +16,18 @@ Content-Length: 5
 
 salut
 ## curl : curl -v -X POST http://127.0.0.1:8080/test.txt -H "Content-Type: text/plain" -d "salut"
+
+POST /test.txt HTTP/1.1
+Host: localhost
+User-Agent: TestClient/1.0
+Transfer-Encoding: chunked
+Content-Type: text/plain
+
+7\r
+Mozilla\r
+9\r
+Developer\r
+7\r
+Network\r
+0\r
+\r

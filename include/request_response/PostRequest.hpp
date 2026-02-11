@@ -6,7 +6,7 @@
 /*   By: kjolly <kjolly@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/24 13:39:08 by yzeghari          #+#    #+#             */
-/*   Updated: 2026/02/09 12:09:58 by kjolly           ###   ########.fr       */
+/*   Updated: 2026/02/11 15:03:22 by kjolly           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,8 +14,7 @@
 # define  POSTRequest_HPP
 
 #include "HTTPRequest.hpp"
-
-void	split_path(std::string path, std::string &dir, std::string &file);
+class Client;
 
 class PostRequest : public HTTPRequest
 {
@@ -24,6 +23,9 @@ class PostRequest : public HTTPRequest
 		~PostRequest();
 		HTTPResponse	generateResponse();
 		char			**generateEnvp();
-		std::string		generateCGIResponse();
+		void			startCgi(int epoll_fd, std::map<int, Client*>& client_map, Client* client);
+
 };
+
+void	split_path(std::string path, std::string &dir, std::string &file);
 #endif

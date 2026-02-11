@@ -2,8 +2,6 @@
 #define CLIENT_H
 #include "Server.hpp"
 #include "request_response/HTTPResponse.hpp"
-#include "request_response/HTTPRequest.hpp"
-#include "request_response/RequestMethod.hpp"
 
 class HTTPRequest;
 

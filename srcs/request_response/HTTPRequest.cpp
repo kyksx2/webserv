@@ -6,7 +6,7 @@
 /*   By: kjolly <kjolly@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/24 13:45:23 by yzeghari          #+#    #+#             */
-/*   Updated: 2026/02/10 11:02:35 by kjolly           ###   ########.fr       */
+/*   Updated: 2026/02/11 17:17:32 by kjolly           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -137,7 +137,7 @@ HTTPRequest::~HTTPRequest()
 {
 }
 
-void HTTPRequest::SetBody(std::string &buffer)
+void HTTPRequest::SetBody_ContentLength(std::string &buffer)
 {
 	int contentLength = 0;
 	if (!safe_atoi(m_headers["content-length"].c_str(), contentLength) || contentLength < 0)
@@ -147,6 +147,39 @@ void HTTPRequest::SetBody(std::string &buffer)
 		throw HTTPRequestException(m_version + ",413,Payload Too Large");
 
 	m_body = buffer.substr(0, contentLength);
+}
+
+void HTTPRequest::SetBody_Chunked(std::string &buffer)
+{
+	size_t index = 0; // sorte de Marque page
+	std::string body_content;
+
+	while (true)
+	{
+		size_t	lineEnd = buffer.find("\r\n", index);
+		if (lineEnd == std::string::npos)
+			throw HTTPRequestException("line issue");
+
+		std::string	Sizeline  = buffer.substr(index, lineEnd - index);
+		size_t semicolon = Sizeline.find(';');
+		if (semicolon != std::string::npos)
+			Sizeline = Sizeline.substr(0, semicolon);
+
+		int chunkSize = std::strtol(Sizeline.c_str(), NULL, 16);
+
+		index = lineEnd + 2;
+
+		if (chunkSize == 0)
+			break;
+
+		if (index + chunkSize > buffer.size())
+			throw HTTPRequestException("incomplet");
+
+		body_content.append(buffer.substr(index, chunkSize));
+
+		index += chunkSize + 2; // +2 pour le \r\n après data
+	}
+	this->m_body = body_content;
 }
 
 const Location_config *HTTPRequest::Getlocation() const

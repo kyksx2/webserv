@@ -1,4 +1,7 @@
 #include "serv_handler/Client.hpp"
+#include "request_response/PostRequest.hpp"
+#include "request_response/GetRequest.hpp"
+#include "request_response/DeleteRequest.hpp"
 
 static HTTPRequest    *get_creation(std::string buffer, const Server &serv)
 {
@@ -135,7 +138,6 @@ void Client::restartTimer() { this->start = time(NULL); } //????????????????????
 //	Utilise le polymorphisme pour creer la bonne classe
 void Client::requestCreation()
 {
-	//! pensez a delete request && a verifier si response existe avent d essayer de le creer grace a generate (= solution envisageable throw)
     // HTTPRequest     *request;
     HTTPResponse    response;
     int    i;
@@ -164,7 +166,6 @@ void Client::requestCreation()
 	{
 		for (i = 0; i < 3; i++)
 		{
-			//! request peut etre vide attention au segfault lors de la creation de .env
 			if (method[i] == method_buffer)
 			{ // plus besoin de creer response direct
 				this->request = ft_method[i](this->requestBuffer, serv);
@@ -200,26 +201,31 @@ bool Client::completeRequest()
 	{
 		try
 		{
-			this->isChunked = false;
 			requestCreation();
-
 			this->headerParse = true;
 
 			if (this->hasresponse)
 				return true;
 
-			std::string cl = this->request->GetHeaders_value("content-length");
-			if (cl.empty())
+			if (this->request->GetHeaders_value("transfer-encoding") == "chunked")
 			{
-				this->contentLength = 0;
-				return true;
+				this->isChunked = true;
 			}
+			else
+			{
+				std::string cl = this->request->GetHeaders_value("content-length");
+				if (cl.empty())
+				{
+					this->contentLength = 0;
+					return true;
+				}
 
-			int tmp;
-			if (!safe_atoi(cl.c_str(), tmp) || tmp < 0)
-				throw HTTPRequest::HTTPRequestException("HTTP/1.1,400,Bad Request");
+				int tmp;
+				if (!safe_atoi(cl.c_str(), tmp) || tmp < 0)
+					throw HTTPRequest::HTTPRequestException("HTTP/1.1,400,Bad Request");
 
-			this->contentLength = tmp;
+				this->contentLength = tmp;
+			}
 		}
 		catch (const std::exception& e)
 		{
@@ -230,22 +236,53 @@ bool Client::completeRequest()
 		}
 	}
 
-	// ===== BODY =====
-	std::string body = this->requestBuffer.substr(pos + 4);
+	if (this->isChunked)
+	{
+		std::string body = this->requestBuffer.substr(pos + 4);
+		size_t pob = body.find("0\r\n\r\n");
+		if (posb == std::string::npos)
+			return false;
+		try
+		{
+			this->request->SetBody_Chunked(body); // parser chunk par chunk
 
-	if (body.size() < this->contentLength)
-		return false; // attendre plus de données
-	try
-	{
-		this->request->SetBody(body);
-		return true;
+			// Vérifier taille maximale APRÈS parsing
+			if (dad_serv)
+			{
+				if (this->request->GetBody().size() > (size_t)this->dad_serv->getConfig().getClientMaxBodySize())
+				{
+					this->response = HTTPResponse(this->request->GetVersion(), 413, "Payload Too Large");
+					this->hasresponse = true;
+					return false;
+				}				
+			}
+			return true; // body complet et valide
+		}
+		catch(const std::exception& e)
+		{
+			return false; // parsing chunked incomplet ou invalide
+		}
 	}
-	catch (const std::exception& e)
+	else
 	{
-		std::vector<std::string> err = split(e.what(), ',');
-		this->response = HTTPResponse(err[0], atoi(err[1].c_str()), err[2]);
-		this->hasresponse = true;
-		return true;
+			// ===== BODY -Content-Lenght- =====
+
+		std::string body = this->requestBuffer.substr(pos + 4);
+
+		if (body.size() < this->contentLength)
+			return false; // attendre plus de données
+		try
+		{
+			this->request->SetBody_ContentLength(body);
+			return true;
+		}
+		catch (const std::exception& e)
+		{
+			std::vector<std::string> err = split(e.what(), ',');
+			this->response = HTTPResponse(err[0], atoi(err[1].c_str()), err[2]);
+			this->hasresponse = true;
+			return true;
+		}
 	}
 }
 
@@ -262,6 +299,8 @@ void	Client::generateBufferResponse(int epoll_fd, std::map<int, Client*>& client
 			this->request->startCgi(epoll_fd, client_map, client);
 		else
 		{
+
+			std::cout << this->request->GetBody() << std::endl;
 			this->response = this->request->generateResponse();
 			this->responseBuffer = this->response.generate();
 		}

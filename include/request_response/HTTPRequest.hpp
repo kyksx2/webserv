@@ -6,17 +6,17 @@
 /*   By: kjolly <kjolly@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/24 13:37:27 by yzeghari          #+#    #+#             */
-/*   Updated: 2026/02/09 12:11:30 by kjolly           ###   ########.fr       */
+/*   Updated: 2026/02/11 16:43:20 by kjolly           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef HTTPREQUEST_HPP
 # define  HTTPREQUEST_HPP
 
-#include "HTTPResponse.hpp"
-// #include "serv_handler/Client.hpp"
-#include "serv_handler/Server.hpp"
 #include <sys/wait.h>
+
+#include "HTTPResponse.hpp"
+#include "../serv_handler/Server.hpp"
 
 class Client;
 //! Liste des chose a faire : Max body size, .Env, utilisation du Query si needed, chunked
@@ -38,7 +38,9 @@ class HTTPRequest
 		virtual ~HTTPRequest();
 
 
-		void SetBody(std::string &buffer);
+		void			SetBody_ContentLength(std::string &buffer);
+		void			SetBody_Chunked(std::string &buffer);
+
 
 		const Location_config				*Getlocation() const;
 		std::string							GetTarget() const;
