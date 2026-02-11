@@ -239,9 +239,9 @@ bool Client::completeRequest()
 	if (this->isChunked)
 	{
 		std::string body = this->requestBuffer.substr(pos + 4);
-		size_t pob = body.find("0\r\n\r\n");
-		if (posb == std::string::npos)
-			return false;
+		// size_t posb = body.find("0\r\n\r\n");
+		// if (posb == std::string::npos)
+		// 	return false;
 		try
 		{
 			this->request->SetBody_Chunked(body); // parser chunk par chunk
@@ -253,8 +253,8 @@ bool Client::completeRequest()
 				{
 					this->response = HTTPResponse(this->request->GetVersion(), 413, "Payload Too Large");
 					this->hasresponse = true;
-					return false;
-				}				
+					return true;
+				}
 			}
 			return true; // body complet et valide
 		}
@@ -284,6 +284,7 @@ bool Client::completeRequest()
 			return true;
 		}
 	}
+	return true;
 }
 
 // attribue en generant si besoin le buffer response a l attribut responseBuffer
@@ -351,7 +352,7 @@ void Client::completeCgi() {
 		std::string response = "HTTP/1.1 200 OK\r\n";
 		std::string body;
 		std::string headers;
-		
+
 		size_t headerEnd = this->cgiBuffer.find("\r\n\r\n");
 		if (headerEnd == std::string::npos) {
 			headerEnd = this->cgiBuffer.find("\n\n");

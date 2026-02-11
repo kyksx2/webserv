@@ -71,7 +71,7 @@ void    WebServ::readClientData(int event_fd) {
 			this->clients.erase(event_fd);
 			close(event_fd);
 			int status = 0;
-			pid_t wait_ret = waitpid(client->getCgiPid(), &status, WNOHANG);			
+			pid_t wait_ret = waitpid(client->getCgiPid(), &status, WNOHANG);
 			if (wait_ret == 0) {
 				// CGI en cours mais pipe fermé : on force l'arrêt
 				kill(client->getCgiPid(), SIGKILL);
@@ -81,7 +81,6 @@ void    WebServ::readClientData(int event_fd) {
 				int exit_code = WEXITSTATUS(status);
 				if (exit_code != 0) {
 					std::cout << "error on CGI" << std::endl;
-					//? generer erreur 500
 				}
 			}
 			client->completeCgi();
@@ -212,6 +211,7 @@ void    WebServ::handleNewClient(Server* find_server) {
 			std::cerr << "Error: socket refused connexion on port "
 			<< find_server->getConfig().getPort()
 			<< std::endl;
+
 			return;
 		}
 	}

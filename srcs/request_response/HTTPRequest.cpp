@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   HTTPRequest.cpp                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kjolly <kjolly@student.42.fr>              +#+  +:+       +#+        */
+/*   By: yzeghari <yzeghari@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/24 13:45:23 by yzeghari          #+#    #+#             */
-/*   Updated: 2026/02/11 17:17:32 by kjolly           ###   ########.fr       */
+/*   Updated: 2026/02/11 17:49:44 by yzeghari         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -151,36 +151,47 @@ void HTTPRequest::SetBody_ContentLength(std::string &buffer)
 
 void HTTPRequest::SetBody_Chunked(std::string &buffer)
 {
-	size_t index = 0; // sorte de Marque page
+	size_t index = 0;
 	std::string body_content;
 
 	while (true)
 	{
-		size_t	lineEnd = buffer.find("\r\n", index);
+		size_t lineEnd = buffer.find("\r\n", index);
 		if (lineEnd == std::string::npos)
-			throw HTTPRequestException("line issue");
+			throw HTTPRequestException("incomplete chunk size");
 
-		std::string	Sizeline  = buffer.substr(index, lineEnd - index);
-		size_t semicolon = Sizeline.find(';');
+		std::string sizeLine = buffer.substr(index, lineEnd - index);
+
+		size_t semicolon = sizeLine.find(';');
 		if (semicolon != std::string::npos)
-			Sizeline = Sizeline.substr(0, semicolon);
+			sizeLine = sizeLine.substr(0, semicolon);
 
-		int chunkSize = std::strtol(Sizeline.c_str(), NULL, 16);
+		int chunkSize = std::strtol(sizeLine.c_str(), NULL, 16);
 
 		index = lineEnd + 2;
 
 		if (chunkSize == 0)
-			break;
+		{
+			if (buffer.substr(index, 2) != "\r\n")
+				throw HTTPRequestException("missing final CRLF");
 
-		if (index + chunkSize > buffer.size())
-			throw HTTPRequestException("incomplet");
+			break;
+		}
+
+		if (index + chunkSize + 2 > buffer.size())
+			throw HTTPRequestException("incomplete chunk data");
 
 		body_content.append(buffer.substr(index, chunkSize));
 
-		index += chunkSize + 2; // +2 pour le \r\n après data
+		if (buffer.substr(index + chunkSize, 2) != "\r\n")
+			throw HTTPRequestException("missing CRLF after chunk");
+
+		index += chunkSize + 2;
 	}
+
 	this->m_body = body_content;
 }
+
 
 const Location_config *HTTPRequest::Getlocation() const
 {
