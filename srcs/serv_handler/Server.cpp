@@ -40,8 +40,10 @@ void Server::init(int epoll_fd) {
     int sockaddrlen = sizeof(this->addr);
     int bd = bind(this->listen_fd, (sockaddr*)&this->addr, sockaddrlen);
     if (bd == -1) {
-        if (errno == EADDRINUSE)
+        if (errno == EADDRINUSE) {
             std::cerr << "Error: port " << this->config.getPort() << " already in use" << std::endl;
+            return;
+        }
         else
             std::cerr << "Error: bind on port " << this->config.getPort() << std::endl;
         close(this->listen_fd);

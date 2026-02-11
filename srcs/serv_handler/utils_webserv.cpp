@@ -10,20 +10,29 @@ WebServ::WebServ(const std::string& conf): epoll_fd(-1) {
 			config = Global_Config(conf);
 
 		serv_conf = config.getConfVect();
+		for(size_t i = 0; i < serv_conf.size(); i++) {
+			std::cout << "--------- BEBUG SESSION ----------" << std::endl
+					<< "host: " << serv_conf[i].getHost() << std::endl
+					<< "port: " << serv_conf[i].getPort() << std::endl
+					<< "root: " << serv_conf[i].getRoot() << std::endl
+					<< "server name: ";
+			std::vector<std::string> vect = serv_conf[i].getServerNames();
+			for (size_t i = 0; i < vect.size(); i++) {
+				std::cout << vect[i] << std::endl;
+			}
+		}
 	}
 	catch(const std::exception& e)
 	{
-		std::cerr << e.what() << '\n';
 		if (this->epoll_fd)
 			close(this->epoll_fd);
 		return;
-		// throw initException();
 	}
 	for (size_t i = 0; i < serv_conf.size(); i++) {
 		Server* new_server = new Server(serv_conf[i]);
 		try {
 			new_server->init(this->epoll_fd);
-			std::cout << new_server->getListenFd() << ": Port: "<< new_server->getConfig().getPort() <<   " Host: " << new_server->getConfig().getHost() << std::endl;
+			// std::cout << new_server->getListenFd() << ": Port: "<< new_server->getConfig().getPort() <<   " Host: " << new_server->getConfig().getHost() << std::endl;
 			int listen_fd = new_server->getListenFd();
 			this->servers[listen_fd] = new_server;
 		}
@@ -34,58 +43,33 @@ WebServ::WebServ(const std::string& conf): epoll_fd(-1) {
 			if (this->epoll_fd)
 				close(this->epoll_fd);
 			return;
-			// throw initException();
 		}
 	}
 }
 
-#include <set> // N'oublie pas d'inclure <set> dans ton header ou ici
-
 WebServ::~WebServ() {
-    std::map<int, Server*>::iterator it;
-    for(it = this->servers.begin(); it != this->servers.end(); it++) {
-        if (it->first) {
-            close(it->first);
-            delete it->second;
-        }
-    }
-    this->servers.clear();
-
-
-    std::set<Client*> deleted_ptrs; // Historique des pointeurs supprimés
-    for(std::map<int, Client*>::iterator ite = this->clients.begin(); ite != this->clients.end(); ite++) {
-        if (ite->second != NULL) {
-            close(ite->first);
-            if (deleted_ptrs.find(ite->second) == deleted_ptrs.end()) {
-                delete ite->second;
-                deleted_ptrs.insert(ite->second);
-            }
-        }
-    }
-    this->clients.clear();
-    if (this->epoll_fd)
-        close(this->epoll_fd);
+	std::map<int, Server*>::iterator it;
+	for(it = this->servers.begin(); it != this->servers.end(); it++) {
+		if (it->first) {
+			close(it->first);
+			delete it->second;
+		}
+	}
+	this->servers.clear();
+	std::set<Client*> deleted_ptrs; // Historique des pointeurs supprimés
+	for(std::map<int, Client*>::iterator ite = this->clients.begin(); ite != this->clients.end(); ite++) {
+		if (ite->second != NULL) {
+			close(ite->first);
+			if (deleted_ptrs.find(ite->second) == deleted_ptrs.end()) {
+				delete ite->second;
+				deleted_ptrs.insert(ite->second);
+			}
+		}
+	}
+	this->clients.clear();
+	if (this->epoll_fd)
+		close(this->epoll_fd);
 }
-
-// WebServ::~WebServ() {
-// 	std::map<int, Server*>::iterator it;
-// 	for(it = this->servers.begin(); it != this->servers.end(); it++) {
-// 		if (it->first) {
-// 			close(it->first);
-// 			delete it->second;
-// 		}
-// 	}
-// 	this->servers.clear();
-// 	for(std::map<int, Client*>::iterator ite = this->clients.begin(); ite != this->clients.end(); ite++) {
-// 	if (ite->second != NULL) {
-// 		close(ite->first);
-// 		delete ite->second;
-// 	}
-// 	}
-// 	this->clients.clear();
-// 	if (this->epoll_fd)
-// 		close(this->epoll_fd);
-// }
 
 void    WebServ::epollInit() {
 	this->epoll_fd = epoll_create1(0);

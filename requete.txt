@@ -1,8 +1,8 @@
-GET /cgi-bin/test.sh HTTP/1.1
+GET /index.html HTTP/1.1
 Host: 127.0.0.1:8080
 User-Agent: Tester/1.0
 Accept: */*
-## curl : curl "http://localhost:8080/cgi-bin/test.sh"
+## curl : curl "http://localhost:8080/cgi-bin/test.py"
 
 DELETE /test.txt HTTP/1.1
 Host: 127.0.0.1:8080
