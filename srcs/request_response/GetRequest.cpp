@@ -6,7 +6,7 @@
 /*   By: yzeghari <yzeghari@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/25 13:45:13 by yzeghari          #+#    #+#             */
-/*   Updated: 2026/02/02 16:29:04 by yzeghari         ###   ########.fr       */
+/*   Updated: 2026/02/12 17:19:12 by yzeghari         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,9 +77,6 @@ HTTPResponse GetRequest::generateResponse()
 				getresponse.setHeader("Location", this->m_target + "/");
 				getresponse.setStatus(301, "Moved Permanently");
 				std::string newLocation = this->m_target + "/";
-				getresponse.setBody("<html><body><h1>301 Moved Permanently</h1>"
-										"<p>Resource has moved to <a href=\"" + newLocation + "\">"
-										+ newLocation + "</a></p></body></html>");
 				return (getresponse);
 			}
 			else
@@ -99,12 +96,6 @@ HTTPResponse GetRequest::generateResponse()
 							// 403 forbidden
 							getresponse.setStatus(403, "Forbidden");
 							getresponse.setHeader("Content-Type", "text/html");
-							getresponse.setBody(
-								"<html><head><title>403 Forbidden</title></head>"
-								"<body><h1>403 Forbidden</h1>"
-								"<p>You don't have permission to access this resource.</p>"
-								"</body></html>"
-							);
 							return (getresponse);
 						}
 
@@ -172,12 +163,6 @@ HTTPResponse GetRequest::generateResponse()
 					// 403 forbidden
 					getresponse.setStatus(403, "Forbidden");
 					getresponse.setHeader("Content-Type", "text/html");
-					getresponse.setBody(
-						"<html><head><title>403 Forbidden</title></head>"
-						"<body><h1>403 Forbidden</h1>"
-						"<p>You don't have permission to access this resource.</p>"
-						"</body></html>"
-					);
 					return (getresponse);
 				}
 			}
@@ -191,12 +176,6 @@ HTTPResponse GetRequest::generateResponse()
 				// 403 forbidden
 				getresponse.setStatus(403, "Forbidden");
 				getresponse.setHeader("Content-Type", "text/html");
-				getresponse.setBody(
-					"<html><head><title>403 Forbidden</title></head>"
-					"<body><h1>403 Forbidden</h1>"
-					"<p>You don't have permission to access this resource.</p>"
-					"</body></html>"
-				);
 				return (getresponse);
 			}
 
@@ -215,12 +194,6 @@ HTTPResponse GetRequest::generateResponse()
 		// 404 Not found
 		getresponse.setStatus(404, "Not Found");
 		getresponse.setHeader("Content-Type", "text/html");
-		getresponse.setBody(
-			"<html><head><title>404 Not Found</title></head>"
-			"<body><h1>404 Not Found</h1>"
-			"<p>The requested resource '" + this->m_target + "' was not found on this server.</p>"
-			"</body></html>"
-		);
 		return(getresponse);
 	}
 	return (getresponse);

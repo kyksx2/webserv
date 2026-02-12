@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   HTTPResponse.hpp                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kjolly <kjolly@student.42.fr>              +#+  +:+       +#+        */
+/*   By: yzeghari <yzeghari@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/04 12:52:24 by yzeghari          #+#    #+#             */
-/*   Updated: 2026/02/09 12:10:55 by kjolly           ###   ########.fr       */
+/*   Updated: 2026/02/12 16:56:25 by yzeghari         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,7 +72,9 @@ class HTTPResponse
 	std::string							GetReason() const;
 	std::map<std::string, std::string>	GetHeaders() const;
 	std::string							GetBody() const;
-	
+
+	void	SetBodyErrorPage();
+
 	bool		IsKeepAlive();
 	std::string	generate();
 	//! pense a rajouter les headers obligatoire tel que lenght ou connection ds generate

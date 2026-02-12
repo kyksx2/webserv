@@ -6,7 +6,7 @@
 /*   By: yzeghari <yzeghari@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/04 12:59:01 by yzeghari          #+#    #+#             */
-/*   Updated: 2026/02/12 13:53:38 by yzeghari         ###   ########.fr       */
+/*   Updated: 2026/02/12 17:27:13 by yzeghari         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -154,7 +154,25 @@ std::string HTTPResponse::GetBody() const
 {
 	return (this->_body);
 }
-\
+
+void HTTPResponse::SetBodyErrorPage()
+{
+	std::ostringstream ss;
+	ss << _status_code;
+	std::string error_file_name = ss.str() + ".html";
+
+	std::string root = "www/errors/";
+
+	std::ifstream	infile((root + error_file_name).c_str());
+	if (!infile)
+	{
+		this->_body = this->_reason_phrase;
+	}
+	std::stringstream buffer;
+	buffer << infile.rdbuf();
+	this->_body = buffer.str();
+}
+
 bool HTTPResponse::IsKeepAlive()
 {
 	if (this->_headers.count("connection"))
@@ -175,12 +193,13 @@ std::string HTTPResponse::generate()
 	<< this->_reason_phrase << "\r\n";
 
 	if (this->_body.empty())
-		_body = _reason_phrase;
+	{
+		SetBodyErrorPage(); // custom error pages
+	}
 
 	if (this->_status_code == 204 || this->_status_code == 304)
 		_body = "";
 
-	//ptet a mttre en minuscule pour debug
 	std::ostringstream oss;
 	oss << _body.size();
 	_headers["Content-Length"] = oss.str();
