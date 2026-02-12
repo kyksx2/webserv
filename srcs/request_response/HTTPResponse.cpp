@@ -6,7 +6,7 @@
 /*   By: yzeghari <yzeghari@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/04 12:59:01 by yzeghari          #+#    #+#             */
-/*   Updated: 2026/02/06 14:45:59 by yzeghari         ###   ########.fr       */
+/*   Updated: 2026/02/12 13:53:38 by yzeghari         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -191,7 +191,7 @@ std::string HTTPResponse::generate()
 		response << it->first << ": " << it->second << "\r\n";
 	}
 	response << "\r\n";
-	response << this->_body << std::endl;
+	response << this->_body;
 	return response.str();
 }
 

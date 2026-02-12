@@ -6,7 +6,7 @@
 /*   By: yzeghari <yzeghari@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/24 13:45:23 by yzeghari          #+#    #+#             */
-/*   Updated: 2026/02/11 17:49:44 by yzeghari         ###   ########.fr       */
+/*   Updated: 2026/02/12 13:45:02 by yzeghari         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -174,7 +174,6 @@ void HTTPRequest::SetBody_Chunked(std::string &buffer)
 		{
 			if (buffer.substr(index, 2) != "\r\n")
 				throw HTTPRequestException("missing final CRLF");
-
 			break;
 		}
 
@@ -191,6 +190,7 @@ void HTTPRequest::SetBody_Chunked(std::string &buffer)
 
 	this->m_body = body_content;
 }
+
 
 
 const Location_config *HTTPRequest::Getlocation() const

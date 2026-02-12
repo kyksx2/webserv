@@ -83,7 +83,8 @@ void    WebServ::readClientData(int event_fd) {
 					std::cout << "error on CGI" << std::endl;
 				}
 			}
-			client->completeCgi();
+			std::cout << "LLLLLLLLLLLLLLLLLLAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA" << std::endl;
+			client->completeCgi(); //??? remplacer cette fonction par la generation de reponse CGI
 			struct epoll_event change_ev_cgi;
 			change_ev_cgi.data.fd = client->getClientFd();
 			change_ev_cgi.events = EPOLLOUT;
