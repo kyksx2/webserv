@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   HTTPRequest.cpp                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: yzeghari <yzeghari@student.42.fr>          +#+  +:+       +#+        */
+/*   By: tnolent <tnolent@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/24 13:45:23 by yzeghari          #+#    #+#             */
-/*   Updated: 2026/02/12 13:45:02 by yzeghari         ###   ########.fr       */
+/*   Updated: 2026/02/13 15:00:10 by tnolent          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -260,7 +260,7 @@ void HTTPRequest::startCgi(int epoll_fd, std::map<int, Client*>& client_map, Cli
 	pid_t pid = 0;
 
 	if (pipe(pipe_to_cgi) == -1 || pipe(pipe_from_cgi) == -1) {
-		//? return une erreur 500
+		//? return une erreur500
 	}
 	pid = fork();
 	if  (pid == -1) {
@@ -268,7 +268,7 @@ void HTTPRequest::startCgi(int epoll_fd, std::map<int, Client*>& client_map, Cli
 		close(pipe_to_cgi[1]);
 		close(pipe_from_cgi[0]);
 		close(pipe_from_cgi[1]);
-		//? return une erreur 500
+		//? return une erreur500
 	}
 	else if (pid == 0) { //! child -> oubie qu'il est un serveur et execute le script
 		//? ecrit dans [1](write) et lis dans [0](read)
@@ -304,7 +304,7 @@ void HTTPRequest::startCgi(int epoll_fd, std::map<int, Client*>& client_map, Cli
 					free(env[i]);
 				}
 				delete[] env;
-			}			//? return une erreur 500, le script ne sait pas executer + free
+			}			//? return une erreur500, le script ne sait pas executer + free
 			perror("execve error");
 			exit(1);
 		}

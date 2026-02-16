@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   GetRequest.cpp                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: yzeghari <yzeghari@student.42.fr>          +#+  +:+       +#+        */
+/*   By: tnolent <tnolent@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/25 13:45:13 by yzeghari          #+#    #+#             */
-/*   Updated: 2026/02/12 17:19:12 by yzeghari         ###   ########.fr       */
+/*   Updated: 2026/02/16 10:46:53 by tnolent          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -81,7 +81,7 @@ HTTPResponse GetRequest::generateResponse()
 			}
 			else
 			{
-				std::string lst_index[] = {"index.html", "index.htm"};
+				std::vector<std::string> lst_index = this->m_location->getIndex();
 				struct stat st_index;
 				std::string	ntarget;
 

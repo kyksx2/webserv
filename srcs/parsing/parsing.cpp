@@ -197,6 +197,8 @@ void Parsing::caseByCase_directive(const ConfigNode& node)
         cgiCase(node);
     if (node.directive == "allow_methods")
         methodCase(node);
+    if (node.directive == "autoindex" && (node.arguments[0] != "on" && node.arguments[0] != "off"))
+        throw std::runtime_error("Error: Autoindex doit seulement accepter on et off");
 }
 
 void    Parsing::methodCase(const ConfigNode& node)

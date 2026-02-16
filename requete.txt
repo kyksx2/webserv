@@ -1,7 +1,39 @@
+
+// test 200 ok
 GET /index.html HTTP/1.1
 Host: 127.0.0.1:8080
 User-Agent: Tester/1.0
 Accept: */*
+
+// test 404 notfound
+GET /notfoundd.html HTTP/1.1
+Host: 127.0.0.1:8080
+User-Agent: Tester/1.0
+Accept: */*
+
+// test 403 Forbidden
+GET /files/a.txt HTTP/1.1
+Host: 127.0.0.1:8080
+User-Agent: Tester/1.0
+Accept: */*
+
+//test 301 MovedPermanently
+GET /files HTTP/1.1
+Host: 127.0.0.1:8080
+User-Agent: Tester/1.0
+Accept: */*
+
+//test 501 Mot Implemented
+GET /files HTTP/1.2
+Host: 127.0.0.1:8080
+User-Agent: Tester/1.0
+Accept: */*
+
+// MethodNotAllowed = 405 a gerer dans le .conf
+
+
+
+
 ## curl : curl "http://localhost:8080/cgi-bin/test.py"
 
 DELETE /test.txt HTTP/1.1

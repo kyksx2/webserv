@@ -9,6 +9,7 @@ WebServ::WebServ(const std::string& conf): epoll_fd(-1) {
 		if (!conf.empty())
 			config = Global_Config(conf);
 
+		// config.print();
 		serv_conf = config.getConfVect();
 		for(size_t i = 0; i < serv_conf.size(); i++) {
 			std::cout << "--------- BEBUG SESSION ----------" << std::endl
