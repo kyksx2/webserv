@@ -59,12 +59,9 @@ void    WebServ::readClientData(int event_fd) {
 			client->appendRequestCgi(buffer, n);
 		}
 		else if (n == -1) {
-			if (errno == EAGAIN || errno == EWOULDBLOCK) {
-				return;
-			}
-			perror("read cgi pipe");
+			return;
 		}
-		if (n == 0 || (n == -1 && errno != EAGAIN)) {
+		if (n == 0) {
 			if(epoll_ctl(this->epoll_fd, EPOLL_CTL_DEL, event_fd, NULL) == -1) {
 				perror("error epoll_ctl for cgi");
 			}
@@ -83,7 +80,6 @@ void    WebServ::readClientData(int event_fd) {
 					std::cout << "error on CGI" << std::endl;
 				}
 			}
-			std::cout << "LLLLLLLLLLLLLLLLLLAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA" << std::endl;
 			client->completeCgi(); //??? remplacer cette fonction par la generation de reponse CGI
 			struct epoll_event change_ev_cgi;
 			change_ev_cgi.data.fd = client->getClientFd();
