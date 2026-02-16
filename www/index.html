@@ -11,6 +11,9 @@
             background-repeat: no-repeat;
             background-attachment: fixed;
         }
+               #response {
+            color: white;
+        }
     </style>
 </head>
 <body>
@@ -23,7 +26,13 @@
 </textarea><br><br>
         
         <button type="submit">Envoyer</button>
+        <button type="button" onclick="showInPage()">Afficher dans la page</button>
     </form>
+    
+    <hr>
+    
+    <h2>Réponse du serveur:</h2>
+    <pre id="response"></pre>
     
     <script>
         document.getElementById('testForm').addEventListener('submit', (e) => {
@@ -51,6 +60,41 @@
             // Rediriger vers l'URL (remplace la page actuelle)
             window.location.href = url;
         });
+        
+        async function showInPage() {
+            const httpRequest = document.getElementById('httpRequest').value;
+            const responseDiv = document.getElementById('response');
+            
+            // Parser la première ligne pour extraire l'URL
+            const lines = httpRequest.split('\n');
+            const requestLine = lines[0].trim().split(' ');
+            const method = requestLine[0];
+            const path = requestLine[1] || '/';
+            
+            // Extraire le Host
+            let host = 'localhost:3000';
+            for (let line of lines) {
+                if (line.toLowerCase().startsWith('host:')) {
+                    host = line.substring(5).trim();
+                    break;
+                }
+            }
+            
+            // Construire l'URL complète
+            const url = `http://${host}${path}`;
+            
+            responseDiv.textContent = 'Chargement...\n';
+            
+            try {
+                const response = await fetch(url, { method: method });
+                const text = await response.text();
+                
+                responseDiv.textContent = `Status: ${response.status} ${response.statusText}\n\n`;
+                responseDiv.textContent += text;
+            } catch (error) {
+                responseDiv.textContent = `ERREUR: ${error.message}`;
+            }
+        }
     </script>
 </body>
 </html>
