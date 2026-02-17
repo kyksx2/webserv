@@ -1,15 +1,3 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   PostRequest.cpp                                    :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: kjolly <kjolly@student.42.fr>              +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/11/25 14:31:54 by yzeghari          #+#    #+#             */
-/*   Updated: 2026/02/11 15:26:09 by kjolly           ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
-
 #include "request_response/PostRequest.hpp"
 #include "serv_handler/Client.hpp"
 #include "serv_handler/Webserv.hpp"

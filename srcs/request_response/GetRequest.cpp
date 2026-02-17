@@ -1,15 +1,3 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   GetRequest.cpp                                     :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: tnolent <tnolent@student.42.fr>            +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/11/25 13:45:13 by yzeghari          #+#    #+#             */
-/*   Updated: 2026/02/16 10:46:53 by tnolent          ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
-
 #include "request_response/GetRequest.hpp"
 
 GetRequest::GetRequest(std::string &buffer, const Server& serv)
@@ -85,7 +73,7 @@ HTTPResponse GetRequest::generateResponse()
 				struct stat st_index;
 				std::string	ntarget;
 
-				for (int i = 0; i < 2; ++i)
+				for (size_t i = 0; i < lst_index.size(); ++i)
 				{
 					ntarget = realPath + lst_index[i];
 					if (!stat(ntarget.c_str(), &st_index))
