@@ -2,6 +2,7 @@
 #include "request_response/PostRequest.hpp"
 #include "request_response/GetRequest.hpp"
 #include "request_response/DeleteRequest.hpp"
+#include "Client.hpp"
 
 static HTTPRequest    *get_creation(std::string buffer, const Server &serv)
 {
@@ -189,6 +190,17 @@ void Client::requestCreation()
 	}
 }
 
+void    Client::CreateResponse(std::string version, int status_code, std::string reason_phrase)
+{
+	if (this->hasresponse == false)
+	{
+		HTTPResponse r(version, status_code, reason_phrase);
+
+		this->response = r;
+		this->hasresponse = true;
+	}
+}
+
 // Creer la classe request lors de la premiere iteration, son body lors de la deuxieme
 // ou la classe response (Bad Request) si probleme
 bool Client::completeRequest()
@@ -369,5 +381,4 @@ void Client::completeCgi() {
 	this->contentLength = 0;
 	this->isChunked = false;
 	this->hasresponse = false;
-
 }

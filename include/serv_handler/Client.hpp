@@ -15,6 +15,7 @@ class Client {
 	void	appendRequest(const char* request, int size);
 	bool	completeRequest();
 	void	requestCreation();
+	void    CreateResponse(std::string version, int status_code, std::string reason_phrase); 
 	void	generateBufferResponse(int epoll_fd, std::map<int, Client*>& client_map, Client* client);
 	void	clearState();
 	void	restartTimer();
@@ -24,7 +25,7 @@ class Client {
 	void	printBufferResponse();
 	void	appendRequestCgi(const char* buffer, int n_size);
 	void	completeCgi();
-	
+
 	time_t		getStart() const;
 	time_t		getstartCgi() const;
 	int			getClientFd() const;

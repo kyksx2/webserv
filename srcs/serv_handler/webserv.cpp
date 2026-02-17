@@ -12,6 +12,7 @@ void    WebServ::run() {
 				break;
 			}
 		}
+		client->CreateRes()
 		for (int i = 0; i < n_event; i++) {
 			int event_fd = ev[i].data.fd;
 			u_int32_t events = ev[i].events;
@@ -80,7 +81,7 @@ void    WebServ::readClientData(int event_fd) {
 					std::cout << "error on CGI" << std::endl;
 				}
 			}
-			client->completeCgi(); //??? remplacer cette fonction par la generation de reponse CGI
+			client->completeCgi();
 			struct epoll_event change_ev_cgi;
 			change_ev_cgi.data.fd = client->getClientFd();
 			change_ev_cgi.events = EPOLLOUT;
