@@ -6,13 +6,13 @@
 /*   By: yzeghari <yzeghari@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/04 12:59:01 by yzeghari          #+#    #+#             */
-/*   Updated: 2026/02/12 17:27:13 by yzeghari         ###   ########.fr       */
+/*   Updated: 2026/02/17 15:10:51 by yzeghari         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "request_response/HTTPResponse.hpp"
 
-HTTPResponse::HTTPResponse() : _version("HTTP/1.1"), _status_code(400), _reason_phrase("Bad Request") {} //!! mettre quelque chose par default
+HTTPResponse::HTTPResponse() : _version("HTTP/1.1"), _status_code(400), _reason_phrase("Bad Request") {}
 
 HTTPResponse::HTTPResponse(std::string version, std::string buffer)
 {
@@ -109,6 +109,12 @@ HTTPResponse::~HTTPResponse()
 {
 }
 
+void HTTPResponse::setLocation(const Location_config *L)
+{
+	if (L)
+		this->m_location = L;
+	// m_location->print();
+}
 void HTTPResponse::setVersion(std::string version)
 {
 	this->_version = version;
@@ -157,20 +163,18 @@ std::string HTTPResponse::GetBody() const
 
 void HTTPResponse::SetBodyErrorPage()
 {
-	std::ostringstream ss;
-	ss << _status_code;
-	std::string error_file_name = ss.str() + ".html";
+	// const std::map<int, std::string>& error_pages =
+	// this->m_location->getErrorPages();
 
-	std::string root = "www/errors/";
-
-	std::ifstream	infile((root + error_file_name).c_str());
-	if (!infile)
-	{
-		this->_body = this->_reason_phrase;
-	}
-	std::stringstream buffer;
-	buffer << infile.rdbuf();
-	this->_body = buffer.str();
+	// error_pages[_status_code];
+	// std::ifstream	infile(error_file_name.c_str());
+	// if (!infile)
+	// {
+	// 	this->_body = this->_reason_phrase;
+	// }
+	// std::stringstream buffer;
+	// buffer << infile.rdbuf();
+	// this->_body = buffer.str();
 }
 
 bool HTTPResponse::IsKeepAlive()

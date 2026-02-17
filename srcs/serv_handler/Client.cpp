@@ -2,7 +2,6 @@
 #include "request_response/PostRequest.hpp"
 #include "request_response/GetRequest.hpp"
 #include "request_response/DeleteRequest.hpp"
-#include "Client.hpp"
 
 static HTTPRequest    *get_creation(std::string buffer, const Server &serv)
 {
@@ -140,7 +139,7 @@ void Client::restartTimer() { this->start = time(NULL); } //????????????????????
 void Client::requestCreation()
 {
     // HTTPRequest     *request;
-    HTTPResponse    response;
+    HTTPResponse	response;
     int    i;
     std::string method[] = {"GET", "POST", "DELETE"};
 	const	Server &serv = *(this->dad_serv); // conversion pointeur -> reference
@@ -156,38 +155,38 @@ void Client::requestCreation()
 	if (firstline.size() < 3)
 	{
 		this->response = HTTPResponse ("HTTP/1.1", 400, "Bad Request");
+		if (firstline.size() >= 2)
+			this->response.setLocation(this->dad_serv->sendALocation(firstline[1]));
+		else
+			this->response.setLocation(this->dad_serv->sendALocation(""));
 		this->hasresponse = true;
 		return;
 	}
 
 	std::string		method_buffer = firstline[0];
+	std::string		target = firstline[1];
 	std::string		version = firstline[2];
 
-	try
+	for (i = 0; i < 3; i++)
 	{
-		for (i = 0; i < 3; i++)
-		{
-			if (method[i] == method_buffer)
-			{ // plus besoin de creer response direct
-				this->request = ft_method[i](this->requestBuffer, serv);
-				return ;
-			}
+		if (method[i] == method_buffer)
+		{ // plus besoin de creer response direct
+			this->request = ft_method[i](this->requestBuffer, serv);
+			return ;
 		}
-
-		if (version == "HTTP/1.0" || version == "HTTP/1.1")
-		{
-			this->response = HTTPResponse (version , 400, "Bad Request");
-			this->hasresponse = true;
-			return;
-		}
-		throw std::runtime_error("400 Bad Request");
 	}
-	catch (const std::exception& e)
+
+	if (version == "HTTP/1.0" || version == "HTTP/1.1")
 	{
-		this->response = HTTPResponse("HTTP/1.1", 400, "Bad Request");
+		this->response = HTTPResponse (version , 400, "Bad Request");
+		this->response.setLocation(this->dad_serv->sendALocation(target));
 		this->hasresponse = true;
 		return;
 	}
+	this->response = HTTPResponse("HTTP/1.1", 400, "Bad Request");
+	this->response.setLocation(this->dad_serv->sendALocation(target));
+	this->hasresponse = true;
+	return;
 }
 
 void    Client::CreateResponse(std::string version, int status_code, std::string reason_phrase)
@@ -196,6 +195,10 @@ void    Client::CreateResponse(std::string version, int status_code, std::string
 	{
 		HTTPResponse r(version, status_code, reason_phrase);
 
+		if (this->request)
+			r.setLocation(this->request->Getlocation());
+		else
+			r.setLocation(this->dad_serv->sendALocation(""));
 		this->response = r;
 		this->hasresponse = true;
 	}
@@ -243,6 +246,13 @@ bool Client::completeRequest()
 		{
 			std::vector<std::string> err = split(e.what(), ',');
 			this->response = HTTPResponse(err[0], atoi(err[1].c_str()), err[2]);
+
+			//? request existe car les headers ont ete pars
+			if (this->request)
+				this->response.setLocation(this->request->Getlocation());
+			else
+				this->response.setLocation(this->dad_serv->sendALocation(""));
+
 			this->hasresponse = true;
 			return true;
 		}
@@ -266,6 +276,10 @@ bool Client::completeRequest()
 				if (this->request->GetBody().size() > (size_t)this->dad_serv->getConfig().getClientMaxBodySize())
 				{
 					this->response = HTTPResponse(this->request->GetVersion(), 413, "Payload Too Large");
+					if (this->request)
+						this->response.setLocation(this->request->Getlocation());
+					else
+						this->response.setLocation(this->dad_serv->sendALocation(""));
 					this->hasresponse = true;
 					return true;
 				}
@@ -295,6 +309,10 @@ bool Client::completeRequest()
 		{
 			std::vector<std::string> err = split(e.what(), ',');
 			this->response = HTTPResponse(err[0], atoi(err[1].c_str()), err[2]);
+			if (this->request)
+				this->response.setLocation(this->request->Getlocation());
+			else
+				this->response.setLocation(this->dad_serv->sendALocation(""));
 			this->hasresponse = true;
 			return true;
 		}
@@ -368,6 +386,7 @@ void Client::completeCgi() {
 		if (this->isCGI(request))
 		{
 			this->response = HTTPResponse(this->request->GetVersion(), this->cgiBuffer);
+			this->response.setLocation(this->request->Getlocation());
 			this->responseBuffer = this->response.generate();
 		}
 		delete this->request;

@@ -31,6 +31,7 @@ void	split_path(std::string path, std::string &dir, std::string &file)
 HTTPResponse PostRequest::generateResponse()
 {
 	HTTPResponse	postresponse;
+	postresponse.setLocation(this->m_location);
 	postresponse.setVersion(this->m_version);
 	postresponse.setHeader("connection", this->m_headers["connection"]);
 	std::string		realPath = this->GetRealPath();
@@ -274,7 +275,7 @@ void PostRequest::startCgi(int epoll_fd, std::map<int, Client*>& client_map, Cli
 	//!            -> lis dans pipe_from_cgi[0]
 	close(pipe_to_cgi[0]);
 	close(pipe_from_cgi[1]);
-	
+
 	fcntl(pipe_from_cgi[0], F_SETFL, O_NONBLOCK);
 	fcntl(pipe_from_cgi[0], F_SETFD, FD_CLOEXEC);
 

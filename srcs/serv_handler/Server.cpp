@@ -46,7 +46,7 @@ void Server::init(int epoll_fd) {
         }
         else
             std::cerr << "Error: bind on port " << this->config.getPort() << std::endl;
-        close(this->listen_fd);
+        // close(this->listen_fd);
         this->isAlive = false;
         return;
     }

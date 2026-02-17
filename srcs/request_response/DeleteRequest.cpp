@@ -6,7 +6,7 @@
 /*   By: yzeghari <yzeghari@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/28 12:27:58 by yzeghari          #+#    #+#             */
-/*   Updated: 2026/02/02 16:29:35 by yzeghari         ###   ########.fr       */
+/*   Updated: 2026/02/17 13:57:54 by yzeghari         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,6 +24,7 @@ DeleteRequest::~DeleteRequest()
 HTTPResponse DeleteRequest::generateResponse()
 {
 	HTTPResponse	delresponse;
+	delresponse.setLocation(this->m_location);
 	delresponse.setVersion(this->m_version);
 	delresponse.setHeader("connection", this->m_headers["connection"]);
 	std::string		realPath = this->GetRealPath();

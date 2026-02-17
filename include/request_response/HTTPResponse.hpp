@@ -6,7 +6,7 @@
 /*   By: yzeghari <yzeghari@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/04 12:52:24 by yzeghari          #+#    #+#             */
-/*   Updated: 2026/02/12 16:56:25 by yzeghari         ###   ########.fr       */
+/*   Updated: 2026/02/17 13:55:48 by yzeghari         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,6 +27,8 @@
 #include <fcntl.h>
 #include <climits>
 #include <algorithm>
+
+#include "parsing/Location_config.hpp"
 
 enum HTTPStatusCode {
 	OK = 200,
@@ -49,6 +51,7 @@ enum HTTPStatusCode {
 class HTTPResponse
 {
  private:
+	const Location_config		*m_location;
 	std::string							_version;
 	int									_status_code;
 	std::string							_reason_phrase;
@@ -62,6 +65,8 @@ class HTTPResponse
 	HTTPResponse& operator=(const HTTPResponse& src);
 	~HTTPResponse();
 
+	void	setLocation(const Location_config *L);
+	
 	void	setVersion(std::string version);
 	void	setStatus(int status_code, std::string reason_phrase);
 	void	setHeader(std::string key, std::string value);
