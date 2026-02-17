@@ -63,12 +63,13 @@ public:
 	void	setIndex(const std::vector<std::string>& new_index);
 	void	setAllowedMetode(const std::string& new_metodes);
 	void	setClientMaxBodySize(size_t size);
-	
+
 	// Utilitaires
 	void	print() const;
 	void	clearMethod();
 	bool	isMethodAllowed(const std::string& method) const;
 	bool	isCgiRequest(const std::string& filename) const;
+	const std::string getFileError(int code) const;
 };
 
 #endif

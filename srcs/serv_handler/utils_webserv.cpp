@@ -16,7 +16,7 @@ WebServ::WebServ(const std::string& conf): epoll_fd(-1) {
 					<< "host: " << serv_conf[i].getHost() << std::endl
 					<< "port: " << serv_conf[i].getPort() << std::endl
 					<< "root: " << serv_conf[i].getRoot() << std::endl
-					<< "server name: ";
+					<< "server name: " << std::endl;
 			std::vector<std::string> vect = serv_conf[i].getServerNames();
 			for (size_t i = 0; i < vect.size(); i++) {
 				std::cout << vect[i] << std::endl;
@@ -29,11 +29,11 @@ WebServ::WebServ(const std::string& conf): epoll_fd(-1) {
 			close(this->epoll_fd);
 		return;
 	}
+	
 	for (size_t i = 0; i < serv_conf.size(); i++) {
 		Server* new_server = new Server(serv_conf[i]);
 		try {
 			new_server->init(this->epoll_fd);
-			// std::cout << new_server->getListenFd() << ": Port: "<< new_server->getConfig().getPort() <<   " Host: " << new_server->getConfig().getHost() << std::endl;
 			int listen_fd = new_server->getListenFd();
 			this->servers[listen_fd] = new_server;
 		}

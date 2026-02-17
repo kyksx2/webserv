@@ -1,9 +1,9 @@
 
 // test 200 ok
-  GET /index.html HTTP/1.1
-  Host: 127.0.0.1:8080
-  User-Agent: Tester/1.0
-  Accept: */*
+GET /index.html HTTP/1.1
+Host: 127.0.0.1:8080
+User-Agent: Tester/1.0
+Accept: */*
 
 // test 404 notfound
 GET /notfoundd.html HTTP/1.1

@@ -5,7 +5,7 @@
 Server_Config::Server_Config() :
     _host("0.0.0.0"),
     _port(8080),
-    _root("html"),
+    _root("./www"),
     _autoindex(false),
     _clientMaxBodySize(1048576),
     _flagDefLocation(false)

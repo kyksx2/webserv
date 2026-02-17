@@ -164,6 +164,14 @@ size_t Location_config::getClientMaxBodySize() const
     return (_clientMaxBodySize);
 }
 
+const std::string Location_config::getFileError(int code) const
+{
+    std::map<int, std::string>::const_iterator it = _errorPages.find(code);
+
+    if (it == _errorPages.end())
+        return "";
+    return it->second;
+}
 
 /*---------------------------UTILS--------------------------------*/
 
