@@ -6,7 +6,7 @@
 /*   By: yzeghari <yzeghari@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/04 12:59:01 by yzeghari          #+#    #+#             */
-/*   Updated: 2026/02/17 15:10:51 by yzeghari         ###   ########.fr       */
+/*   Updated: 2026/02/17 18:01:08 by yzeghari         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -97,6 +97,7 @@ HTTPResponse &HTTPResponse::operator=(const HTTPResponse &src)
 {
 	if (this == &src)
 		return (*this);
+	this->m_location = src.m_location;
 	this->_version = src._version;
 	this->_status_code = src._status_code;
 	this->_reason_phrase = src._reason_phrase;
@@ -136,6 +137,11 @@ void HTTPResponse::setBody(std::string body)
 	this->_body = body;
 }
 
+const Location_config * HTTPResponse::getLocation() const
+{
+	return (this->m_location);
+}
+
 std::string HTTPResponse::GetVersion() const
 {
 	return (this->_version);
@@ -163,18 +169,19 @@ std::string HTTPResponse::GetBody() const
 
 void HTTPResponse::SetBodyErrorPage()
 {
-	// const std::map<int, std::string>& error_pages =
-	// this->m_location->getErrorPages();
+	std::string	error_page = this->m_location->getFileError(_status_code);
+	std::string root = this->m_location->getRoot();
 
-	// error_pages[_status_code];
-	// std::ifstream	infile(error_file_name.c_str());
-	// if (!infile)
-	// {
-	// 	this->_body = this->_reason_phrase;
-	// }
-	// std::stringstream buffer;
-	// buffer << infile.rdbuf();
-	// this->_body = buffer.str();
+
+	std::cout << "error_name " << (root + error_page) << "code : " << _status_code<<  std::endl;
+	std::ifstream	infile((root + error_page).c_str());
+	if (!infile)
+	{
+		this->_body = this->_reason_phrase;
+	}
+	std::stringstream buffer;
+	buffer << infile.rdbuf();
+	this->_body = buffer.str();
 }
 
 bool HTTPResponse::IsKeepAlive()

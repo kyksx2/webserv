@@ -253,6 +253,36 @@ bool Client::completeRequest()
 			else
 				this->response.setLocation(this->dad_serv->sendALocation(""));
 
+		std::pair<int, std::string> redirect = this->response.getLocation()->getRedirect();
+		std::cout << "un" <<  response.getLocation()->getRedirect().first << std::endl;
+		std::cout << "un" <<  response.getLocation()->getRedirect().second << std::endl;
+		if (redirect.first != 0) // ou autre condition de validité
+		{
+			std::string fileError;
+			if (redirect.second.empty())
+			{
+				fileError = this->response.getLocation()->getFileError(redirect.first);
+				std::cout << "cac\n";
+			}
+			else
+			{
+				fileError = redirect.second;
+				std::cout << "coucou\n";
+			}
+
+
+			this->response.setStatus(555, "xaxa");
+			std::string root = this->response.getLocation()->getRoot();
+
+			std::cout << "path :" << (root + fileError).c_str() << std::endl;
+			std::ifstream	infile((root + fileError).c_str());
+			if (infile)
+			{
+				std::stringstream buffer;
+				buffer << infile.rdbuf();
+				this->response.setBody (buffer.str());
+			}
+		}
 			this->hasresponse = true;
 			return true;
 		}

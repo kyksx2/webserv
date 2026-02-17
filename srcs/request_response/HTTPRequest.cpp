@@ -6,7 +6,7 @@
 /*   By: yzeghari <yzeghari@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/24 13:45:23 by yzeghari          #+#    #+#             */
-/*   Updated: 2026/02/17 15:07:20 by yzeghari         ###   ########.fr       */
+/*   Updated: 2026/02/17 17:53:59 by yzeghari         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -112,10 +112,12 @@ HTTPRequest::HTTPRequest(std::string &buffer, const Server& serv)
 
 	// Location
 	this->m_location = this->m_serv.sendALocation(this->m_target);
-	if (this->m_location == NULL)
+	if (this->m_location)
 	{
-		// theoriquement impossible | ce message est la pour debug au cas ou qd meme
-		std::cerr << "location == NULL peut causer un segfault" << std::endl;
+		std::pair<int, std::string> redirect = this->m_location->getRedirect();
+
+		if (redirect.first != 0) // ou autre condition de validité
+			throw HTTPRequest::HTTPRequestException(m_version + ",400,Bad Request");
 	}
 }
 
