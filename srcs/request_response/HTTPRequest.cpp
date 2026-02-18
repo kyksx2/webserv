@@ -6,7 +6,7 @@
 /*   By: kjolly <kjolly@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/24 13:45:23 by yzeghari          #+#    #+#             */
-/*   Updated: 2026/02/18 15:27:28 by kjolly           ###   ########.fr       */
+/*   Updated: 2026/02/18 16:16:20 by kjolly           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -266,7 +266,7 @@ void HTTPRequest::startCgi(int epoll_fd, std::map<int, Client*>& client_map, Cli
 			free(env[i]);
 		}
 		delete[] env;
-		client->
+		client->CreateResponse(500);
 	}
 	pid = fork();
 	if  (pid == -1) {
@@ -278,7 +278,7 @@ void HTTPRequest::startCgi(int epoll_fd, std::map<int, Client*>& client_map, Cli
 		close(pipe_to_cgi[1]);
 		close(pipe_from_cgi[0]);
 		close(pipe_from_cgi[1]);
-		client->
+		client->CreateResponse(500);
 	}
 	else if (pid == 0) { //! child -> oubie qu'il est un serveur et execute le script
 		//? ecrit dans [1](write) et lis dans [0](read)
