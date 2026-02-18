@@ -78,6 +78,14 @@ void    WebServ::readClientData(int event_fd) {
 				int exit_code = WEXITSTATUS(status);
 				if (exit_code != 0) {
 					std::cout << "error on CGI" << std::endl;
+					// client->responseerror 500
+					struct epoll_event ep_ev;
+					ep_ev.data.fd = client->getClientFd();
+					ep_ev.events = EPOLLOUT;
+					if (epoll_ctl(this->epoll_fd, EPOLL_CTL_MOD, client->getClientFd(), &change_ev_cgi) == -1) {
+						closeClient(client->getClientFd());
+					}
+					return;
 				}
 			}
 			client->completeCgi();

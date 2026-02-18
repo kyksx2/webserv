@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   HTTPRequest.cpp                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tnolent <tnolent@student.42.fr>            +#+  +:+       +#+        */
+/*   By: kjolly <kjolly@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/24 13:45:23 by yzeghari          #+#    #+#             */
-/*   Updated: 2026/02/18 11:23:13 by tnolent          ###   ########.fr       */
+/*   Updated: 2026/02/18 15:27:28 by kjolly           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -256,21 +256,29 @@ std::string HTTPRequest::GetHeaders_value(std::string key)
 void HTTPRequest::startCgi(int epoll_fd, std::map<int, Client*>& client_map, Client* client)
 {
 	client->setStartCgi(time(NULL));
-	char **env = this->generateEnvp();
 	int pipe_to_cgi[2];
 	int pipe_from_cgi[2];
 	pid_t pid = 0;
-
+	char **env = this->generateEnvp();
+	
 	if (pipe(pipe_to_cgi) == -1 || pipe(pipe_from_cgi) == -1) {
-		//? return une erreur500
+		for(int i = 0; env[i]; i++) {
+			free(env[i]);
+		}
+		delete[] env;
+		client->
 	}
 	pid = fork();
 	if  (pid == -1) {
+		for(int i = 0; env[i]; i++) {
+			free(env[i]);
+		}
+		delete[] env;
 		close(pipe_to_cgi[0]);
 		close(pipe_to_cgi[1]);
 		close(pipe_from_cgi[0]);
 		close(pipe_from_cgi[1]);
-		//? return une erreur500
+		client->
 	}
 	else if (pid == 0) { //! child -> oubie qu'il est un serveur et execute le script
 		//? ecrit dans [1](write) et lis dans [0](read)
