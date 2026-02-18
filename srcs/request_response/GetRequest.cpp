@@ -38,7 +38,6 @@ HTTPResponse GetRequest::generateResponse()
 	getresponse.setVersion(this->m_version);
 	getresponse.setHeader("connection", this->m_headers["connection"]);
 	std::string	inthefile;
-	//tester path../file/ != path../dir/
 	std::string		realPath = this->GetRealPath();
 	struct stat st;
 
@@ -64,9 +63,7 @@ HTTPResponse GetRequest::generateResponse()
 			if (this->m_target.empty() || this->m_target[this->m_target.length() - 1] != '/'){
 				// 301 redirect
 				getresponse.setHeader("Location", this->m_target + "/");
-				//! a gerer
 				getresponse.setStatus(301, "Moved Permanently");
-				getresponse.setHeader("Location", this->m_target + "/");
 				return (getresponse);
 			}
 			else

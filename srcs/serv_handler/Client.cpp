@@ -227,7 +227,7 @@ bool Client::completeRequest()
 
 				int tmp;
 				if (!safe_atoi(cl.c_str(), tmp) || tmp < 0)
-					throw HTTPRequest::HTTPRequestException("HTTP/1.1,401,Bad Request");
+					throw HTTPRequest::HTTPRequestException("HTTP/1.1,400,Bad Request");
 
 				this->contentLength = tmp;
 			}
@@ -258,7 +258,7 @@ bool Client::completeRequest()
 				fileError = redirect.second;
 			std::string root = this->response.getLocation()->getRoot();
 			std::ifstream	infile((root + fileError).c_str());
-			this->response.setStatus(redirect.first, "Redirection in Location");
+			this->response.setStatus(redirect.first, "Redirection"); //! soit faire une ft qui renvoi la phrase et default renvoie redirection
 			if (!infile)
 			{
 				this->hasresponse = true;
