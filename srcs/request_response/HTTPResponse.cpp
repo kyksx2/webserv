@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   HTTPResponse.cpp                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: yzeghari <yzeghari@student.42.fr>          +#+  +:+       +#+        */
+/*   By: tnolent <tnolent@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/04 12:59:01 by yzeghari          #+#    #+#             */
-/*   Updated: 2026/02/17 18:01:08 by yzeghari         ###   ########.fr       */
+/*   Updated: 2026/02/18 09:28:33 by tnolent          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -172,13 +172,9 @@ void HTTPResponse::SetBodyErrorPage()
 	std::string	error_page = this->m_location->getFileError(_status_code);
 	std::string root = this->m_location->getRoot();
 
-
-	std::cout << "error_name " << (root + error_page) << "code : " << _status_code<<  std::endl;
 	std::ifstream	infile((root + error_page).c_str());
 	if (!infile)
-	{
 		this->_body = this->_reason_phrase;
-	}
 	std::stringstream buffer;
 	buffer << infile.rdbuf();
 	this->_body = buffer.str();

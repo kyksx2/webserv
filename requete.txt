@@ -29,6 +29,12 @@ Host: 127.0.0.1:8080
 User-Agent: Tester/1.0
 Accept: */*
 
+//test return 501 /secret
+GET /cgi-bin/test.py HTTP/1.1
+Host: 127.0.0.1:8080
+User-Agent: Tester/1.0
+Accept: */*
+
 // MethodNotAllowed = 405 a gerer dans le .conf
 
 

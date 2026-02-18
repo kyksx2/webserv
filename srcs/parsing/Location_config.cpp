@@ -72,17 +72,12 @@ void Location_config::setCgi(const std::string& extension, const std::string& pa
 
 void Location_config::setRedirect(int code, const std::string& url)
 {
-    if (code == 0 || url.empty()) {
-        // Est-ce un nombre ou une URL ?
-        if (code > 99 && code < 600) {
-            _redirect = std::make_pair(code , "");
-        } else {
-            _redirect = std::make_pair(302, url);
-        }
-    } 
-    else {
+    if (code == 0 && !url.empty())
+        _redirect = std::make_pair(302, url);
+    else if (code != 0 && !url.empty())
         _redirect = std::make_pair(code, url);
-    }
+    else if (url.empty())
+        _redirect = std::make_pair(code, "");
 }
 
 void Location_config::setErrorPage(int code, const std::string& path)

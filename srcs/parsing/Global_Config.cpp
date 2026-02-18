@@ -144,14 +144,20 @@ Location_config Global_Config::buildLocation(const ConfigNode& node, Server_Conf
             location.setCgi(child.arguments[0], child.arguments[1]);
         if (child.directive == "return")
         {
-            ss << child.arguments[0];
-            ss >> code;
             if (child.arguments.size() == 2)
+            {
+                ss << child.arguments[0];
+                ss >> code;
                 location.setRedirect(code, child.arguments[1]);
-            else if (!isStringDigit(child.arguments[0]))
+            }
+            else if (child.arguments.size() == 1 && !isStringDigit(child.arguments[0]))
                 location.setRedirect(0, child.arguments[0]);
-            else if (isStringDigit(child.arguments[0]))
+            else if (child.arguments.size() == 1 && isStringDigit(child.arguments[0]))
+            {
+                ss << child.arguments[0];
+                ss >> code;
                 location.setRedirect(code, "");
+            }
         }
 		if (child.directive == "error_page"){
                 ss << child.arguments[0];

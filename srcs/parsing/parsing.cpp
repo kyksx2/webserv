@@ -197,9 +197,38 @@ void Parsing::caseByCase_directive(const ConfigNode& node)
         cgiCase(node);
     if (node.directive == "allow_methods")
         methodCase(node);
+    if (node.directive == "return")
+        returnCase(node);
     if (node.directive == "autoindex" && (node.arguments[0] != "on" && node.arguments[0] != "off"))
         throw std::runtime_error("Error: Autoindex doit seulement accepter on et off");
 }
+
+void    Parsing::returnCase(const ConfigNode& node)
+{
+    int code;
+    std::stringstream ss(node.arguments[0]);
+    ss >> code;
+    if (node.arguments.size() == 1)
+    {
+        if (isStringDigit(node.arguments[0]))
+        {
+            if (code < 100 || code >= 600)
+                throw std::runtime_error("Error: le code de 'return' doit etre entre 100-599");
+        }
+    }
+    else if (node.arguments.size() == 2)
+    {
+        if (!isStringDigit(node.arguments[0]))
+            throw std::runtime_error("Error: le premier argument de return doit etre le status code");
+        if (code < 100 || code >= 600)
+            throw std::runtime_error("Error: le code de 'return' doit etre entre 100-599");
+        if (node.arguments[1].empty())
+            throw std::runtime_error("Error: l'URL de return ne doit pas etre vide");
+        if (code < 300 || code >= 400)
+            std::cerr << "Warning: On code :'" << code << " " << node.arguments[1] << std::endl;
+    }
+}
+
 
 void    Parsing::methodCase(const ConfigNode& node)
 {

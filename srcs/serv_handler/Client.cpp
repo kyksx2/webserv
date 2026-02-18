@@ -223,9 +223,7 @@ bool Client::completeRequest()
 				return true;
 
 			if (this->request->GetHeaders_value("transfer-encoding") == "chunked")
-			{
 				this->isChunked = true;
-			}
 			else
 			{
 				std::string cl = this->request->GetHeaders_value("content-length");
@@ -237,7 +235,7 @@ bool Client::completeRequest()
 
 				int tmp;
 				if (!safe_atoi(cl.c_str(), tmp) || tmp < 0)
-					throw HTTPRequest::HTTPRequestException("HTTP/1.1,400,Bad Request");
+					throw HTTPRequest::HTTPRequestException("HTTP/1.1,401,Bad Request");
 
 				this->contentLength = tmp;
 			}
@@ -247,35 +245,28 @@ bool Client::completeRequest()
 			std::vector<std::string> err = split(e.what(), ',');
 			this->response = HTTPResponse(err[0], atoi(err[1].c_str()), err[2]);
 
-			//? request existe car les headers ont ete pars
+			// ? request existe car les headers ont ete pars
 			if (this->request)
 				this->response.setLocation(this->request->Getlocation());
 			else
-				this->response.setLocation(this->dad_serv->sendALocation(""));
-
+			{
+				//! a refaire
+				if (err[3].empty() == false)
+					this->response.setLocation(this->dad_serv->sendALocation(err[3]));
+				else
+					this->response.setLocation(this->dad_serv->sendALocation("/"));
+			}
 		std::pair<int, std::string> redirect = this->response.getLocation()->getRedirect();
-		std::cout << "un" <<  response.getLocation()->getRedirect().first << std::endl;
-		std::cout << "un" <<  response.getLocation()->getRedirect().second << std::endl;
 		if (redirect.first != 0) // ou autre condition de validité
 		{
 			std::string fileError;
 			if (redirect.second.empty())
-			{
 				fileError = this->response.getLocation()->getFileError(redirect.first);
-				std::cout << "cac\n";
-			}
 			else
-			{
 				fileError = redirect.second;
-				std::cout << "coucou\n";
-			}
-
-
-			this->response.setStatus(555, "xaxa");
 			std::string root = this->response.getLocation()->getRoot();
-
-			std::cout << "path :" << (root + fileError).c_str() << std::endl;
 			std::ifstream	infile((root + fileError).c_str());
+			this->response.setStatus(redirect.first, "...");
 			if (infile)
 			{
 				std::stringstream buffer;

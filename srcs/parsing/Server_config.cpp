@@ -221,7 +221,7 @@ void Server_Config::generateDefaultLocation() {
     this->_defaultLocation.setAutoindex(this->_autoindex);
     this->_defaultLocation.setClientMaxBodySize(this->getClientMaxBodySize());
     this->_defaultLocation.setUploadStore("");
-    this->_defaultLocation.setRedirect(0, "");
+    // this->_defaultLocation.setRedirect(0, "");
     this->_defaultLocation.setErrorPages(this->getErrorPages());
     // std::cout << "----- VERIF DEFAULT LOCATION -----" << std::endl;
     // this->_defaultLocation.print();

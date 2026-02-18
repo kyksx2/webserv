@@ -40,6 +40,7 @@ class Parsing {
 		void				errorPageCase(const ConfigNode& node);
 		void				numberArgCase(const ConfigNode& node);
 		void				methodCase(const ConfigNode& node);
+		void				returnCase(const ConfigNode& node);
 		void				cgiCase(const ConfigNode& node);
 		void				listenCase(const ConfigNode& node);
 		void				validateNode(const ConfigNode& node);

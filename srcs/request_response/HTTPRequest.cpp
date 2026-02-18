@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   HTTPRequest.cpp                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: yzeghari <yzeghari@student.42.fr>          +#+  +:+       +#+        */
+/*   By: tnolent <tnolent@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/24 13:45:23 by yzeghari          #+#    #+#             */
-/*   Updated: 2026/02/17 17:53:59 by yzeghari         ###   ########.fr       */
+/*   Updated: 2026/02/18 11:23:13 by tnolent          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -117,7 +117,7 @@ HTTPRequest::HTTPRequest(std::string &buffer, const Server& serv)
 		std::pair<int, std::string> redirect = this->m_location->getRedirect();
 
 		if (redirect.first != 0) // ou autre condition de validité
-			throw HTTPRequest::HTTPRequestException(m_version + ",400,Bad Request");
+			throw HTTPRequest::HTTPRequestException(m_version + ",400,Bad Request," + this->m_target);
 	}
 }
 
