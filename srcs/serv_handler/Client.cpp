@@ -65,6 +65,13 @@ std::string Client::getCgiBuffer() const { return this->cgiBuffer; }
 
 std::string Client::getResponseBuffer() const { return this->responseBuffer; }
 
+HTTPRequest*	Client::getRequest() const
+{
+	if (request)
+		return (request);
+	return NULL;
+}
+
 time_t Client::getStart() const { return (this->start); }
 
 time_t Client::getstartCgi() const { return (this->start_cgi); }
@@ -351,7 +358,6 @@ void	Client::generateBufferResponse(int epoll_fd, std::map<int, Client*>& client
 		else
 		{
 
-			std::cout << this->request->GetBody() << std::endl;
 			this->response = this->request->generateResponse();
 			this->responseBuffer = this->response.generate();
 		}

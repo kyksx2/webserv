@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   HTTPRequest.cpp                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kjolly <kjolly@student.42.fr>              +#+  +:+       +#+        */
+/*   By: yzeghari <yzeghari@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/24 13:45:23 by yzeghari          #+#    #+#             */
-/*   Updated: 2026/02/18 16:16:20 by kjolly           ###   ########.fr       */
+/*   Updated: 2026/02/18 16:27:37 by yzeghari         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -260,13 +260,16 @@ void HTTPRequest::startCgi(int epoll_fd, std::map<int, Client*>& client_map, Cli
 	int pipe_from_cgi[2];
 	pid_t pid = 0;
 	char **env = this->generateEnvp();
-	
+
 	if (pipe(pipe_to_cgi) == -1 || pipe(pipe_from_cgi) == -1) {
 		for(int i = 0; env[i]; i++) {
 			free(env[i]);
 		}
 		delete[] env;
-		client->CreateResponse(500);
+		if (client->getRequest())
+			client->CreateResponse(client->getRequest()->GetVersion(), 500, "Internal Server Error");
+		else
+			client->CreateResponse("HTTP/1.1", 500, "Internal Server Error");
 	}
 	pid = fork();
 	if  (pid == -1) {
@@ -278,7 +281,10 @@ void HTTPRequest::startCgi(int epoll_fd, std::map<int, Client*>& client_map, Cli
 		close(pipe_to_cgi[1]);
 		close(pipe_from_cgi[0]);
 		close(pipe_from_cgi[1]);
-		client->CreateResponse(500);
+		if (client->getRequest())
+			client->CreateResponse(client->getRequest()->GetVersion(), 500, "Internal Server Error");
+		else
+			client->CreateResponse("HTTP/1.1", 500, "Internal Server Error");
 	}
 	else if (pid == 0) { //! child -> oubie qu'il est un serveur et execute le script
 		//? ecrit dans [1](write) et lis dans [0](read)

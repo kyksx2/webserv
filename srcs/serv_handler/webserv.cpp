@@ -1,4 +1,7 @@
 #include "serv_handler/Webserv.hpp"
+#include "request_response/PostRequest.hpp"
+#include "request_response/GetRequest.hpp"
+#include "request_response/DeleteRequest.hpp"
 
 void    WebServ::run() {
 	while(signal_running) {
@@ -78,11 +81,20 @@ void    WebServ::readClientData(int event_fd) {
 				int exit_code = WEXITSTATUS(status);
 				if (exit_code != 0) {
 					std::cout << "error on CGI" << std::endl;
-					client->CreateResponse(500);
+
+					if (client->getRequest())
+						client->CreateResponse(client->getRequest()->GetVersion(),
+											500, "Internal Server Error");
+					else
+						client->CreateResponse("HTTP/1.1",
+											500, "Internal Server Error");
+
 					struct epoll_event ep_ev;
 					ep_ev.data.fd = client->getClientFd();
 					ep_ev.events = EPOLLOUT;
-					if (epoll_ctl(this->epoll_fd, EPOLL_CTL_MOD, client->getClientFd(), &change_ev_cgi) == -1) {
+
+					if (epoll_ctl(this->epoll_fd, EPOLL_CTL_MOD,
+								client->getClientFd(), &ep_ev) == -1) {
 						closeClient(client->getClientFd());
 					}
 					return;

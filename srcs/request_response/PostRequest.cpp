@@ -38,7 +38,7 @@ HTTPResponse PostRequest::generateResponse()
 	struct stat st;
 	std::string	dir;
 	std::string	file;
-	split_path(this->m_target, dir, file);
+	split_path(realPath, dir, file);
 
 	// Verifie si la Methode est autorise sur target
 	if (this->m_location->isMethodAllowed("POST") == false)
@@ -92,19 +92,19 @@ HTTPResponse PostRequest::generateResponse()
 		if (stat(dir.c_str(), &st) == 0 && S_ISDIR(st.st_mode))
 		{
 			std::ofstream monFlux(realPath.c_str(), std::ios::out | std::ios::trunc);
-			if (monFlux)
-			{
-				postresponse.setStatus(200, "OK");
-				postresponse.setHeader("Content-Type", this->m_headers["content-type"]);
-				monFlux << this->m_body;
-				monFlux.close();
-				return postresponse;
-			}
-			else
+			if (!monFlux)
 			{
 				postresponse.setStatus(500, "Internal Server Error");
 				return postresponse;
 			}
+
+			monFlux << this->m_body;
+			monFlux.close();
+
+			postresponse.setStatus(201, "Created");
+			postresponse.setHeader("Location", realPath);
+			postresponse.setHeader("Content-Type", this->m_headers["content-type"]);
+			return postresponse;
 		}
 		else
 		{
