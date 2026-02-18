@@ -15,7 +15,7 @@ class Client {
 	void	appendRequest(const char* request, int size);
 	bool	completeRequest();
 	void	requestCreation();
-	void    CreateResponse(std::string version, int status_code, std::string reason_phrase); 
+	void    CreateResponse(std::string version, int status_code, std::string reason_phrase);
 	void	generateBufferResponse(int epoll_fd, std::map<int, Client*>& client_map, Client* client);
 	void	clearState();
 	void	restartTimer();
@@ -65,78 +65,4 @@ private:
 	pid_t			cgi_pid;
 	std::string		cgiBuffer;
 };
-
-// class Client {
-//  public:
-// 	Client();
-// 	Client(int fd, Server* find_server);
-// 	~Client();
-
-// 	void appendRequest(const char* request, int size);
-// 	bool completeRequest();
-// 	void parseRequest();
-// 	void generateResponse();
-// 	void requestCreation();
-// 	bool isKeepAlive();
-// 	void clearState();
-// 	void restartTimer();
-
-// 	std::string& getResponseBuffer();
-// 	int getClientFd();
-// 	size_t getDataSent();
-// 	std::string& getRequestBuffer();
-// 	time_t	getStart();
-
-
-//  private:
-// 	time_t start; //? new a ajouter
-// 	int client_fd;
-// 	size_t data_sent;
-// 	Server* dad_serv;
-// 	bool	hasresponse;
-// 	bool headerParse;
-// 	size_t headerSize;
-// 	size_t contentLength;
-// 	bool isChunked;
-// 	std::string requestBuffer;
-// 	std::string responseBuffer;
-// 	HTTPRequest *request;
-// 	HTTPResponse response;
-// };
-
-// class Client {
-//  public:
-// 	Client(int fd, Server* find_server);
-// 	~Client();
-// 	Client(const Client& src);
-// 	Client&  operator=(const Client& src);
-
-// 	void appendRequest(const char* request, int size);
-// 	bool completeRequest();
-// 	//void parseRequest();
-// 	//void generateResponse();
-// 	void requestCreation();
-// 	bool isKeepAlive();
-// 	void clearState();
-
-// 	std::string& getResponseBuffer();
-// 	int getClientFd();
-// 	size_t getDataSent();
-// 	std::string& getRequestBuffer();
-
-// 	void setDataSent(int n);
-// 	void setResponseBuffer(std::string& response);
-
-//  private:
-// 	int client_fd;
-// 	size_t data_sent;
-// 	Server* dad_serv;
-// 	bool headerParse;
-// 	size_t contentLength;
-// 	bool isChunked;
-// 	std::string requestBuffer;
-// 	std::string responseBuffer;
-// 	HTTPRequest *request;
-// 	HTTPResponse response;
-// };
 #endif

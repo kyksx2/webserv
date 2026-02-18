@@ -6,7 +6,7 @@
 /*   By: yzeghari <yzeghari@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/04 12:52:24 by yzeghari          #+#    #+#             */
-/*   Updated: 2026/02/17 18:00:29 by yzeghari         ###   ########.fr       */
+/*   Updated: 2026/02/18 13:10:22 by yzeghari         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -84,7 +84,6 @@ class HTTPResponse
 
 	bool		IsKeepAlive();
 	std::string	generate();
-	//! pense a rajouter les headers obligatoire tel que lenght ou connection ds generate
 };
 
 std::vector<std::string>	split(const std::string &chaine, char delimiteur);

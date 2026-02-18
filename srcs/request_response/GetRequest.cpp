@@ -66,7 +66,7 @@ HTTPResponse GetRequest::generateResponse()
 				getresponse.setHeader("Location", this->m_target + "/");
 				//! a gerer
 				getresponse.setStatus(301, "Moved Permanently");
-				std::string newLocation = this->m_target + "/";
+				getresponse.setHeader("Location", this->m_target + "/");
 				return (getresponse);
 			}
 			else

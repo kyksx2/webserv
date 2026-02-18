@@ -3,24 +3,24 @@
 #include "request_response/GetRequest.hpp"
 #include "request_response/DeleteRequest.hpp"
 
-static HTTPRequest    *get_creation(std::string buffer, const Server &serv)
+static HTTPRequest	*get_creation(std::string buffer, const Server &serv)
 {
-    return (new GetRequest(buffer, serv));
+	return (new GetRequest(buffer, serv));
 }
 
-static HTTPRequest    *delete_creation(std::string buffer, const Server &serv)
+static HTTPRequest	*delete_creation(std::string buffer, const Server &serv)
 {
-    return (new DeleteRequest(buffer, serv));
+	return (new DeleteRequest(buffer, serv));
 }
 
-static HTTPRequest    *post_creation(std::string buffer, const Server &serv)
+static HTTPRequest	*post_creation(std::string buffer, const Server &serv)
 {
-    return (new PostRequest(buffer, serv));
+	return (new PostRequest(buffer, serv));
 }
 
 Client::Client(int fd, Server* find_server) : client_fd(fd), dad_serv(find_server), start_cgi(0), data_sent(0), headerParse(false), headerSize(0),contentLength(0),
-    isChunked(false), hasresponse(false), requestBuffer(""), responseBuffer(""), request(), response(), active_cgi(false), cgi_fd(-1), cgi_pid(0) {
-        start = time(NULL);
+	isChunked(false), hasresponse(false), requestBuffer(""), responseBuffer(""), request(), response(), active_cgi(false), cgi_fd(-1), cgi_pid(0) {
+	start = time(NULL);
 }
 
 Client::Client(const Client& src) {
@@ -127,31 +127,22 @@ void Client::printHeader()
 
 void Client::restartTimer() { this->start = time(NULL); } //?????????????????????????????????? changement
 
-
-// POST /dossier/page.html?query=123 HTTP/1.1\r\n      <-- 1. Request Line
-// Host: localhost:8080\r\n                            <-- 2. Headers
-// User-Agent: curl/7.68.0\r\n
-// Content-Length: 15\r\n
-// \r\n                                                <-- 3. Séparateur
-// nom=bob&age=22                                      <-- 4. Body
-
 //	Utilise le polymorphisme pour creer la bonne classe
 void Client::requestCreation()
 {
-    // HTTPRequest     *request;
-    HTTPResponse	response;
-    int    i;
-    std::string method[] = {"GET", "POST", "DELETE"};
+	HTTPResponse	response;
+	int		i;
+	std::string method[] = {"GET", "POST", "DELETE"};
 	const	Server &serv = *(this->dad_serv); // conversion pointeur -> reference
-    HTTPRequest *(*ft_method[])(std::string, const Server&) = {
-        get_creation,
-        post_creation,
-        delete_creation
-    };
-    std::stringstream ss(this->requestBuffer);
-    std::string line;
-    std::getline(ss, line);
-    std::vector<std::string> firstline = split(line, ' ');
+	HTTPRequest *(*ft_method[])(std::string, const Server&) = {
+		get_creation,
+		post_creation,
+		delete_creation
+	};
+	std::stringstream ss(this->requestBuffer);
+	std::string line;
+	std::getline(ss, line);
+	std::vector<std::string> firstline = split(line, ' ');
 	if (firstline.size() < 3)
 	{
 		this->response = HTTPResponse ("HTTP/1.1", 400, "Bad Request");
@@ -170,7 +161,8 @@ void Client::requestCreation()
 	for (i = 0; i < 3; i++)
 	{
 		if (method[i] == method_buffer)
-		{ // plus besoin de creer response direct
+		{
+			// Creer l'objet Get, POST ou DELETE
 			this->request = ft_method[i](this->requestBuffer, serv);
 			return ;
 		}
@@ -257,7 +249,7 @@ bool Client::completeRequest()
 					this->response.setLocation(this->dad_serv->sendALocation("/"));
 			}
 		std::pair<int, std::string> redirect = this->response.getLocation()->getRedirect();
-		if (redirect.first != 0) // ou autre condition de validité
+		if (redirect.first != 0) // return dans le .conf
 		{
 			std::string fileError;
 			if (redirect.second.empty())
@@ -266,13 +258,17 @@ bool Client::completeRequest()
 				fileError = redirect.second;
 			std::string root = this->response.getLocation()->getRoot();
 			std::ifstream	infile((root + fileError).c_str());
-			this->response.setStatus(redirect.first, "...");
-			if (infile)
+			this->response.setStatus(redirect.first, "Redirection in Location");
+			if (!infile)
 			{
-				std::stringstream buffer;
-				buffer << infile.rdbuf();
-				this->response.setBody (buffer.str());
+				this->hasresponse = true;
+				return true;
 			}
+			std::stringstream buffer;
+			buffer << infile.rdbuf();
+			this->response.setBody (buffer.str());
+			this->hasresponse = true;
+			return true;
 		}
 			this->hasresponse = true;
 			return true;
@@ -361,7 +357,7 @@ void	Client::generateBufferResponse(int epoll_fd, std::map<int, Client*>& client
 		}
 
 	}
-	//! penser a remettre tout a 0
+	// reinitialise entre chaque requete
 	this->headerParse = false;
 	this->headerSize = 0;
 	this->contentLength = 0;

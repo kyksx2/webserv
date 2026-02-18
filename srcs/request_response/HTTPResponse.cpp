@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   HTTPResponse.cpp                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tnolent <tnolent@student.42.fr>            +#+  +:+       +#+        */
+/*   By: yzeghari <yzeghari@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/04 12:59:01 by yzeghari          #+#    #+#             */
-/*   Updated: 2026/02/18 09:28:33 by tnolent          ###   ########.fr       */
+/*   Updated: 2026/02/18 13:31:02 by yzeghari         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -188,7 +188,7 @@ bool HTTPResponse::IsKeepAlive()
 			return true;
 		return false;
 	}
-	return false; // au cas ou ??
+	return false; //! a gerer
 }
 
 std::string HTTPResponse::generate()
@@ -203,7 +203,6 @@ std::string HTTPResponse::generate()
 	{
 		SetBodyErrorPage(); // custom error pages
 	}
-
 	if (this->_status_code == 204 || this->_status_code == 304)
 		_body = "";
 

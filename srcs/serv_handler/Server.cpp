@@ -67,7 +67,7 @@ void Server::init(int epoll_fd) {
     }
 }
 
-//!! AHAH, SEND A LOCATION
+//AHAH, SEND A LOCATION
 const Location_config*  Server::sendALocation(const std::string& uri)
 {
     const Location_config* tmp = this->config.findLocation(uri);
@@ -76,7 +76,7 @@ const Location_config*  Server::sendALocation(const std::string& uri)
     }
     return (tmp);
 }
-//! LET SEE IF YOU REALY TRAP
+//LET SEE IF YOU REALY TRAP
 
 int Server::getListenFd() const { return this->listen_fd; }
 
