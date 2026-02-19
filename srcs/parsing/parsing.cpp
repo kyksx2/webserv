@@ -207,6 +207,7 @@ void    Parsing::returnCase(const ConfigNode& node)
 {
     int code;
     std::stringstream ss(node.arguments[0]);
+
     ss >> code;
     if (node.arguments.size() == 1)
     {
@@ -215,17 +216,17 @@ void    Parsing::returnCase(const ConfigNode& node)
             if (code < 100 || code >= 600)
                 throw std::runtime_error("Error: le code de 'return' doit etre entre 100-599");
         }
+        else
+            throw std::runtime_error("Error: le code de 'return' n'est pas valide");
     }
     else if (node.arguments.size() == 2)
     {
         if (!isStringDigit(node.arguments[0]))
             throw std::runtime_error("Error: le premier argument de return doit etre le status code");
-        if (code < 100 || code >= 600)
-            throw std::runtime_error("Error: le code de 'return' doit etre entre 100-599");
+        if (code < 1 || code >= 999)
+            throw std::runtime_error("Error: le code de 'return' n'est pas valide");
         if (node.arguments[1].empty())
             throw std::runtime_error("Error: l'URL de return ne doit pas etre vide");
-        if (code < 300 || code >= 400)
-            std::cerr << "Warning: On code :'" << code << " " << node.arguments[1] << std::endl;
     }
 }
 
