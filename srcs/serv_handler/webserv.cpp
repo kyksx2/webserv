@@ -80,15 +80,14 @@ void    WebServ::readClientData(int event_fd) {
 			if (WIFEXITED(status)) {
 				int exit_code = WEXITSTATUS(status);
 				if (exit_code != 0) {
-					std::cout << "error on CGI" << std::endl;
-
-					if (client->getRequest())
-						client->CreateResponse(client->getRequest()->GetVersion(),
-											500, "Internal Server Error");
-					else
-						client->CreateResponse("HTTP/1.1",
-											500, "Internal Server Error");
-
+					if (client->getRequest()) {
+						client->CreateResponse(client->getRequest()->GetVersion(), 500, "Internal Server Error");
+						client->generateBufferResponse(this->epoll_fd, this->clients, client);
+					}
+					else {
+						client->CreateResponse("HTTP/1.1", 500, "Internal Server Error");
+						client->generateBufferResponse(this->epoll_fd, this->clients, client);
+					}
 					struct epoll_event ep_ev;
 					ep_ev.data.fd = client->getClientFd();
 					ep_ev.events = EPOLLOUT;
