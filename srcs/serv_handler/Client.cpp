@@ -196,7 +196,7 @@ void    Client::CreateResponse(std::string version, int status_code, std::string
 		if (this->request)
 			r.setLocation(this->request->Getlocation());
 		else
-			r.setLocation(this->dad_serv->sendALocation(""));
+			r.setLocation(this->dad_serv->sendALocation("/"));
 		this->response = r;
 		this->hasresponse = true;
 	}
@@ -307,7 +307,6 @@ bool Client::completeRequest()
 					return true;
 				}
 			}
-			std::cout << *(this->request) << std::endl;
 			return true; // body complet et valide
 		}
 		catch(const std::exception& e)
@@ -349,7 +348,9 @@ void	Client::generateBufferResponse(int epoll_fd, std::map<int, Client*>& client
 {
 	this->responseBuffer.clear();
 	if (this->hasresponse)
+	{
 		this->responseBuffer = this->response.generate();
+	}
 	else if (this->request)
 	{
 		if (isCGI(this->request))
@@ -360,7 +361,6 @@ void	Client::generateBufferResponse(int epoll_fd, std::map<int, Client*>& client
 			this->response = this->request->generateResponse();
 			this->responseBuffer = this->response.generate();
 		}
-
 	}
 	// reinitialise entre chaque requete
 	this->headerParse = false;
@@ -398,11 +398,11 @@ bool Client::isCGI(const HTTPRequest *req)
 
 // void Client::completeCgi() {
 // 	this->data_sent = 0;
-	
+
 // 	std::string response = "HTTP/1.1 200 OK\r\n";
 // 	std::string body;
 // 	std::string headers;
-	
+
 // 	size_t headerEnd = this->cgiBuffer.find("\r\n\r\n");
 // 	if (headerEnd == std::string::npos) {
 // 		headerEnd = this->cgiBuffer.find("\n\n");
@@ -411,7 +411,7 @@ bool Client::isCGI(const HTTPRequest *req)
 // 	if (headerEnd != std::string::npos) {
 // 		// Determine separator length
 // 		size_t sepLen = (this->cgiBuffer[headerEnd] == '\r') ? 4 : 2;
-		
+
 // 		headers = this->cgiBuffer.substr(0, headerEnd);
 // 		body = this->cgiBuffer.substr(headerEnd + sepLen);
 
@@ -437,12 +437,12 @@ bool Client::isCGI(const HTTPRequest *req)
 
 // 	this->responseBuffer = response;
 // 	this->responseBuffer += headers + "\r\n";
-	
+
 // 	// Add Content-Length if not present (case-insensitive check is better, but simple check for now)
 // 	// Lowercase headers for checking
 // 	std::string headersLower = headers;
 // 	std::transform(headersLower.begin(), headersLower.end(), headersLower.begin(), ::tolower);
-	
+
 // 	if (headersLower.find("content-length:") == std::string::npos) {
 // 		std::stringstream ss;
 // 		ss << body.size();
@@ -455,7 +455,7 @@ bool Client::isCGI(const HTTPRequest *req)
 // 	// Reset state
 // 	this->cgiBuffer.clear();
 // 	this->active_cgi = false;
-	
+
 // 	if (this->request) {
 // 		delete this->request;
 // 		this->request = NULL;

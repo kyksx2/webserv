@@ -6,7 +6,7 @@
 /*   By: yzeghari <yzeghari@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/04 12:59:01 by yzeghari          #+#    #+#             */
-/*   Updated: 2026/02/18 13:31:02 by yzeghari         ###   ########.fr       */
+/*   Updated: 2026/02/19 11:45:42 by yzeghari         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -90,7 +90,6 @@ HTTPResponse::HTTPResponse(std::string version, int status_code, std::string rea
 	this->_version = version;
 	this->_status_code = status_code;
 	this->_reason_phrase = reason_phrase;
-	this->_body = reason_phrase;
 }
 
 HTTPResponse &HTTPResponse::operator=(const HTTPResponse &src)
@@ -174,7 +173,10 @@ void HTTPResponse::SetBodyErrorPage()
 
 	std::ifstream	infile((root + error_page).c_str());
 	if (!infile)
+	{
 		this->_body = this->_reason_phrase;
+		return ;
+	}
 	std::stringstream buffer;
 	buffer << infile.rdbuf();
 	this->_body = buffer.str();

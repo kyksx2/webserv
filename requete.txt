@@ -29,16 +29,19 @@ Host: 127.0.0.1:8080
 User-Agent: Tester/1.0
 Accept: */*
 
-//test return 501 /secret
+//test CGI reussi
 GET /cgi-bin/test.py HTTP/1.1
 Host: 127.0.0.1:8080
 User-Agent: Tester/1.0
 Accept: */*
 
+//test return 500
+GET /cgi-bin/fail.py HTTP/1.1
+Host: 127.0.0.1:8080
+User-Agent: Tester/1.0
+Accept: */*
+
 // MethodNotAllowed = 405 a gerer dans le .conf
-
-
-
 
 ## curl : curl "http://localhost:8080/cgi-bin/test.py"
 
@@ -71,3 +74,7 @@ curl -v -X POST http://localhost:8080/test.txt \
   -H "Transfer-Encoding: chunked" \
   -d "MozillaDeveloperNetwork"
 
+curl -X POST http://localhost:8080/files/a.txt \
+  -H "Transfer-Encoding: chunked" \
+  -H "Content-Type: application/json" \
+  -d '{"hello":"world"}'
