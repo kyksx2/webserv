@@ -6,7 +6,7 @@
 /*   By: yzeghari <yzeghari@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/04 12:59:01 by yzeghari          #+#    #+#             */
-/*   Updated: 2026/02/19 11:45:42 by yzeghari         ###   ########.fr       */
+/*   Updated: 2026/02/19 14:29:54 by yzeghari         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,6 @@ HTTPResponse::HTTPResponse(std::string version, std::string buffer)
 {
 	this->_version = version;
 
-	std::cout << "======BUFFER RECU======\n" << buffer << "======================="<< std::endl;
 	// Status | par defaut 200 OK
 	this->_status_code = 200;
 	this->_reason_phrase = "OK";
@@ -166,6 +165,32 @@ std::string HTTPResponse::GetBody() const
 	return (this->_body);
 }
 
+void HTTPResponse::GetReasonByStatusCode(int code)
+{
+	std::string reason;
+
+	switch (code)
+	{
+		case OK: reason = "OK"; break;
+		case Created: reason = "Created"; break;
+		case Accepted: reason = "Accepted"; break;
+		case NoContent: reason = "No Content"; break;
+		case MovedPermanently: reason = "Moved Permanently"; break;
+		case PermanentRedirect: reason = "Permanent Redirect"; break;
+		case BadRequest: reason = "Bad Request"; break;
+		case Unauthorized: reason = "Unauthorized"; break;
+		case Forbidden: reason = "Forbidden"; break;
+		case NotFound: reason = "Not Found"; break;
+		case MethodNotAllowed: reason = "Method Not Allowed"; break;
+		case RequestTimeout: reason = "Request Timeout"; break;
+		case UnsupportedMediaType: reason = "Unsupported Media Type"; break;
+		case InternalServerError: reason = "Internal Server Error"; break;
+		case NotImplemented: reason = "Not Implemented"; break;
+		default: reason = "Unknown Status"; break;
+	}
+	setStatus(code, reason);
+}
+
 void HTTPResponse::SetBodyErrorPage()
 {
 	std::string	error_page = this->m_location->getFileError(_status_code);
@@ -190,7 +215,7 @@ bool HTTPResponse::IsKeepAlive()
 			return true;
 		return false;
 	}
-	return false; //! a gerer
+	return false;
 }
 
 std::string HTTPResponse::generate()

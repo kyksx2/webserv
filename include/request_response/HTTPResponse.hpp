@@ -6,7 +6,7 @@
 /*   By: yzeghari <yzeghari@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/04 12:52:24 by yzeghari          #+#    #+#             */
-/*   Updated: 2026/02/18 13:10:22 by yzeghari         ###   ########.fr       */
+/*   Updated: 2026/02/19 14:17:18 by yzeghari         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,22 +30,22 @@
 
 #include "parsing/Location_config.hpp"
 
-enum HTTPStatusCode {
-	OK = 200,
-	Created = 201,
-	Accepted = 202,
-	NoContent = 204,
-	MovedPermanently = 301,
-	PermanentRedirect = 308,
-	BadRequest = 400,
-	Unauthorized = 401,
-	Forbidden = 403,
-	NotFound = 404,
-	MethodNotAllowed = 405,
-	RequestTimeout = 408,
-	UnsupportedMediaType = 415,
-	InternalServerError = 500,
-	NotImplemented = 501
+enum StatusCode {
+    OK = 200,
+    Created = 201,
+    Accepted = 202,
+    NoContent = 204,
+    MovedPermanently = 301,
+    PermanentRedirect = 308,
+    BadRequest = 400,
+    Unauthorized = 401,
+    Forbidden = 403,
+    NotFound = 404,
+    MethodNotAllowed = 405,
+    RequestTimeout = 408,
+    UnsupportedMediaType = 415,
+    InternalServerError = 500,
+    NotImplemented = 501
 };
 
 class HTTPResponse
@@ -72,13 +72,14 @@ class HTTPResponse
 	void	setHeader(std::string key, std::string value);
 	void	setBody(std::string	body);
 
-
 	const Location_config *getLocation() const;
 	std::string							GetVersion() const;
 	int									GetStatusCode() const;
 	std::string							GetReason() const;
 	std::map<std::string, std::string>	GetHeaders() const;
 	std::string							GetBody() const;
+
+	void	GetReasonByStatusCode(int code);
 
 	void	SetBodyErrorPage();
 

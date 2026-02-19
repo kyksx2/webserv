@@ -1,3 +1,7 @@
+GET / HTTP/1.1
+Host: 127.0.0.1:8080
+User-Agent: Tester/1.0
+Accept: */*
 
 // test 200 ok
 GET /index.html HTTP/1.1
@@ -36,7 +40,7 @@ User-Agent: Tester/1.0
 Accept: */*
 
 //test return 500
-GET /cgi-bin/test_get.py HTTP/1.1
+GET /secret HTTP/1.1
 Host: 127.0.0.1:8080
 User-Agent: Tester/1.0
 Accept: */*

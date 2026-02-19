@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   HTTPRequest.cpp                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kjolly <kjolly@student.42.fr>              +#+  +:+       +#+        */
+/*   By: yzeghari <yzeghari@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/24 13:45:23 by yzeghari          #+#    #+#             */
-/*   Updated: 2026/02/19 12:29:18 by kjolly           ###   ########.fr       */
+/*   Updated: 2026/02/19 14:30:02 by yzeghari         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -92,7 +92,7 @@ HTTPRequest::HTTPRequest(std::string &buffer, const Server& serv)
 	if (m_headers.count("transfer-encoding") && m_headers.count("content-length"))
 		throw HTTPRequest::HTTPRequestException(m_version + ",400,Bad Request");
 
-	// Connection par défaut (corrigé)
+	// Connection par defaut
 	if (!m_headers.count("connection"))
 	{
 		if (m_version == "HTTP/1.1")
@@ -144,9 +144,6 @@ void HTTPRequest::SetBody_ContentLength(std::string &buffer)
 	int contentLength = 0;
 	if (!safe_atoi(m_headers["content-length"].c_str(), contentLength) || contentLength < 0)
 		throw HTTPRequestException(m_version + ",400,Bad Request");
-
-	if (contentLength > (int) m_location->getClientMaxBodySize())
-		throw HTTPRequestException(m_version + ",413,Payload Too Large");
 
 	m_body = buffer.substr(0, contentLength);
 }

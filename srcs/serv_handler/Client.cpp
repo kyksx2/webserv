@@ -215,7 +215,7 @@ bool Client::completeRequest()
 		try
 		{
 			requestCreation();
-			
+
 			this->headerParse = true;
 
 			if (this->hasresponse)
@@ -233,8 +233,10 @@ bool Client::completeRequest()
 				}
 				int tmp;
 				if (!safe_atoi(cl.c_str(), tmp) || tmp < 0)
-					throw HTTPRequest::HTTPRequestException("HTTP/1.1,400,Bad Request");
+					throw HTTPRequest::HTTPRequestException(request->GetVersion() + ",400,Bad Request");
 
+				if (contentLength > (size_t) request->Getlocation()->getClientMaxBodySize())
+					throw HTTPRequest::HTTPRequestException(request->GetVersion() + ",413,Payload Too Large");
 				this->contentLength = tmp;
 			}
 		}
@@ -254,7 +256,7 @@ bool Client::completeRequest()
 					this->response.setLocation(this->dad_serv->sendALocation("/"));
 			}
 		std::pair<int, std::string> redirect = this->response.getLocation()->getRedirect();
-		if (redirect.first != 0) // return dans le .conf
+		if (redirect.first) // return dans le .conf
 		{
 			std::string fileError;
 			if (redirect.second.empty())
@@ -263,7 +265,7 @@ bool Client::completeRequest()
 				fileError = redirect.second;
 			std::string root = this->response.getLocation()->getRoot();
 			std::ifstream	infile((root + fileError).c_str());
-			this->response.setStatus(redirect.first, "Redirection"); //! soit faire une ft qui renvoi la phrase et default renvoie redirection
+			this->response.GetReasonByStatusCode(redirect.first);
 			if (!infile)
 			{
 				this->hasresponse = true;

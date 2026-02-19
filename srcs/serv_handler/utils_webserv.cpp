@@ -12,7 +12,7 @@ WebServ::WebServ(const std::string& conf): epoll_fd(-1) {
 		// config.print();
 		serv_conf = config.getConfVect();
 		for(size_t i = 0; i < serv_conf.size(); i++) {
-			std::cout << "--------- BEBUG SESSION ----------" << std::endl
+			std::cout << "--------- DEBUG SESSION ----------" << std::endl
 					<< "host: " << serv_conf[i].getHost() << std::endl
 					<< "port: " << serv_conf[i].getPort() << std::endl
 					<< "root: " << serv_conf[i].getRoot() << std::endl
@@ -29,7 +29,7 @@ WebServ::WebServ(const std::string& conf): epoll_fd(-1) {
 			close(this->epoll_fd);
 		return;
 	}
-	
+
 	for (size_t i = 0; i < serv_conf.size(); i++) {
 		Server* new_server = new Server(serv_conf[i]);
 		try {
