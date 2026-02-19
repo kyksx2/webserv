@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   HTTPRequest.cpp                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: yzeghari <yzeghari@student.42.fr>          +#+  +:+       +#+        */
+/*   By: kjolly <kjolly@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/24 13:45:23 by yzeghari          #+#    #+#             */
-/*   Updated: 2026/02/18 16:27:37 by yzeghari         ###   ########.fr       */
+/*   Updated: 2026/02/19 12:29:18 by kjolly           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -145,7 +145,7 @@ void HTTPRequest::SetBody_ContentLength(std::string &buffer)
 	if (!safe_atoi(m_headers["content-length"].c_str(), contentLength) || contentLength < 0)
 		throw HTTPRequestException(m_version + ",400,Bad Request");
 
-	if (contentLength > (int) this->m_serv.getConfig().getClientMaxBodySize())
+	if (contentLength > (int) m_location->getClientMaxBodySize())
 		throw HTTPRequestException(m_version + ",413,Payload Too Large");
 
 	m_body = buffer.substr(0, contentLength);

@@ -215,6 +215,7 @@ bool Client::completeRequest()
 		try
 		{
 			requestCreation();
+			
 			this->headerParse = true;
 
 			if (this->hasresponse)
@@ -230,7 +231,6 @@ bool Client::completeRequest()
 					this->contentLength = 0;
 					return true;
 				}
-
 				int tmp;
 				if (!safe_atoi(cl.c_str(), tmp) || tmp < 0)
 					throw HTTPRequest::HTTPRequestException("HTTP/1.1,400,Bad Request");
@@ -248,8 +248,7 @@ bool Client::completeRequest()
 				this->response.setLocation(this->request->Getlocation());
 			else
 			{
-				//! a refaire
-				if (err[3].empty() == false)
+				if (err.size() == 4)
 					this->response.setLocation(this->dad_serv->sendALocation(err[3]));
 				else
 					this->response.setLocation(this->dad_serv->sendALocation("/"));
@@ -280,15 +279,12 @@ bool Client::completeRequest()
 			return true;
 		}
 	}
+	size_t pos = this->requestBuffer.find("\r\n\r\n");
+	if (pos == std::string::npos ) //|| this->requestBuffer.substr(pos).size < 5
+		return false;
 	if (this->isChunked)
 	{
-		size_t pos = this->requestBuffer.find("\r\n\r\n");
-		if (pos == std::string::npos)
-   			return false;
 		std::string body = this->requestBuffer.substr(pos + 4);
-		// size_t posb = body.find("0\r\n\r\n");
-		// if (posb == std::string::npos)
-		// 	return false;
 		try
 		{
 			this->request->SetBody_Chunked(body); // parser chunk par chunk
@@ -296,14 +292,9 @@ bool Client::completeRequest()
 			// Vérifier taille maximale APRÈS parsing
 			if (dad_serv)
 			{
-				if (this->request->GetBody().size() > (size_t)this->dad_serv->getConfig().getClientMaxBodySize())
+				if (this->request->GetBody().size() > (size_t)request->Getlocation()->getClientMaxBodySize())
 				{
-					this->response = HTTPResponse(this->request->GetVersion(), 413, "Payload Too Large");
-					if (this->request)
-						this->response.setLocation(this->request->Getlocation());
-					else
-						this->response.setLocation(this->dad_serv->sendALocation(""));
-					this->hasresponse = true;
+					CreateResponse(this->request->GetVersion(), 413, "Payload Too Large");
 					return true;
 				}
 			}
@@ -317,9 +308,7 @@ bool Client::completeRequest()
 	else
 	{
 			// ===== BODY -Content-Lenght- =====
-		size_t pos = this->requestBuffer.find("\r\n\r\n");
 		std::string body = this->requestBuffer.substr(pos + 4);
-
 		if (body.size() < this->contentLength)
 			return false; // attendre plus de données
 		try
@@ -330,12 +319,7 @@ bool Client::completeRequest()
 		catch (const std::exception& e)
 		{
 			std::vector<std::string> err = split(e.what(), ',');
-			this->response = HTTPResponse(err[0], atoi(err[1].c_str()), err[2]);
-			if (this->request)
-				this->response.setLocation(this->request->Getlocation());
-			else
-				this->response.setLocation(this->dad_serv->sendALocation(""));
-			this->hasresponse = true;
+			CreateResponse(err[0], atoi(err[1].c_str()), err[2]);
 			return true;
 		}
 	}
