@@ -103,7 +103,6 @@ void	Client::setCgiPid(pid_t pid) { this->cgi_pid = pid; }
 
 void	Client::setStartCgi(time_t t) { this->start_cgi = t; }
 
-
 bool Client::isKeepAlive() { return this->response.IsKeepAlive(); }
 
 void    Client::appendRequest(const char* request, int size) {

@@ -2,132 +2,84 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <title>Test Serveur</title>
+    <title>HTTP Raw Tester</title>
     <style>
-        body {
-            background-image: url('/../images/MIB_web.jpg');
-            background-size: cover;
-            background-position: center;
-            background-repeat: no-repeat;
-            background-attachment: fixed;
-            color: white;
-        }
-
-        h1, h2, label {
-            color: white;
-        }
-        button {
-            color: black;
-        }
-        #response {
-            color: white;
-        }
+        body { font-family: monospace; padding: 20px; background-color: #f0f0f0; }
+        .box { background: white; padding: 20px; border-radius: 5px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        textarea { width: 100%; font-family: monospace; padding: 10px; border: 1px solid #ccc; }
+        button { margin: 10px 0; padding: 10px 20px; cursor: pointer; background: #333; color: white; border: none; }
+        #response { background: #222; color: #fff; padding: 15px; white-space: pre-wrap; min-height: 200px; border-radius: 3px; }
+        .label { font-weight: bold; margin-bottom: 5px; display: block; }
     </style>
 </head>
 <body>
-    <h1>Test de requêtes serveur</h1>
-    
-    <form id="testForm">
-        <label>Requête HTTP complète:</label><br>
-        <textarea id="httpRequest" rows="10" cols="80">
 
-</textarea><br><br>
-        
-        <button type="submit">Envoyer</button>
-        <button type="button" onclick="showInPage()">Afficher dans la page</button>
-    </form>
-    
-    <hr>
-    
-    <h2>Réponse du serveur:</h2>
-    <pre id="response"></pre>
-    
-<script>
-    document.getElementById('testForm').addEventListener('submit', (e) => {
-        e.preventDefault();
-        
-        const httpRequest = document.getElementById('httpRequest').value;
-        const lines = httpRequest.split('\n');
-        const requestLine = lines[0].trim().split(' ');
-        const path = requestLine[1] || '/';
-        
-        let host = 'localhost:8080';
-        for (let line of lines) {
-            if (line.toLowerCase().startsWith('host:')) {
-                host = line.substring(5).trim();
-                break;
+    <div class="box">
+        <span class="label">Requête :</span>
+        <textarea id="requestInput" rows="10">
+POST /cgi-bin/test_post.py HTTP/1.1
+Content-Type: application/x-www-form-urlencoded
+
+nom=valeur&test=ok</textarea>
+
+        <button onclick="sendRequest()">Envoyer la requête</button>
+
+        <span class="label">Réponse du serveur :</span>
+        <div id="response">Le résultat s'affichera ici.</div>
+    </div>
+
+    <script>
+        async function sendRequest() {
+            const raw = document.getElementById('requestInput').value;
+            const display = document.getElementById('response');
+            
+            // 1. Parsing minimal de la requête brute
+            const lines = raw.split('\n');
+            const firstLine = lines[0].split(' ');
+            if (firstLine.length < 2) {
+                display.textContent = "Erreur : Première ligne invalide.";
+                return;
             }
-        }
-        
-        const url = `http://${host}${path}`;
-        window.location.href = url;
-    });
-    
-    async function showInPage() {
-        const httpRequest = document.getElementById('httpRequest').value;
-        const responseDiv = document.getElementById('response');
-        
-        // Séparer headers et body (séparés par une ligne vide)
-        const parts = httpRequest.split(/\r?\n\r?\n/);
-        const headerSection = parts[0];
-        const body = parts.slice(1).join('\n\n') || null;
-        
-        const lines = headerSection.split('\n');
-        const requestLine = lines[0].trim().split(' ');
-        const method = requestLine[0];
-        const path = requestLine[1] || '/';
-        
-        // Extraire le Host et les autres headers
-        let host = 'localhost:8080';
-        const headers = {};
-        
-        for (let i = 1; i < lines.length; i++) {
-            const line = lines[i].trim();
-            if (!line) continue;
-            
-            const colonIndex = line.indexOf(':');
-            if (colonIndex === -1) continue;
-            
-            const key = line.substring(0, colonIndex).trim();
-            const value = line.substring(colonIndex + 1).trim();
-            
-            if (key.toLowerCase() === 'host') {
-                host = value;
-            } else {
-                // On ignore Content-Length, fetch le calcule tout seul
-                if (key.toLowerCase() !== 'content-length') {
-                    headers[key] = value;
+
+            const method = firstLine[0];
+            const url = firstLine[1];
+
+            // 2. Séparation Headers / Body
+            const parts = raw.split(/\n\s*\n/);
+            const headersRaw = parts[0].split('\n').slice(1);
+            const body = parts.length > 1 ? parts.slice(1).join('\n\n').trim() : null;
+
+            const headers = {};
+            headersRaw.forEach(line => {
+                const index = line.indexOf(':');
+                if (index !== -1) {
+                    headers[line.substring(0, index).trim()] = line.substring(index + 1).trim();
                 }
+            });
+
+            display.textContent = "Envoi en cours...";
+
+            try {
+                const response = await fetch(url, {
+                    method: method,
+                    headers: headers,
+                    body: (method !== 'GET' && method !== 'HEAD') ? body : null
+                });
+
+                const responseText = await response.text();
+                
+                // Reconstruction de l'affichage de la réponse brute
+                let fullResponse = `HTTP/1.1 ${response.status} ${response.statusText}\n`;
+                response.headers.forEach((v, k) => {
+                    fullResponse += `${k}: ${v}\n`;
+                });
+                fullResponse += '\n' + responseText;
+
+                display.textContent = fullResponse;
+            } catch (err) {
+                display.textContent = "Erreur : " + err.message;
             }
         }
-        
-        const url = `http://${host}${path}?_=${Date.now()}`;
-        responseDiv.textContent = 'Chargement...\n';
-        
-        try {
-            const options = { 
-                method, 
-                headers: {
-                    ...headers,
-                    'Cache-Control': 'no-cache',
-                    'Pragma': 'no-cache'
-                }
-            };
-            
-            // Ajouter le body uniquement si la méthode le permet
-            if (!['GET', 'HEAD'].includes(method.toUpperCase()) && body) {
-                options.body = body;
-            }
-            
-            const response = await fetch(url, options);
-            const text = await response.text();
-            
-            responseDiv.textContent = `Status: ${response.status} ${response.statusText}\n\n`;
-            responseDiv.textContent += text;
-        } catch (error) {
-            responseDiv.textContent = `ERREUR: ${error.message}`;
-        }
-    }
-</script>
+    </script>
 </body>
 </html>

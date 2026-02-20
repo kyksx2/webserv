@@ -212,7 +212,7 @@ void Server_Config::cleanIndex()
     if (!_index.empty())
         _index.clear();
 }
-//! -------------------------------------------------------------------
+
 void Server_Config::generateDefaultLocation() {
     this->_defaultLocation.setPath("/");
     this->_defaultLocation.setRoot(this->getRoot());
@@ -228,4 +228,3 @@ void Server_Config::generateDefaultLocation() {
 }
 
 const Location_config& Server_Config::getDefaultLocation() { return this->_defaultLocation; }
-//! -------------------------------------------------------------------

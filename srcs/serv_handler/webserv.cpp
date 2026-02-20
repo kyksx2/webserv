@@ -32,7 +32,7 @@ void    WebServ::run() {
 				std::map<int, Client*>::iterator it_client = this->clients.find(event_fd);
 				if (it_client != this->clients.end()) {
 					Client* current_client = it_client->second;
-					if (events & (EPOLLIN | EPOLLHUP)) { //? verifie si le bit represente EPOLLIN
+					if (events & (EPOLLIN | EPOLLHUP)) {//? verifie si le bit represente EPOLLIN
 						current_client->restartTimer();
 						readClientData(event_fd);
 						if (this->clients.find(event_fd) == this->clients.end())
@@ -110,7 +110,6 @@ void    WebServ::readClientData(int event_fd) {
 		return;
 	}
 	// Si un CGI est en cours d'exécution pour ce client, on ignore les inputs sur le socket client
-	// pour éviter de lancer une nouvelle requête ou de corrompre l'état
 	if (client->getActiveCgi()) {
 		return;
 	}
@@ -233,7 +232,6 @@ void    WebServ::handleNewClient(Server* find_server) {
 	}
 	else {
 		fcntl(client_fd, F_SETFL, O_NONBLOCK); //? passage en non bloquant
-		// Après socket() ou accept()
 		fcntl(client_fd, F_SETFD, FD_CLOEXEC); //?
 		struct epoll_event client_ev;
 		client_ev.data.fd = client_fd;
@@ -249,19 +247,3 @@ void    WebServ::handleNewClient(Server* find_server) {
 	}
 	return;
 }
-
-// //           UTILS PRINT
-
-// // void WebServ::printEverythings() {
-	// //     std::map<int, Server*>::iterator it;
-
-	//     for (it = this->servers.begin(); it != this->servers.end(); ++it) {
-
-	//         // it->first  : CLÉ (le int, le Listen FD)
-	//         // it->second : VALEUR (le Server*)
-	//         std::cout << "Server sur le FD : " << it->first << std::endl;
-
-	// //         if (it->second) // Petite sécurité pour vérifier que le pointeur n'est pas null
-	// //             it->second->config.print();
-	// //     }
-	// // }

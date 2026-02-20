@@ -1,7 +1,5 @@
 #include "serv_handler/Webserv.hpp"
 
-//! gerer les timeout -> 60secondes sans activites = deconnection
-
 volatile int signal_running = 1;
 
 void handle_sig(int sig) {
@@ -21,7 +19,6 @@ int main(int ac, char **av) {
         try
         {
             WebServ serv(conf);
-            std::cout << std::endl << "----------------------------------------" << std::endl;
             serv.run();
         }
         catch(const std::exception& e)

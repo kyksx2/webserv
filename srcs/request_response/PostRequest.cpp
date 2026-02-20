@@ -194,7 +194,6 @@ char **PostRequest::generateEnvp()
 	{
 		env.push_back("PATH_TRANSLATED=");
 	}
-
 	// ===== Allocation finale =====
 	char **envp = new char*[env.size() + 1];
 	for (size_t i = 0; i < env.size(); i++)
@@ -206,9 +205,6 @@ char **PostRequest::generateEnvp()
 
 void PostRequest::startCgi(int epoll_fd, std::map<int, Client*>& client_map, Client* client)
 {
-	// (void)epoll_fd;
-	// (void)client_map;
-	// (void)client;
 	client->setStartCgi(time(NULL));
 	char **env = this->generateEnvp();
 	int pipe_to_cgi[2];
@@ -216,15 +212,29 @@ void PostRequest::startCgi(int epoll_fd, std::map<int, Client*>& client_map, Cli
 	pid_t pid = 0;
 
 	if (pipe(pipe_to_cgi) == -1 || pipe(pipe_from_cgi) == -1) {
-		//? return une erreur 500
+		for(int i = 0; env[i]; i++) {
+			free(env[i]);
+		}
+		delete[] env;
+		if (client->getRequest())
+			client->CreateResponse(client->getRequest()->GetVersion(), 500, "Internal Server Error");
+		else
+			client->CreateResponse("HTTP/1.1", 500, "Internal Server Error");
 	}
 	pid = fork();
 	if  (pid == -1) {
+		for(int i = 0; env[i]; i++) {
+			free(env[i]);
+		}
+		delete[] env;
 		close(pipe_to_cgi[0]);
 		close(pipe_to_cgi[1]);
 		close(pipe_from_cgi[0]);
 		close(pipe_from_cgi[1]);
-		//? return une erreur 500
+		if (client->getRequest())
+			client->CreateResponse(client->getRequest()->GetVersion(), 500, "Internal Server Error");
+		else
+			client->CreateResponse("HTTP/1.1", 500, "Internal Server Error");
 	}
 	else if (pid == 0) { //! child -> oubie qu'il est un serveur et execute le script
 		//? ecrit dans [1](write) et lis dans [0](read)

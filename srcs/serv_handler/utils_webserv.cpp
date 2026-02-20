@@ -11,17 +11,17 @@ WebServ::WebServ(const std::string& conf): epoll_fd(-1) {
 
 		// config.print();
 		serv_conf = config.getConfVect();
-		for(size_t i = 0; i < serv_conf.size(); i++) {
-			std::cout << "--------- DEBUG SESSION ----------" << std::endl
-					<< "host: " << serv_conf[i].getHost() << std::endl
-					<< "port: " << serv_conf[i].getPort() << std::endl
-					<< "root: " << serv_conf[i].getRoot() << std::endl
-					<< "server name: " << std::endl;
-			std::vector<std::string> vect = serv_conf[i].getServerNames();
-			for (size_t i = 0; i < vect.size(); i++) {
-				std::cout << vect[i] << std::endl;
-			}
-		}
+		// for(size_t i = 0; i < serv_conf.size(); i++) {
+		// 	std::cout << "--------- DEBUG SESSION ----------" << std::endl
+		// 			<< "host: " << serv_conf[i].getHost() << std::endl
+		// 			<< "port: " << serv_conf[i].getPort() << std::endl
+		// 			<< "root: " << serv_conf[i].getRoot() << std::endl
+		// 			<< "server name: " << std::endl;
+		// 	std::vector<std::string> vect = serv_conf[i].getServerNames();
+		// 	for (size_t i = 0; i < vect.size(); i++) {
+		// 		std::cout << vect[i] << std::endl;
+		// 	}
+		// }
 	}
 	catch(const std::exception& e)
 	{
@@ -83,7 +83,7 @@ void    WebServ::epollInit() {
 void	WebServ::checkTimeout() {
 	for (std::map<int, Client*>::iterator it = clients.begin(); it != clients.end();) {
 		if (it->second->getActiveCgi()) {
-			if (time(NULL) - it->second->getstartCgi() > 30) {
+			if (time(NULL) - it->second->getstartCgi() > 20) {
 				kill(it->second->getCgiPid(), SIGKILL);
 				waitpid(it->second->getCgiPid(), NULL, 0);
 				int cgi_fd = it->second->getCgiFd();
@@ -91,7 +91,8 @@ void	WebServ::checkTimeout() {
 				close(cgi_fd);
 				this->clients.erase(cgi_fd);
 				it->second->setCgiStatus(false);
-				//? erreur 504
+				it->second->CreateResponse("HTTP/1.1", 504, "Gateway timeout");
+				it->second->generateBufferResponse(this->epoll_fd, this->clients, it->second);
 				struct epoll_event ev;
 				ev.events = EPOLLOUT;
 				ev.data.fd = it->second->getClientFd();

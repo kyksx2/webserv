@@ -3,21 +3,16 @@
 import os
 import urllib.parse
 
-# 1. On récupère les données envoyées en GET via la variable d'environnement
 query_string = os.environ.get("QUERY_STRING", "")
 
-# 2. On parse les paramètres (ex: ?nom=Bond&prenom=James)
 params = urllib.parse.parse_qs(query_string)
 
-# 3. Préparation du contenu HTML
 name = params.get("nom", ["Inconnu"])[0]
 agent_id = params.get("id", ["000"])[0]
 
-# 4. LE PLUS IMPORTANT : L'en-tête HTTP (C'est le script qui doit l'écrire !)
 print("Content-Type: text/html")
-print()  # Ligne vide obligatoire entre les headers et le body
+print()
 
-# 5. Le corps de la page
 print(f"""
 <!DOCTYPE html>
 <html lang="fr">

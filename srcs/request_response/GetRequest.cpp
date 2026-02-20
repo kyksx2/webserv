@@ -234,7 +234,7 @@ char **GetRequest::generateEnvp()
 
 	env.push_back("SERVER_PORT=" + port);
 
-	env.push_back("HTTP_HOST=" + host);
+	env.push_back("HTTP_HOST=" + host); 
 
 	// ===== PATH_INFO =====
 	std::string path_info;
