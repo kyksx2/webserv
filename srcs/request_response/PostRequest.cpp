@@ -27,17 +27,16 @@ void	split_path(std::string path, std::string &dir, std::string &file)
 	}
 }
 
-//! Pour POST avec 201 Created, Location si body contient URI → 500 si absent (optionnel selon ton serveur)
 HTTPResponse PostRequest::generateResponse()
 {
 	HTTPResponse	postresponse;
 	postresponse.setLocation(this->m_location);
 	postresponse.setVersion(this->m_version);
 	postresponse.setHeader("connection", this->m_headers["connection"]);
-	std::string		realPath = this->GetRealPath();
+	std::string	realPath = this->GetRealPath();
 	struct stat st;
-	std::string	dir;
-	std::string	file;
+	std::string dir;
+	std::string file;
 	split_path(realPath, dir, file);
 
 	// Verifie si la Methode est autorise sur target
@@ -54,13 +53,15 @@ HTTPResponse PostRequest::generateResponse()
 	{
 		if (S_ISREG(st.st_mode))
 		{
-			std::ofstream monFlux(realPath.c_str(), std::ios::out | std::ios::trunc);
+			std::ofstream monFlux(realPath.c_str(), std::ios::out | std::ios::trunc | std::ios::binary);
 			if (monFlux)
 			{
 				postresponse.setStatus(200, "OK");
 				postresponse.setHeader("Content-Type", this->m_headers["content-type"]);
-				monFlux << this->m_body;
+				
+				monFlux.write(this->m_body.data(), this->m_body.size());
 				monFlux.close();
+				
 				return postresponse;
 			}
 			else
@@ -71,13 +72,15 @@ HTTPResponse PostRequest::generateResponse()
 		}
 		else if (S_ISDIR(st.st_mode))
 		{
-			std::ofstream monFlux((realPath + "/default").c_str(), std::ios::out | std::ios::trunc);
+			std::ofstream monFlux((realPath + "/default").c_str(), std::ios::out | std::ios::trunc | std::ios::binary);
 			if (monFlux)
 			{
 				postresponse.setStatus(200, "OK");
 				postresponse.setHeader("Content-Type", this->m_headers["content-type"]);
-				monFlux << this->m_body;
+				
+				monFlux.write(this->m_body.data(), this->m_body.size());
 				monFlux.close();
+				
 				return postresponse;
 			}
 			else
@@ -91,23 +94,24 @@ HTTPResponse PostRequest::generateResponse()
 	{
 		if (stat(dir.c_str(), &st) == 0 && S_ISDIR(st.st_mode))
 		{
-			std::ofstream monFlux(realPath.c_str(), std::ios::out | std::ios::trunc);
+			std::ofstream monFlux(realPath.c_str(), std::ios::out | std::ios::trunc | std::ios::binary);
 			if (!monFlux)
 			{
 				postresponse.setStatus(500, "Internal Server Error");
 				return postresponse;
 			}
 
-			monFlux << this->m_body;
+			monFlux.write(this->m_body.data(), this->m_body.size());
 			monFlux.close();
 
-			postresponse.setStatus(201, "Created");
+			postresponse.setStatus(201, "Created"); // 201 car le fichier vient d'être créé
 			postresponse.setHeader("Location", realPath);
 			postresponse.setHeader("Content-Type", this->m_headers["content-type"]);
 			return postresponse;
 		}
 		else
 		{
+			// Le dossier parent n'existe pas, impossible de creer le fichier
 			postresponse.setStatus(404, "Not Found");
 			return postresponse;
 		}

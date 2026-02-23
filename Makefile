@@ -8,18 +8,21 @@ CXXFLAGS = -Wall -Wextra -Werror -std=c++98 -g3 -I include #-fsanitize=address
 # Dossiers
 SRC_DIR = srcs
 OBJ_DIR = objs
-SRCS = $(wildcard $(SRC_DIR)/*.cpp) \
-       $(wildcard $(SRC_DIR)/parsing/*.cpp) \
-       $(wildcard $(SRC_DIR)/CGI/*.cpp) \
-       $(wildcard $(SRC_DIR)/request_response/*.cpp) \
-       $(wildcard $(SRC_DIR)/serv_handler/*.cpp)
+SRCS = $(addprefix $(SRC_DIR)/, $(addprefix parsing/, Global_Config.cpp Location_config.cpp parsing.cpp Server_config.cpp utils_parsing.cpp) \
+								$(addprefix request_response/, DeleteRequest.cpp GetRequest.cpp HTTPRequest.cpp HTTPResponse.cpp PostRequest.cpp) \
+								$(addprefix serv_handler/, Client.cpp Server.cpp utils_webserv.cpp webserv.cpp) \
+								main.cpp \
+		)
 
 # Transformation des sources en objets
 # Cela va créer une structure miroir dans objs/ (ex: objs/parsing/Config.o)
 OBJS = $(SRCS:$(SRC_DIR)/%.cpp=$(OBJ_DIR)/%.o)
 
 # Dépendances (Headers)
-DEPS = $(wildcard include/*.hpp)
+DEPS = $(addprefix include/, $(addprefix parsing/, Global_Config.hpp Location_config.hpp parsing.hpp Server_config.hpp) \
+							 $(addprefix request_response/, DeleteRequest.hpp GetRequest.hpp HTTPRequest.hpp HTTPResponse.hpp PostRequest.hpp) \
+							 $(addprefix serv_handler/, Client.hpp Server.hpp Webserv.hpp) \
+		)
 
 all: $(NAME)
 
@@ -39,44 +42,3 @@ fclean: clean
 re: fclean all
 
 .PHONY: all clean fclean re
-
-# # Nom du programme
-# NAME = webserv
-
-# # Compilateur et flags
-# CXX = c++
-# CXXFLAGS = -Wall -Wextra -Werror -std=c++98 -I include
-
-# # Dossiers
-# SRC_DIR = srcs
-# OBJ_DIR = objs
-
-# # Recherche de tous les .cpp automatiquement
-# SRCS = $(wildcard $(SRC_DIR)/*.cpp) \
-#        $(wildcard $(SRC_DIR)/parsing/*.cpp)
-
-# OBJS = $(SRCS:$(SRC_DIR)/%.cpp=$(OBJ_DIR)/%.o)
-# DEPS = $(wildcard include/*.hpp)
-
-# # Règle par défaut
-# all: $(NAME)
-
-# # Link final
-# $(NAME): $(OBJS)
-# 	$(CXX) $(CXXFLAGS) $(OBJS) -o $(NAME)
-
-# # Compilation des .o
-# $(OBJ_DIR)/%.o: $(SRC_DIR)/%.cpp $(DEPS)
-# 	@mkdir -p $(dir $@)
-# 	$(CXX) $(CXXFLAGS) -c $< -o $@
-
-# # Nettoyage
-# clean:
-# 	rm -rf $(OBJ_DIR)
-
-# fclean: clean
-# 	rm -f $(NAME)
-
-# re: fclean all
-
-# .PHONY: all clean fclean re
