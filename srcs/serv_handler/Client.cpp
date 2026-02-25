@@ -233,10 +233,10 @@ bool Client::completeRequest()
 				int tmp;
 				if (!safe_atoi(cl.c_str(), tmp) || tmp < 0)
 					throw HTTPRequest::HTTPRequestException(request->GetVersion() + ",400,Bad Request");
-
+				this->contentLength = tmp;
 				if (contentLength > (size_t) request->Getlocation()->getClientMaxBodySize())
 					throw HTTPRequest::HTTPRequestException(request->GetVersion() + ",413,Payload Too Large");
-				this->contentLength = tmp;
+
 			}
 		}
 		catch (const std::exception& e)
